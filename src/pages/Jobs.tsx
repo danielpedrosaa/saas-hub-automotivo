@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle, Camera } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +18,8 @@ import type { Enums } from "@/integrations/supabase/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
+import JobPhotoUpload from "@/components/photos/JobPhotoUpload";
+import JobPhotoGallery from "@/components/photos/JobPhotoGallery";
 
 type JobStatus = Enums<"job_status">;
 
@@ -310,6 +312,28 @@ export default function Jobs() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Photos section */}
+                  {selectedJob.status === "done" ? (
+                    <JobPhotoGallery photos={(selectedJob as any).job_photos || []} />
+                  ) : (
+                    <div className="space-y-3">
+                      <JobPhotoUpload
+                        jobId={selectedJob.id}
+                        photoType="before"
+                        photos={((selectedJob as any).job_photos || []).filter((p: any) => p.photo_type === "before")}
+                        onPhotosChange={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                      />
+                      {selectedJob.status === "in_progress" && (
+                        <JobPhotoUpload
+                          jobId={selectedJob.id}
+                          photoType="after"
+                          photos={((selectedJob as any).job_photos || []).filter((p: any) => p.photo_type === "after")}
+                          onPhotosChange={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                        />
+                      )}
+                    </div>
+                  )}
 
                   {/* Notes */}
                   {selectedJob.notes && (
