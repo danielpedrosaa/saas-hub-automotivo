@@ -4,21 +4,24 @@ import AppLayout from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, Filter } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Enums } from "@/integrations/supabase/types";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 type JobStatus = Enums<"job_status">;
 
 const statusConfig: Record<JobStatus, { label: string; className: string }> = {
   waiting: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
-  in_progress: { label: "Em Processo", className: "bg-primary text-primary-foreground" },
-  done: { label: "Concluído", className: "bg-success text-success-foreground" },
+  in_progress: { label: "Em Execução", className: "bg-primary text-primary-foreground" },
+  done: { label: "Finalizado", className: "bg-success text-success-foreground" },
 };
 
 const nextStatus: Record<JobStatus, JobStatus | null> = {
@@ -27,9 +30,16 @@ const nextStatus: Record<JobStatus, JobStatus | null> = {
   done: null,
 };
 
+const nextLabel: Record<JobStatus, string> = {
+  waiting: "Iniciar",
+  in_progress: "Finalizar",
+  done: "",
+};
+
 export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
+  const [selectedJob, setSelectedJob] = useState<any>(null);
   const queryClient = useQueryClient();
   const { shopId } = useAuth();
   const { toast } = useToast();
@@ -50,6 +60,7 @@ export default function Jobs() {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
     } else {
       queryClient.invalidateQueries({ queryKey: ["jobs", shopId] });
+      setSelectedJob(null);
     }
   };
 
@@ -57,7 +68,7 @@ export default function Jobs() {
     <AppLayout>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">Veículos</h1>
+          <h1 className="text-xl font-bold">Ordens de Serviço</h1>
           <Button size="icon" onClick={() => navigate("/checkin")} className="h-10 w-10">
             <Plus className="h-5 w-5" />
           </Button>
@@ -72,7 +83,7 @@ export default function Jobs() {
               onClick={() => setFilter(s)}
               className="shrink-0 text-xs"
             >
-              {s === "all" ? "Todos" : statusConfig[s].label}
+              {s === "all" ? "Todas" : statusConfig[s].label}
             </Button>
           ))}
         </div>
@@ -82,53 +93,157 @@ export default function Jobs() {
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : filtered.length === 0 ? (
-          <p className="py-12 text-center text-sm text-muted-foreground">
-            Nenhum veículo encontrado
-          </p>
+          <div className="flex flex-col items-center gap-3 py-12 text-muted-foreground">
+            <ClipboardList className="h-10 w-10" />
+            <p className="text-sm">Nenhuma OS encontrada</p>
+          </div>
         ) : (
           <div className="space-y-3">
             <AnimatePresence>
-              {filtered.map((job) => (
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  <Card className="border-border bg-secondary">
-                    <CardContent className="flex items-center justify-between p-4">
-                      <div className="space-y-1">
-                        <p className="font-mono text-xl font-bold uppercase tracking-wider text-foreground">
-                          {(job as any).vehicles?.plate}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {(job as any).vehicles?.model} • {(job as any).services?.name ?? "—"}
-                        </p>
-                        <Badge className={statusConfig[job.status].className}>
-                          {statusConfig[job.status].label}
-                        </Badge>
-                      </div>
-                      {nextStatus[job.status] && (
-                        <motion.div whileTap={{ scale: 0.95 }}>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => advanceStatus(job.id, job.status)}
-                            className="min-h-[48px] text-xs"
-                          >
-                            {job.status === "waiting" ? "Iniciar" : "Concluir"}
-                          </Button>
-                        </motion.div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+              {filtered.map((job) => {
+                const vehicle = (job as any).vehicles;
+                const customer = vehicle?.customers;
+                const jobServices = (job as any).job_services || [];
+
+                return (
+                  <motion.div
+                    key={job.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                  >
+                    <Card
+                      className="cursor-pointer border-border bg-secondary active:bg-muted transition-colors"
+                      onClick={() => setSelectedJob(job)}
+                    >
+                      <CardContent className="p-4 space-y-2">
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1">
+                            <p className="font-mono text-xl font-bold uppercase tracking-wider text-foreground">
+                              {vehicle?.plate}
+                            </p>
+                            {customer?.name && (
+                              <p className="text-sm text-muted-foreground">{customer.name}</p>
+                            )}
+                            <p className="text-xs text-muted-foreground">
+                              {vehicle?.model}
+                              {vehicle?.color ? ` • ${vehicle.color}` : ""}
+                            </p>
+                          </div>
+                          <Badge className={statusConfig[job.status].className}>
+                            {statusConfig[job.status].label}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between border-t border-border pt-2">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(job.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+                          </span>
+                          <span className="text-sm font-bold tabular-nums text-primary">
+                            R$ {Number(job.total_price).toFixed(2)}
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
+
+        {/* OS Detail Dialog */}
+        <Dialog open={!!selectedJob} onOpenChange={(o) => !o && setSelectedJob(null)}>
+          <DialogContent className="max-h-[85vh] overflow-y-auto">
+            {selectedJob && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="flex items-center justify-between">
+                    <span>Detalhes da OS</span>
+                    <Badge className={statusConfig[selectedJob.status].className}>
+                      {statusConfig[selectedJob.status].label}
+                    </Badge>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {/* Vehicle + Customer */}
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Veículo</p>
+                    <p className="font-mono text-2xl font-bold uppercase tracking-wider text-foreground">
+                      {(selectedJob as any).vehicles?.plate}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {[(selectedJob as any).vehicles?.model, (selectedJob as any).vehicles?.color]
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </p>
+                  </div>
+
+                  {(selectedJob as any).vehicles?.customers?.name && (
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Cliente</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {(selectedJob as any).vehicles.customers.name}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Services */}
+                  <div className="space-y-2">
+                    <p className="text-xs text-muted-foreground">Serviços</p>
+                    {((selectedJob as any).job_services || []).map((js: any) => (
+                      <div key={js.id} className="flex justify-between text-sm">
+                        <span className="text-foreground">{js.service_name}</span>
+                        <span className="tabular-nums text-muted-foreground">
+                          R$ {Number(js.price).toFixed(2)}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="flex justify-between border-t border-border pt-2">
+                      <span className="font-semibold text-foreground">Total</span>
+                      <span className="text-lg font-bold tabular-nums text-primary">
+                        R$ {Number(selectedJob.total_price).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  {selectedJob.notes && (
+                    <div className="space-y-1">
+                      <p className="text-xs text-muted-foreground">Observações</p>
+                      <p className="text-sm text-foreground">{selectedJob.notes}</p>
+                    </div>
+                  )}
+
+                  {/* Timestamps */}
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p>Criada: {format(new Date(selectedJob.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                    {selectedJob.started_at && (
+                      <p>Iniciada: {format(new Date(selectedJob.started_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                    )}
+                    {selectedJob.finished_at && (
+                      <p>Finalizada: {format(new Date(selectedJob.finished_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                    )}
+                  </div>
+
+                  {/* Status action */}
+                  {nextStatus[selectedJob.status] && (
+                    <motion.div whileTap={{ scale: 0.97 }}>
+                      <Button
+                        onClick={() => advanceStatus(selectedJob.id, selectedJob.status)}
+                        className="h-14 w-full text-sm font-bold uppercase tracking-wider"
+                      >
+                        {nextLabel[selectedJob.status]}
+                      </Button>
+                    </motion.div>
+                  )}
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </AppLayout>
   );
