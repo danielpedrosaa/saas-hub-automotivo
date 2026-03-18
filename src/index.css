@@ -47,6 +47,8 @@
 
     --success: 142 71% 45%;
     --success-foreground: 220 20% 6%;
+    --delivered: 262 60% 55%;
+    --delivered-foreground: 220 20% 98%;
     --warning: 48 96% 53%;
     --warning-foreground: 220 20% 6%;
   }
