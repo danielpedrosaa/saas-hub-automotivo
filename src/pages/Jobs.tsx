@@ -231,17 +231,24 @@ export default function Jobs() {
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => (
-            <Button
-              key={s}
-              variant={filter === s ? "default" : "secondary"}
-              size="sm"
-              onClick={() => setFilter(s)}
-              className="shrink-0 text-xs"
-            >
-              {s === "all" ? "Todas" : statusConfig[s].label}
-            </Button>
-          ))}
+          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => {
+            const count = s === "all" ? (jobs?.length ?? 0) : (jobs?.filter((j) => j.status === s).length ?? 0);
+            return (
+              <Button
+                key={s}
+                variant={filter === s ? "default" : "secondary"}
+                size="sm"
+                onClick={() => setFilter(s)}
+                className="shrink-0 text-xs gap-1.5"
+              >
+                {s !== "all" && (
+                  <span className={cn("h-2 w-2 rounded-full", statusConfig[s].className)} />
+                )}
+                {s === "all" ? "Todas" : statusConfig[s].label}
+                <span className="text-[10px] opacity-70">({count})</span>
+              </Button>
+            );
+          })}
         </div>
 
         <div className="flex gap-2">
