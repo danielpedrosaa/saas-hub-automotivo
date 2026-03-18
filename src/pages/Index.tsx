@@ -46,6 +46,7 @@ export default function Index() {
               />
               <StatCard
                 icon={<Car className="h-5 w-5" />}
+                value={inProgress}
                 label="Em execução"
                 color="text-primary"
               />
