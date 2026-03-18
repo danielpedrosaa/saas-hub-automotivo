@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useServices, useCustomers, useVehicles } from "@/hooks/useShopData";
@@ -10,17 +10,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, ArrowRight, Loader2, Check } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
+import StructuredChecklist, {
+  type ChecklistItem,
+  createInitialChecklist,
+} from "@/components/checklist/StructuredChecklist";
 
 interface SelectedService {
   service_id: string;
   service_name: string;
   price: number;
 }
+
+const TOTAL_STEPS = 5;
 
 export default function CheckIn() {
   const { shopId, user } = useAuth();
@@ -37,7 +44,10 @@ export default function CheckIn() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Only fetch vehicles for the selected customer
+  // Checklist state
+  const [visualMarkers, setVisualMarkers] = useState<VisualMarker[]>([]);
+  const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>(createInitialChecklist);
+
   const { data: customerVehicles } = useVehicles(customerId || undefined);
 
   const selectedCustomer = customers?.find((c) => c.id === customerId);
@@ -58,12 +68,21 @@ export default function CheckIn() {
     );
   };
 
+  const addVisualMarker = (marker: VisualMarker) => {
+    setVisualMarkers((prev) => [...prev, marker]);
+  };
+
+  const removeVisualMarker = (id: string) => {
+    setVisualMarkers((prev) => prev.filter((m) => m.id !== id));
+  };
+
   const canAdvance = () => {
     switch (step) {
       case 1: return !!customerId;
       case 2: return !!vehicleId;
-      case 3: return selectedServices.length > 0;
-      case 4: return true;
+      case 3: return true; // checklist is optional
+      case 4: return selectedServices.length > 0;
+      case 5: return true;
       default: return false;
     }
   };
@@ -97,6 +116,35 @@ export default function CheckIn() {
       const { error: jsErr } = await supabase.from("job_services").insert(jobServices);
       if (jsErr) throw jsErr;
 
+      // Insert checklist items (visual markers + structured items that are checked)
+      const checklistRows = [
+        ...visualMarkers.map((m) => ({
+          job_id: job.id,
+          item_type: "visual" as const,
+          label: m.label,
+          position_x: m.x,
+          position_y: m.y,
+          car_view: m.view,
+          notes: null,
+        })),
+        ...checklistItems
+          .filter((item) => item.checked)
+          .map((item) => ({
+            job_id: job.id,
+            item_type: "structured" as const,
+            label: item.label,
+            notes: item.notes.trim() || null,
+            position_x: null,
+            position_y: null,
+            car_view: null,
+          })),
+      ];
+
+      if (checklistRows.length > 0) {
+        const { error: clErr } = await supabase.from("job_checklist").insert(checklistRows);
+        if (clErr) throw clErr;
+      }
+
       queryClient.invalidateQueries({ queryKey: ["jobs"] });
       toast({ title: "OS criada com sucesso!" });
       navigate("/jobs");
@@ -107,7 +155,10 @@ export default function CheckIn() {
     }
   };
 
-  const stepTitles = ["Cliente", "Veículo", "Serviços", "Resumo"];
+  const stepTitles = ["Cliente", "Veículo", "Checklist", "Serviços", "Resumo"];
+
+  const checkedStructuredCount = checklistItems.filter((i) => i.checked).length;
+  const totalChecklistCount = visualMarkers.length + checkedStructuredCount;
 
   return (
     <AppLayout>
@@ -124,14 +175,14 @@ export default function CheckIn() {
           <div className="flex-1">
             <h1 className="text-xl font-bold">Nova OS</h1>
             <p className="text-xs text-muted-foreground">
-              Passo {step} de 4 — {stepTitles[step - 1]}
+              Passo {step} de {TOTAL_STEPS} — {stepTitles[step - 1]}
             </p>
           </div>
         </div>
 
         {/* Progress bar */}
         <div className="flex gap-1">
-          {[1, 2, 3, 4].map((s) => (
+          {Array.from({ length: TOTAL_STEPS }, (_, i) => i + 1).map((s) => (
             <div
               key={s}
               className={`h-1 flex-1 rounded-full transition-colors ${
@@ -219,8 +270,65 @@ export default function CheckIn() {
               </div>
             )}
 
-            {/* STEP 3: Select services + edit prices */}
+            {/* STEP 3: Vehicle checklist */}
             {step === 3 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-2">
+                    <ClipboardCheck className="h-4 w-4 text-primary" />
+                    Checklist do veículo
+                  </Label>
+                  {totalChecklistCount > 0 && (
+                    <span className="text-xs text-destructive font-medium">
+                      {totalChecklistCount} {totalChecklistCount === 1 ? "problema" : "problemas"}
+                    </span>
+                  )}
+                </div>
+
+                <Tabs defaultValue="visual" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="visual" className="text-xs">
+                      <CarIcon className="mr-1.5 h-3.5 w-3.5" />
+                      Diagrama
+                      {visualMarkers.length > 0 && (
+                        <span className="ml-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">
+                          {visualMarkers.length}
+                        </span>
+                      )}
+                    </TabsTrigger>
+                    <TabsTrigger value="list" className="text-xs">
+                      <ClipboardCheck className="mr-1.5 h-3.5 w-3.5" />
+                      Lista
+                      {checkedStructuredCount > 0 && (
+                        <span className="ml-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] text-destructive-foreground">
+                          {checkedStructuredCount}
+                        </span>
+                      )}
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="visual" className="mt-3">
+                    <CarDiagram
+                      markers={visualMarkers}
+                      onAddMarker={addVisualMarker}
+                      onRemoveMarker={removeVisualMarker}
+                    />
+                  </TabsContent>
+                  <TabsContent value="list" className="mt-3">
+                    <StructuredChecklist
+                      items={checklistItems}
+                      onChange={setChecklistItems}
+                    />
+                  </TabsContent>
+                </Tabs>
+
+                <p className="text-xs text-muted-foreground text-center">
+                  Opcional — você pode pular se não houver problemas
+                </p>
+              </div>
+            )}
+
+            {/* STEP 4: Select services + edit prices */}
+            {step === 4 && (
               <div className="space-y-3">
                 <Label>Selecione os serviços</Label>
                 {services?.filter((s) => s.active).map((svc) => {
@@ -279,8 +387,8 @@ export default function CheckIn() {
               </div>
             )}
 
-            {/* STEP 4: Summary + notes */}
-            {step === 4 && (
+            {/* STEP 5: Summary + notes */}
+            {step === 5 && (
               <div className="space-y-4">
                 <Card className="border-border bg-secondary">
                   <CardContent className="space-y-3 p-4">
@@ -297,6 +405,31 @@ export default function CheckIn() {
                         {[selectedVehicle?.model, (selectedVehicle as any)?.color].filter(Boolean).join(" • ")}
                       </p>
                     </div>
+
+                    {/* Checklist summary */}
+                    {totalChecklistCount > 0 && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Checklist</p>
+                        <p className="text-sm text-destructive font-medium">
+                          {totalChecklistCount} {totalChecklistCount === 1 ? "problema registrado" : "problemas registrados"}
+                        </p>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {visualMarkers.map((m) => (
+                            <span key={m.id} className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] text-destructive">
+                              <span className="h-1 w-1 rounded-full bg-destructive" />
+                              {m.label} ({m.view === "top" ? "topo" : m.view === "left_side" ? "esq." : "dir."})
+                            </span>
+                          ))}
+                          {checklistItems.filter((i) => i.checked).map((i) => (
+                            <span key={i.id} className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] text-destructive">
+                              <span className="h-1 w-1 rounded-full bg-destructive" />
+                              {i.label}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     <div>
                       <p className="text-xs text-muted-foreground">Serviços</p>
                       {selectedServices.map((s) => (
@@ -332,14 +465,15 @@ export default function CheckIn() {
 
         {/* Navigation buttons */}
         <div className="flex gap-3 pt-2">
-          {step < 4 ? (
+          {step < TOTAL_STEPS ? (
             <motion.div whileTap={{ scale: 0.97 }} className="flex-1">
               <Button
                 onClick={() => setStep(step + 1)}
                 disabled={!canAdvance()}
                 className="h-14 w-full text-sm font-bold uppercase tracking-wider"
               >
-                Próximo <ArrowRight className="ml-2 h-4 w-4" />
+                {step === 3 ? (totalChecklistCount > 0 ? "Próximo" : "Pular") : "Próximo"}
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </motion.div>
           ) : (
