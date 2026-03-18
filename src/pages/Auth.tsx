@@ -38,6 +38,11 @@ export default function Auth() {
       if (isLogin) {
         await signIn(email, password);
       } else {
+        const shopData = {
+          shop_name: shopName || `${fullName}'s Shop`,
+          shop_phone: shopPhone || undefined,
+          shop_whatsapp: shopWhatsapp || undefined,
+        };
         await signUp(email, password, fullName);
         toast({
           title: "Conta criada!",
