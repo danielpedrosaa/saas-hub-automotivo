@@ -1,13 +1,14 @@
 import { useLocation, Link } from "react-router-dom";
-import { Home, Car, Wrench, Users, Settings, UserCircle } from "lucide-react";
+import { Home, Car, Wrench, Settings, UserCircle, ClipboardList } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: Home, label: "Início", roles: ["owner", "employee"] },
-  { to: "/jobs", icon: Wrench, label: "OS", roles: ["owner", "employee"] },
+  { to: "/jobs", icon: ClipboardList, label: "OS", roles: ["owner", "employee"] },
   { to: "/vehicles", icon: Car, label: "Veículos", roles: ["owner", "employee"] },
   { to: "/customers", icon: UserCircle, label: "Clientes", roles: ["owner", "employee"] },
+  { to: "/services", icon: Wrench, label: "Serviços", roles: ["owner"] },
   { to: "/settings", icon: Settings, label: "Config", roles: ["owner", "employee"] },
 ];
 
