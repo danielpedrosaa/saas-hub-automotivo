@@ -18,6 +18,8 @@ import type { Enums } from "@/integrations/supabase/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
+import JobPhotoUpload from "@/components/photos/JobPhotoUpload";
+import JobPhotoGallery from "@/components/photos/JobPhotoGallery";
 
 type JobStatus = Enums<"job_status">;
 
