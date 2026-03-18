@@ -86,9 +86,11 @@ function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; i
 }
 
 export default function Jobs() {
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get("status") as JobStatus | null;
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
-  const [filter, setFilter] = useState<JobStatus | "all">("all");
+  const [filter, setFilter] = useState<JobStatus | "all">(initialStatus && ["waiting", "in_progress", "done", "delivered"].includes(initialStatus) ? initialStatus : "all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
