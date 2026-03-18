@@ -243,6 +243,47 @@ export type Database = {
           },
         ]
       }
+      message_templates: {
+        Row: {
+          created_at: string
+          greeting: string
+          id: string
+          main_text: string
+          shop_id: string
+          signature: string
+          thanks_message: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          greeting?: string
+          id?: string
+          main_text?: string
+          shop_id: string
+          signature?: string
+          thanks_message?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          greeting?: string
+          id?: string
+          main_text?: string
+          shop_id?: string
+          signature?: string
+          thanks_message?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_templates_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: true
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
