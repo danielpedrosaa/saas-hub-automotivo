@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useJobs, useServices } from "@/hooks/useShopData";
+import { useJobs, useServices, useShop } from "@/hooks/useShopData";
 import AppLayout from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
