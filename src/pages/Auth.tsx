@@ -43,7 +43,7 @@ export default function Auth() {
           shop_phone: shopPhone || undefined,
           shop_whatsapp: shopWhatsapp || undefined,
         };
-        await signUp(email, password, fullName);
+        await signUp(email, password, fullName, shopData);
         toast({
           title: "Conta criada!",
           description: "Verifique seu email para confirmar o cadastro.",
