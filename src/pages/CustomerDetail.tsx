@@ -317,7 +317,7 @@ export default function CustomerDetail() {
                     </div>
                   </div>
 
-                  {fullJob.status === "done" ? (
+                  {(fullJob.status === "done" || fullJob.status === "delivered") ? (
                     <JobPhotoGallery photos={fullJob.job_photos || []} />
                   ) : (
                     <div className="space-y-3">
