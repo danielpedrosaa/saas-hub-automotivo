@@ -527,7 +527,7 @@ export default function Jobs() {
                   </div>
 
                   {/* Photos section */}
-                  {selectedJob.status === "done" ? (
+                  {selectedJob.status === "done" || selectedJob.status === "delivered" ? (
                     <JobPhotoGallery photos={(selectedJob as any).job_photos || []} />
                   ) : (
                     <div className="space-y-3">
