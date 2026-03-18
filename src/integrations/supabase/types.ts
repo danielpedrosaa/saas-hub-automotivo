@@ -188,16 +188,22 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          phone: string | null
+          whatsapp: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          phone?: string | null
+          whatsapp?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          phone?: string | null
+          whatsapp?: string | null
         }
         Relationships: []
       }
