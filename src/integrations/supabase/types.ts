@@ -96,6 +96,38 @@ export type Database = {
           },
         ]
       }
+      job_photos: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          photo_type: string
+          photo_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          photo_type?: string
+          photo_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          photo_type?: string
+          photo_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_photos_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_services: {
         Row: {
           created_at: string
