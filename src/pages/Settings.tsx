@@ -44,11 +44,19 @@ export default function Settings() {
               Loja
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-1">
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
             ) : (
-              <p className="text-sm text-foreground">{shop?.name}</p>
+              <>
+                <p className="text-sm text-foreground">{shop?.name}</p>
+                {shop?.phone && (
+                  <p className="text-xs text-muted-foreground">Tel: {shop.phone}</p>
+                )}
+                {shop?.whatsapp && (
+                  <p className="text-xs text-muted-foreground">WhatsApp: {shop.whatsapp}</p>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
