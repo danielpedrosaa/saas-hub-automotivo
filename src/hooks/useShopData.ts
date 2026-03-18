@@ -53,6 +53,25 @@ export function useCustomers() {
   });
 }
 
+export function useVehicles(customerId?: string) {
+  const { shopId } = useAuth();
+  return useQuery({
+    queryKey: ["vehicles", shopId, customerId],
+    enabled: !!shopId,
+    queryFn: async () => {
+      let query = supabase
+        .from("vehicles")
+        .select("*, customers(name)")
+        .eq("shop_id", shopId!)
+        .order("created_at", { ascending: false });
+      if (customerId) query = query.eq("customer_id", customerId);
+      const { data, error } = await query;
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useTeam() {
   const { shopId } = useAuth();
   return useQuery({
