@@ -100,7 +100,8 @@ export default function CheckIn() {
         .insert({
           shop_id: shopId,
           vehicle_id: vehicleId,
-          total_price: totalPrice,
+          total_price: finalPrice,
+          discount: discount,
           notes: notes.trim() || null,
           created_by: user.id,
         })
