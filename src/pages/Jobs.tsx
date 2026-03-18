@@ -79,6 +79,7 @@ function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; i
   );
 }
 
+export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
