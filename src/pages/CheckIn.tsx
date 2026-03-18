@@ -500,6 +500,7 @@ export default function CheckIn() {
                     maxLength={1000}
                   />
                 </div>
+              </div>
             )}
           </motion.div>
         </AnimatePresence>
