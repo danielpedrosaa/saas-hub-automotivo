@@ -61,9 +61,29 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
   }
 
   .font-mono {
     font-family: 'Geist Mono', ui-monospace, monospace;
+  }
+
+  /* Safe area for bottom nav */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Active state for touch feedback */
+  .touch-active:active {
+    opacity: 0.85;
+    transform: scale(0.98);
+    transition: all 0.1s ease;
   }
 }
