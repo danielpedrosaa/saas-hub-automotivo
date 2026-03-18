@@ -104,6 +104,7 @@ export default function CheckIn() {
           total_price: finalPrice,
           discount: discount,
           notes: notes.trim() || null,
+          internal_notes: internalNotes.trim() || null,
           created_by: user.id,
         })
         .select("id")
