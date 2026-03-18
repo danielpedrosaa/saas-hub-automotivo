@@ -14,16 +14,270 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          shop_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          shop_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          entry_photo_url: string | null
+          finished_at: string | null
+          id: string
+          notes: string | null
+          service_id: string | null
+          shop_id: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          entry_photo_url?: string | null
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          service_id?: string | null
+          shop_id: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          entry_photo_url?: string | null
+          finished_at?: string | null
+          id?: string
+          notes?: string | null
+          service_id?: string | null
+          shop_id?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jobs_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          phone: string | null
+          shop_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id: string
+          phone?: string | null
+          shop_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          shop_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          active: boolean
+          created_at: string
+          duration_minutes: number
+          id: string
+          name: string
+          price: number
+          shop_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name: string
+          price?: number
+          shop_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          name?: string
+          price?: number
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          id: string
+          model: string | null
+          plate: string
+          shop_id: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          model?: string | null
+          plate: string
+          shop_id: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          model?: string | null
+          plate?: string
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicles_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_shop_id: { Args: { _user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "employee"
+      job_status: "waiting" | "in_progress" | "done"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +404,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "employee"],
+      job_status: ["waiting", "in_progress", "done"],
+    },
   },
 } as const
