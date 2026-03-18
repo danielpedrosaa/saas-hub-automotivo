@@ -704,7 +704,27 @@ export default function Jobs() {
                     )}
                   </div>
 
-                  {/* Status action */}
+                  {/* WhatsApp */}
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      className="flex-1 h-12 gap-2 text-sm font-semibold border-green-600/30 text-green-600 hover:bg-green-600/10"
+                      onClick={() => handleSendWhatsApp(selectedJob, "completion")}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      Enviar WhatsApp
+                    </Button>
+                    {(selectedJob.status === "done" || selectedJob.status === "delivered") && (
+                      <Button
+                        variant="outline"
+                        className="h-12 gap-2 text-sm border-green-600/30 text-green-600 hover:bg-green-600/10"
+                        onClick={() => handleSendWhatsApp(selectedJob, "ready")}
+                      >
+                        🚗 Pronto p/ retirada
+                      </Button>
+                    )}
+                  </div>
+
                   {!editing && nextStatus[selectedJob.status] && (
                     <motion.div whileTap={{ scale: 0.97 }}>
                       <Button
