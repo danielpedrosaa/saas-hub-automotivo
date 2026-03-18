@@ -52,6 +52,48 @@ export type Database = {
           },
         ]
       }
+      job_services: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          price: number
+          service_id: string
+          service_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          price?: number
+          service_id: string
+          service_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          price?: number
+          service_id?: string
+          service_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_services_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "job_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           created_at: string
@@ -64,6 +106,7 @@ export type Database = {
           shop_id: string
           started_at: string | null
           status: Database["public"]["Enums"]["job_status"]
+          total_price: number
           vehicle_id: string
         }
         Insert: {
@@ -77,6 +120,7 @@ export type Database = {
           shop_id: string
           started_at?: string | null
           status?: Database["public"]["Enums"]["job_status"]
+          total_price?: number
           vehicle_id: string
         }
         Update: {
@@ -90,6 +134,7 @@ export type Database = {
           shop_id?: string
           started_at?: string | null
           status?: Database["public"]["Enums"]["job_status"]
+          total_price?: number
           vehicle_id?: string
         }
         Relationships: [

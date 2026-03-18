@@ -10,7 +10,7 @@ export function useJobs() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("jobs")
-        .select("*, vehicles(*), services(*)")
+        .select("*, vehicles(*, customers(name)), job_services(*)")
         .eq("shop_id", shopId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
