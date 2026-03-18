@@ -54,6 +54,7 @@ export default function CheckIn() {
   const selectedCustomer = customers?.find((c) => c.id === customerId);
   const selectedVehicle = customerVehicles?.find((v) => v.id === vehicleId);
   const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+  const finalPrice = Math.max(0, totalPrice - discount);
 
   const toggleService = (svc: { id: string; name: string; price: number }) => {
     setSelectedServices((prev) => {
