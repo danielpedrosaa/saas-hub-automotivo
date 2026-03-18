@@ -212,7 +212,7 @@ export default function Jobs() {
 
   const handleSendWhatsApp = (job: any, type: "completion" | "ready") => {
     const data = getWhatsAppData(job);
-    const message = type === "completion" ? buildCompletionMessage(data) : buildReadyMessage(data);
+    const message = type === "completion" ? buildCompletionMessage(data, messageTemplate) : buildReadyMessage(data, messageTemplate);
     const sent = sendWhatsApp(data.customerWhatsapp, message);
     if (!sent) {
       toast({ title: "⚠️ Sem WhatsApp", description: "Cliente não possui número de WhatsApp cadastrado.", variant: "destructive" });
