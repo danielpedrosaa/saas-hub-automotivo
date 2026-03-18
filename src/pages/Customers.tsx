@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCustomers } from "@/hooks/useShopData";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,11 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Loader2, Pencil, Search, Phone, MessageCircle, Mail, Users } from "lucide-react";
+import { Plus, Loader2, Pencil, Search, Phone, MessageCircle, Mail, Users, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Customers() {
   const { shopId } = useAuth();
+  const navigate = useNavigate();
   const { data: customers, isLoading } = useCustomers();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -165,7 +167,10 @@ export default function Customers() {
           <div className="space-y-3">
             {filtered?.map((c) => (
               <motion.div key={c.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15 }}>
-                <Card className="border-border bg-secondary">
+                <Card
+                  className="border-border bg-secondary cursor-pointer active:bg-muted transition-colors"
+                  onClick={() => navigate(`/customers/${c.id}`)}
+                >
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="space-y-1 min-w-0 flex-1">
                       <p className="font-semibold text-foreground truncate">{c.name}</p>
@@ -187,9 +192,17 @@ export default function Customers() {
                         )}
                       </div>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(c)} className="h-10 w-10 shrink-0">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={(e) => { e.stopPropagation(); openEdit(c); }}
+                        className="h-10 w-10"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
