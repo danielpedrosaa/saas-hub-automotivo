@@ -9,8 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, ClipboardList, Calendar } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Enums } from "@/integrations/supabase/types";
 import { format } from "date-fns";
@@ -39,13 +40,28 @@ const nextLabel: Record<JobStatus, string> = {
 export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
+  const [search, setSearch] = useState("");
+  const [sortAsc, setSortAsc] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const queryClient = useQueryClient();
   const { shopId } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const filtered = jobs?.filter((j) => filter === "all" || j.status === filter) ?? [];
+  const filtered = (jobs ?? [])
+    .filter((j) => filter === "all" || j.status === filter)
+    .filter((j) => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      const customerName = (j as any).vehicles?.customers?.name?.toLowerCase() ?? "";
+      const plate = (j as any).vehicles?.plate?.toLowerCase() ?? "";
+      return customerName.includes(q) || plate.includes(q);
+    })
+    .sort((a, b) => {
+      const da = new Date(a.created_at).getTime();
+      const db = new Date(b.created_at).getTime();
+      return sortAsc ? da - db : db - da;
+    });
 
   const advanceStatus = async (jobId: string, current: JobStatus) => {
     const next = nextStatus[current];
@@ -86,6 +102,27 @@ export default function Jobs() {
               {s === "all" ? "Todas" : statusConfig[s].label}
             </Button>
           ))}
+        </div>
+
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por cliente ou placa..."
+              className="h-10 pl-10 text-sm"
+            />
+          </div>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setSortAsc(!sortAsc)}
+            className="h-10 w-10 shrink-0"
+            title={sortAsc ? "Mais antigas primeiro" : "Mais recentes primeiro"}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
         </div>
 
         {isLoading ? (
