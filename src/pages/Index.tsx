@@ -64,7 +64,7 @@ export default function Index() {
                 className="h-14 w-full text-sm font-bold uppercase tracking-wider"
               >
                 <Plus className="mr-2 h-5 w-5" />
-                Novo Check-in
+                Nova OS
               </Button>
             </motion.div>
           </>
