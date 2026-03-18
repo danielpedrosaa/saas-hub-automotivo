@@ -11,8 +11,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle, Pencil, Trash2, X, Check, Percent, Lock, Save } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle, Pencil, Trash2, X, Check, Percent, Lock, Save, CalendarIcon, Filter } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -87,6 +90,8 @@ export default function Jobs() {
   const { data: allServices } = useServices();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
   const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [editing, setEditing] = useState(false);
@@ -166,11 +171,23 @@ export default function Jobs() {
       const plate = (j as any).vehicles?.plate?.toLowerCase() ?? "";
       return customerName.includes(q) || plate.includes(q);
     })
+    .filter((j) => {
+      const d = new Date(j.created_at);
+      if (dateFrom && d < new Date(dateFrom.setHours(0, 0, 0, 0))) return false;
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setHours(23, 59, 59, 999);
+        if (d > end) return false;
+      }
+      return true;
+    })
     .sort((a, b) => {
       const da = new Date(a.created_at).getTime();
       const db = new Date(b.created_at).getTime();
       return sortAsc ? da - db : db - da;
     });
+
+  const hasDateFilter = !!dateFrom || !!dateTo;
 
   const advanceStatus = async (jobId: string, current: JobStatus) => {
     const next = nextStatus[current];
@@ -214,17 +231,24 @@ export default function Jobs() {
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => (
-            <Button
-              key={s}
-              variant={filter === s ? "default" : "secondary"}
-              size="sm"
-              onClick={() => setFilter(s)}
-              className="shrink-0 text-xs"
-            >
-              {s === "all" ? "Todas" : statusConfig[s].label}
-            </Button>
-          ))}
+          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => {
+            const count = s === "all" ? (jobs?.length ?? 0) : (jobs?.filter((j) => j.status === s).length ?? 0);
+            return (
+              <Button
+                key={s}
+                variant={filter === s ? "default" : "secondary"}
+                size="sm"
+                onClick={() => setFilter(s)}
+                className="shrink-0 text-xs gap-1.5"
+              >
+                {s !== "all" && (
+                  <span className={cn("h-2 w-2 rounded-full", statusConfig[s].className)} />
+                )}
+                {s === "all" ? "Todas" : statusConfig[s].label}
+                <span className="text-[10px] opacity-70">({count})</span>
+              </Button>
+            );
+          })}
         </div>
 
         <div className="flex gap-2">
@@ -246,6 +270,49 @@ export default function Jobs() {
           >
             <ArrowUpDown className="h-4 w-4" />
           </Button>
+        </div>
+
+        {/* Date range filter */}
+        <div className="flex gap-2 items-center">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className={cn("h-9 text-xs gap-1.5", dateFrom && "border-primary text-primary")}>
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {dateFrom ? format(dateFrom, "dd/MM/yy", { locale: ptBR }) : "De"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={dateFrom}
+                onSelect={setDateFrom}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm" className={cn("h-9 text-xs gap-1.5", dateTo && "border-primary text-primary")}>
+                <CalendarIcon className="h-3.5 w-3.5" />
+                {dateTo ? format(dateTo, "dd/MM/yy", { locale: ptBR }) : "Até"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <CalendarComponent
+                mode="single"
+                selected={dateTo}
+                onSelect={setDateTo}
+                initialFocus
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
+          {hasDateFilter && (
+            <Button variant="ghost" size="sm" className="h-9 text-xs text-destructive" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
+              <X className="h-3.5 w-3.5 mr-1" /> Limpar
+            </Button>
+          )}
         </div>
 
         {isLoading ? (
