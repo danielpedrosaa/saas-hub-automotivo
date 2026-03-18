@@ -52,6 +52,50 @@ export type Database = {
           },
         ]
       }
+      job_checklist: {
+        Row: {
+          car_view: string | null
+          created_at: string
+          id: string
+          item_type: string
+          job_id: string
+          label: string
+          notes: string | null
+          position_x: number | null
+          position_y: number | null
+        }
+        Insert: {
+          car_view?: string | null
+          created_at?: string
+          id?: string
+          item_type?: string
+          job_id: string
+          label: string
+          notes?: string | null
+          position_x?: number | null
+          position_y?: number | null
+        }
+        Update: {
+          car_view?: string | null
+          created_at?: string
+          id?: string
+          item_type?: string
+          job_id?: string
+          label?: string
+          notes?: string | null
+          position_x?: number | null
+          position_y?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_checklist_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_services: {
         Row: {
           created_at: string
