@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useJobs } from "@/hooks/useShopData";
 import AppLayout from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,13 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Enums } from "@/integrations/supabase/types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
 
 type JobStatus = Enums<"job_status">;
 
@@ -80,6 +82,20 @@ export default function Jobs() {
     }
   };
 
+  // Extract checklist data from selected job
+  const jobChecklist = (selectedJob as any)?.job_checklist ?? [];
+  const visualChecklist: VisualMarker[] = jobChecklist
+    .filter((c: any) => c.item_type === "visual")
+    .map((c: any) => ({
+      id: c.id,
+      x: Number(c.position_x),
+      y: Number(c.position_y),
+      view: c.car_view as "top" | "left_side" | "right_side",
+      label: c.label,
+    }));
+  const structuredChecklist = jobChecklist.filter((c: any) => c.item_type === "structured");
+  const hasChecklist = jobChecklist.length > 0;
+
   return (
     <AppLayout>
       <div className="space-y-4">
@@ -140,7 +156,7 @@ export default function Jobs() {
               {filtered.map((job) => {
                 const vehicle = (job as any).vehicles;
                 const customer = vehicle?.customers;
-                const jobServices = (job as any).job_services || [];
+                const checklistCount = ((job as any).job_checklist || []).length;
 
                 return (
                   <motion.div
@@ -169,9 +185,17 @@ export default function Jobs() {
                               {vehicle?.color ? ` • ${vehicle.color}` : ""}
                             </p>
                           </div>
-                          <Badge className={statusConfig[job.status].className}>
-                            {statusConfig[job.status].label}
-                          </Badge>
+                          <div className="flex flex-col items-end gap-1.5">
+                            <Badge className={statusConfig[job.status].className}>
+                              {statusConfig[job.status].label}
+                            </Badge>
+                            {checklistCount > 0 && (
+                              <span className="flex items-center gap-1 text-[10px] text-destructive">
+                                <AlertTriangle className="h-3 w-3" />
+                                {checklistCount}
+                              </span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex items-center justify-between border-t border-border pt-2">
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -224,6 +248,47 @@ export default function Jobs() {
                       <p className="text-sm font-semibold text-foreground">
                         {(selectedJob as any).vehicles.customers.name}
                       </p>
+                    </div>
+                  )}
+
+                  {/* Checklist section */}
+                  {hasChecklist && (
+                    <div className="space-y-2">
+                      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                        <ClipboardCheck className="h-3.5 w-3.5" />
+                        Checklist — {jobChecklist.length} {jobChecklist.length === 1 ? "problema" : "problemas"}
+                      </p>
+
+                      {visualChecklist.length > 0 && (
+                        <div className="rounded-lg border border-border p-2">
+                          <p className="text-[10px] text-muted-foreground mb-1.5 uppercase tracking-wider">Diagrama visual</p>
+                          <CarDiagram
+                            markers={visualChecklist}
+                            onAddMarker={() => {}}
+                            onRemoveMarker={() => {}}
+                            readOnly
+                          />
+                        </div>
+                      )}
+
+                      {structuredChecklist.length > 0 && (
+                        <div className="space-y-1.5">
+                          {structuredChecklist.map((item: any) => (
+                            <div
+                              key={item.id}
+                              className="flex items-start gap-2 rounded-md bg-destructive/5 border border-destructive/20 p-2.5"
+                            >
+                              <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0 mt-0.5" />
+                              <div>
+                                <p className="text-sm text-foreground">{item.label}</p>
+                                {item.notes && (
+                                  <p className="text-xs text-muted-foreground mt-0.5">↳ {item.notes}</p>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
