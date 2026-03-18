@@ -14,6 +14,9 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [shopName, setShopName] = useState("");
+  const [shopPhone, setShopPhone] = useState("");
+  const [shopWhatsapp, setShopWhatsapp] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
