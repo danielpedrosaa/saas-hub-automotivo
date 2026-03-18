@@ -40,13 +40,28 @@ const nextLabel: Record<JobStatus, string> = {
 export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
+  const [search, setSearch] = useState("");
+  const [sortAsc, setSortAsc] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const queryClient = useQueryClient();
   const { shopId } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const filtered = jobs?.filter((j) => filter === "all" || j.status === filter) ?? [];
+  const filtered = (jobs ?? [])
+    .filter((j) => filter === "all" || j.status === filter)
+    .filter((j) => {
+      if (!search.trim()) return true;
+      const q = search.toLowerCase();
+      const customerName = (j as any).vehicles?.customers?.name?.toLowerCase() ?? "";
+      const plate = (j as any).vehicles?.plate?.toLowerCase() ?? "";
+      return customerName.includes(q) || plate.includes(q);
+    })
+    .sort((a, b) => {
+      const da = new Date(a.created_at).getTime();
+      const db = new Date(b.created_at).getTime();
+      return sortAsc ? da - db : db - da;
+    });
 
   const advanceStatus = async (jobId: string, current: JobStatus) => {
     const next = nextStatus[current];
