@@ -708,7 +708,7 @@ export default function Jobs() {
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
-                      className="flex-1 h-12 gap-2 text-sm font-semibold border-green-600/30 text-green-600 hover:bg-green-600/10"
+                      className="flex-1 h-12 gap-2 text-sm font-semibold border-whatsapp/30 text-whatsapp hover:bg-whatsapp/10"
                       onClick={() => handleSendWhatsApp(selectedJob, "completion")}
                     >
                       <MessageCircle className="h-4 w-4" />
@@ -717,7 +717,7 @@ export default function Jobs() {
                     {(selectedJob.status === "done" || selectedJob.status === "delivered") && (
                       <Button
                         variant="outline"
-                        className="h-12 gap-2 text-sm border-green-600/30 text-green-600 hover:bg-green-600/10"
+                        className="h-12 gap-2 text-sm border-whatsapp/30 text-whatsapp hover:bg-whatsapp/10"
                         onClick={() => handleSendWhatsApp(selectedJob, "ready")}
                       >
                         🚗 Pronto p/ retirada
