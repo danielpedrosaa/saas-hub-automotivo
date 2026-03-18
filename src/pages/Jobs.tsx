@@ -342,9 +342,11 @@ export default function Jobs() {
                     transition={{ duration: 0.15 }}
                   >
                     <Card
-                      className="cursor-pointer border-border bg-secondary active:bg-muted transition-colors"
+                      className="cursor-pointer border-border bg-secondary active:bg-muted transition-colors overflow-hidden"
                       onClick={() => setSelectedJob(job)}
                     >
+                      {/* Status color bar */}
+                      <div className={cn("h-1", statusConfig[job.status].className)} />
                       <CardContent className="p-4 space-y-2">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1">
@@ -380,6 +382,25 @@ export default function Jobs() {
                             R$ {Number(job.total_price).toFixed(2)}
                           </span>
                         </div>
+                        {/* Quick action button inline */}
+                        {nextStatus[job.status] && (
+                          <motion.div whileTap={{ scale: 0.95 }}>
+                            <Button
+                              size="sm"
+                              variant={job.status === "waiting" ? "default" : job.status === "in_progress" ? "default" : "secondary"}
+                              className={cn(
+                                "w-full h-10 text-xs font-bold uppercase tracking-wider",
+                                job.status === "done" && "bg-[hsl(var(--delivered))] hover:bg-[hsl(var(--delivered))]/90 text-[hsl(var(--delivered-foreground))]"
+                              )}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                advanceStatus(job.id, job.status);
+                              }}
+                            >
+                              {nextLabel[job.status]}
+                            </Button>
+                          </motion.div>
+                        )}
                       </CardContent>
                     </Card>
                   </motion.div>
