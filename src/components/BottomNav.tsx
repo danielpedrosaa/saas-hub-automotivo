@@ -5,9 +5,9 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/", icon: Home, label: "Início", roles: ["owner", "employee"] },
-  { to: "/jobs", icon: Car, label: "Veículos", roles: ["owner", "employee"] },
+  { to: "/jobs", icon: Wrench, label: "OS", roles: ["owner", "employee"] },
+  { to: "/vehicles", icon: Car, label: "Veículos", roles: ["owner", "employee"] },
   { to: "/customers", icon: UserCircle, label: "Clientes", roles: ["owner", "employee"] },
-  { to: "/services", icon: Wrench, label: "Serviços", roles: ["owner"] },
   { to: "/settings", icon: Settings, label: "Config", roles: ["owner", "employee"] },
 ];
 
