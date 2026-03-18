@@ -91,6 +91,7 @@ export default function Jobs() {
   const initialStatus = searchParams.get("status") as JobStatus | null;
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
+  const { data: shop } = useShop();
   const [filter, setFilter] = useState<JobStatus | "all">(initialStatus && ["waiting", "in_progress", "done", "delivered"].includes(initialStatus) ? initialStatus : "all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
