@@ -5,16 +5,15 @@ import { useAuth } from "@/contexts/AuthContext";
 export function useMessageTemplate() {
   const { shopId } = useAuth();
   return useQuery({
-    queryKey: ["message_template", shopId],
+    queryKey: ["whatsapp_templates", shopId],
     enabled: !!shopId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("message_templates")
+        .from("whatsapp_templates")
         .select("*")
-        .eq("shop_id", shopId!)
-        .maybeSingle();
+        .eq("shop_id", shopId!);
       if (error) throw error;
-      return data;
+      return data || [];
     },
   });
 }

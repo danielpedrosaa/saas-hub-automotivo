@@ -1,8 +1,3 @@
-/**
- * WhatsApp messaging utilities via wa.me deep links.
- * No API required — opens WhatsApp with pre-filled message.
- */
-
 export interface WhatsAppJobData {
   customerName: string;
   customerWhatsapp: string | null;
@@ -14,85 +9,43 @@ export interface WhatsAppJobData {
   shopName: string;
 }
 
-export interface MessageTemplate {
-  greeting: string;
-  main_text: string;
-  thanks_message: string;
-  signature: string;
+export function parseTemplate(templateText: string, data: WhatsAppJobData): string {
+  const servicesText = data.services.map(s => s.name).join(", ") || "Nenhum";
+  const valorFormatado = `R$ ${Number(data.totalPrice).toFixed(2)}`;
+
+  return templateText
+    .replace(/\{nome_cliente\}/g, data.customerName || "Cliente")
+    .replace(/\{placa\}/g, data.vehiclePlate || "N/A")
+    .replace(/\{servicos\}/g, servicesText)
+    .replace(/\{valor\}/g, valorFormatado)
+    .replace(/\{nome_loja\}/g, data.shopName || "Nossa Loja");
 }
 
-const DEFAULT_TEMPLATE: MessageTemplate = {
-  greeting: "Olá, {{nome_cliente}}! 👋",
-  main_text: "Seu veículo *{{placa}}* foi finalizado com sucesso! ✅",
-  thanks_message: "Agradecemos a preferência! 🙏",
-  signature: "",
-};
+const DEFAULT_DONE_TEXT = "Olá, {nome_cliente}! Os serviços ({servicos}) no veículo {placa} foram concluídos com sucesso. O valor final ficou em {valor}. Agradecemos a preferência! - {nome_loja}";
+const DEFAULT_READY_TEXT = "Olá, {nome_cliente}! Seu veículo {placa} está pronto para retirada em {nome_loja}. O valor total foi de {valor}. Estamos te aguardando!";
 
-function applyVariables(text: string, data: WhatsAppJobData): string {
-  return text
-    .replace(/\{\{nome_cliente\}\}/g, data.customerName)
-    .replace(/\{\{placa\}\}/g, data.vehiclePlate)
-    .replace(/\{\{modelo\}\}/g, data.vehicleModel || "")
-    .replace(/\{\{valor\}\}/g, `R$ ${Number(data.totalPrice).toFixed(2)}`)
-    .replace(/\{\{loja\}\}/g, data.shopName);
+export function buildCompletionMessage(data: WhatsAppJobData, templates?: any[]): string {
+  if (Array.isArray(templates)) {
+     const custom = templates.find(t => t.trigger_type === 'job_done' && t.active);
+     if (custom && custom.message_template) {
+         return parseTemplate(custom.message_template, data);
+     }
+  }
+  return parseTemplate(DEFAULT_DONE_TEXT, data);
 }
 
-export function buildCompletionMessage(data: WhatsAppJobData, template?: MessageTemplate | null): string {
-  const t = template || DEFAULT_TEMPLATE;
-
-  const servicesText = data.services
-    .map((s) => `• ${s.name}`)
-    .join("\n");
-
-  const finalPrice = Number(data.totalPrice).toFixed(2);
-
-  return [
-    applyVariables(t.greeting, data),
-    ``,
-    applyVariables(t.main_text, data),
-    ``,
-    `*Serviços realizados:*`,
-    servicesText,
-    ``,
-    ...(data.discount > 0
-      ? [`💰 *Desconto:* R$ ${Number(data.discount).toFixed(2)}`, ``]
-      : []),
-    `💲 *Valor total: R$ ${finalPrice}*`,
-    ``,
-    applyVariables(t.thanks_message, data),
-    ...(t.signature ? [`*${applyVariables(t.signature, data)}*`] : [`*${data.shopName}*`]),
-  ].join("\n");
+export function buildReadyMessage(data: WhatsAppJobData, templates?: any[]): string {
+  // Para fins nativos, deixaremos a de retirada usando um fallback simples
+  // pois a customização exigida pela issue focava no job_done base.
+  return parseTemplate(DEFAULT_READY_TEXT, data);
 }
 
-export function buildReadyMessage(data: WhatsAppJobData, template?: MessageTemplate | null): string {
-  const t = template || DEFAULT_TEMPLATE;
-
-  return [
-    applyVariables(t.greeting, data),
-    ``,
-    `Seu veículo *${data.vehiclePlate}* está pronto para retirada! 🚗`,
-    ``,
-    `💲 *Valor: R$ ${Number(data.totalPrice).toFixed(2)}*`,
-    ``,
-    `Estamos te aguardando!`,
-    ...(t.signature ? [`*${applyVariables(t.signature, data)}*`] : [`*${data.shopName}*`]),
-  ].join("\n");
-}
-
-/**
- * Formats phone to international format and cleans non-digits.
- * Defaults to Brazil (+55) if no country code detected.
- */
 function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.length >= 12) return digits;
   return `55${digits}`;
 }
 
-/**
- * Opens WhatsApp with pre-filled message.
- * Returns false if no WhatsApp number available.
- */
 export function sendWhatsApp(phone: string | null, message: string): boolean {
   if (!phone) return false;
   const formatted = formatPhone(phone);

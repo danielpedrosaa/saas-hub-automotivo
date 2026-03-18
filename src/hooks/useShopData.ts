@@ -53,6 +53,26 @@ export function useCustomers() {
   });
 }
 
+export function useCustomersWithStats() {
+  const { shopId } = useAuth();
+  return useQuery({
+    queryKey: ["customers_stats", shopId],
+    enabled: !!shopId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("customers")
+        .select(`
+          *,
+          vehicles (*, jobs(status, total_price, created_at))
+        `)
+        .eq("shop_id", shopId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+}
+
 export function useVehicles(customerId?: string) {
   const { shopId } = useAuth();
   return useQuery({
@@ -99,6 +119,23 @@ export function useShop() {
         .select("*")
         .eq("id", shopId!)
         .single();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
+export function useAppointments() {
+  const { shopId } = useAuth();
+  return useQuery({
+    queryKey: ["appointments", shopId],
+    enabled: !!shopId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("*, customers(*), vehicles(*), services(*), profiles:created_by(id, full_name)")
+        .eq("shop_id", shopId!)
+        .order("scheduled_at", { ascending: true });
       if (error) throw error;
       return data;
     },
