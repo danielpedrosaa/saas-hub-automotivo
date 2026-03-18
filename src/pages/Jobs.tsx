@@ -193,6 +193,30 @@ export default function Jobs() {
 
   const hasDateFilter = !!dateFrom || !!dateTo;
 
+  const getWhatsAppData = (job: any): WhatsAppJobData => {
+    const vehicle = job.vehicles;
+    const customer = vehicle?.customers;
+    return {
+      customerName: customer?.name || "Cliente",
+      customerWhatsapp: customer?.whatsapp || customer?.phone || null,
+      vehiclePlate: vehicle?.plate || "",
+      vehicleModel: vehicle?.model || null,
+      services: (job.job_services || []).map((s: any) => ({ name: s.service_name, price: Number(s.price) })),
+      totalPrice: Number(job.total_price),
+      discount: Number(job.discount || 0),
+      shopName: shop?.name || "Nossa Loja",
+    };
+  };
+
+  const handleSendWhatsApp = (job: any, type: "completion" | "ready") => {
+    const data = getWhatsAppData(job);
+    const message = type === "completion" ? buildCompletionMessage(data) : buildReadyMessage(data);
+    const sent = sendWhatsApp(data.customerWhatsapp, message);
+    if (!sent) {
+      toast({ title: "⚠️ Sem WhatsApp", description: "Cliente não possui número de WhatsApp cadastrado.", variant: "destructive" });
+    }
+  };
+
   const advanceStatus = async (jobId: string, current: JobStatus) => {
     const next = nextStatus[current];
     if (!next) return;
@@ -200,6 +224,9 @@ export default function Jobs() {
     const updates: any = { status: next };
     if (next === "in_progress") updates.started_at = new Date().toISOString();
     if (next === "done") updates.finished_at = new Date().toISOString();
+
+    // Find the job for WhatsApp
+    const job = jobs?.find((j) => j.id === jobId);
 
     const { error } = await supabase.from("jobs").update(updates).eq("id", jobId);
     if (error) {
@@ -213,6 +240,11 @@ export default function Jobs() {
       toast({ title: statusLabels[next] || "Status atualizado!" });
       queryClient.invalidateQueries({ queryKey: ["jobs", shopId] });
       setSelectedJob(null);
+
+      // Auto-trigger WhatsApp when finalized
+      if (next === "done" && job) {
+        setTimeout(() => handleSendWhatsApp(job, "completion"), 500);
+      }
     }
   };
 
