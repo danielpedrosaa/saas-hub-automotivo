@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon, Percent } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
 import StructuredChecklist, {
