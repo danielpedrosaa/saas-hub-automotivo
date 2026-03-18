@@ -93,6 +93,7 @@ export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
   const { data: shop } = useShop();
+  const { data: messageTemplate } = useMessageTemplate();
   const [filter, setFilter] = useState<JobStatus | "all">(initialStatus && ["waiting", "in_progress", "done", "delivered"].includes(initialStatus) ? initialStatus : "all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
