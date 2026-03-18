@@ -44,14 +44,78 @@ const nextLabel: Record<JobStatus, string> = {
 
 export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
+  const { data: allServices } = useServices();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
   const [search, setSearch] = useState("");
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
+  const [editServices, setEditServices] = useState<any[]>([]);
+  const [editDiscount, setEditDiscount] = useState(0);
+  const [savingEdit, setSavingEdit] = useState(false);
   const queryClient = useQueryClient();
   const { shopId } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const openEdit = (job: any) => {
+    setEditServices((job.job_services || []).map((s: any) => ({ ...s })));
+    setEditDiscount(Number(job.discount || 0));
+    setEditing(true);
+  };
+
+  const cancelEdit = () => {
+    setEditing(false);
+  };
+
+  const updateEditPrice = (id: string, price: number) => {
+    setEditServices((prev) => prev.map((s) => (s.id === id ? { ...s, price } : s)));
+  };
+
+  const removeEditService = (id: string) => {
+    setEditServices((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const addServiceToEdit = (svc: any) => {
+    if (editServices.find((s) => s.service_id === svc.id)) return;
+    setEditServices((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), service_id: svc.id, service_name: svc.name, price: Number(svc.price), job_id: selectedJob.id, isNew: true },
+    ]);
+  };
+
+  const editSubtotal = editServices.reduce((sum, s) => sum + Number(s.price), 0);
+  const editFinal = Math.max(0, editSubtotal - editDiscount);
+
+  const saveEdit = async () => {
+    if (!selectedJob || editServices.length === 0) return;
+    setSavingEdit(true);
+    try {
+      // Delete old services and re-insert
+      await supabase.from("job_services").delete().eq("job_id", selectedJob.id);
+      const rows = editServices.map((s) => ({
+        job_id: selectedJob.id,
+        service_id: s.service_id,
+        service_name: s.service_name,
+        price: Number(s.price),
+      }));
+      const { error: isErr } = await supabase.from("job_services").insert(rows);
+      if (isErr) throw isErr;
+      const { error: jErr } = await supabase
+        .from("jobs")
+        .update({ total_price: editFinal, discount: editDiscount })
+        .eq("id", selectedJob.id);
+      if (jErr) throw jErr;
+      toast({ title: "OS atualizada!" });
+      queryClient.invalidateQueries({ queryKey: ["jobs", shopId] });
+      setEditing(false);
+      setSelectedJob(null);
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    } finally {
+      setSavingEdit(false);
+    }
+  };
 
   const filtered = (jobs ?? [])
     .filter((j) => filter === "all" || j.status === filter)
