@@ -230,26 +230,32 @@ export type Database = {
       }
       vehicles: {
         Row: {
+          color: string | null
           created_at: string
           customer_id: string | null
           id: string
           model: string | null
+          observations: string | null
           plate: string
           shop_id: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
           model?: string | null
+          observations?: string | null
           plate: string
           shop_id: string
         }
         Update: {
+          color?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
           model?: string | null
+          observations?: string | null
           plate?: string
           shop_id?: string
         }
