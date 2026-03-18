@@ -517,6 +517,13 @@ export default function Jobs() {
                     </div>
                   )}
 
+                  {/* Internal Notes */}
+                  <InternalNotesField
+                    jobId={selectedJob.id}
+                    initialValue={selectedJob.internal_notes || ""}
+                    onSaved={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                  />
+
                   {/* Timestamps */}
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <p>Criada: {format(new Date(selectedJob.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
