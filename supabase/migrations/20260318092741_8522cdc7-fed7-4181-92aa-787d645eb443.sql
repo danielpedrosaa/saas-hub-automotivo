@@ -1,0 +1,1 @@
+ALTER TABLE public.jobs ADD COLUMN discount numeric NOT NULL DEFAULT 0;
