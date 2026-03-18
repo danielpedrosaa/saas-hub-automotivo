@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 
 export default function Customers() {
   const { shopId } = useAuth();
+  const navigate = useNavigate();
   const { data: customers, isLoading } = useCustomers();
   const queryClient = useQueryClient();
   const { toast } = useToast();
