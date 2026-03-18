@@ -171,11 +171,23 @@ export default function Jobs() {
       const plate = (j as any).vehicles?.plate?.toLowerCase() ?? "";
       return customerName.includes(q) || plate.includes(q);
     })
+    .filter((j) => {
+      const d = new Date(j.created_at);
+      if (dateFrom && d < new Date(dateFrom.setHours(0, 0, 0, 0))) return false;
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setHours(23, 59, 59, 999);
+        if (d > end) return false;
+      }
+      return true;
+    })
     .sort((a, b) => {
       const da = new Date(a.created_at).getTime();
       const db = new Date(b.created_at).getTime();
       return sortAsc ? da - db : db - da;
     });
+
+  const hasDateFilter = !!dateFrom || !!dateTo;
 
   const advanceStatus = async (jobId: string, current: JobStatus) => {
     const next = nextStatus[current];
