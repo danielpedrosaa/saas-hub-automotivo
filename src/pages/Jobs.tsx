@@ -90,6 +90,8 @@ export default function Jobs() {
   const { data: allServices } = useServices();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
   const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [sortAsc, setSortAsc] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [editing, setEditing] = useState(false);
