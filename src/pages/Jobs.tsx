@@ -26,6 +26,7 @@ import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram
 import JobPhotoUpload from "@/components/photos/JobPhotoUpload";
 import JobPhotoGallery from "@/components/photos/JobPhotoGallery";
 import { buildCompletionMessage, buildReadyMessage, sendWhatsApp, type WhatsAppJobData } from "@/lib/whatsapp";
+import { useMessageTemplate } from "@/hooks/useMessageTemplate";
 
 type JobStatus = Enums<"job_status">;
 
