@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Jobs from "./pages/Jobs";
 import CheckIn from "./pages/CheckIn";
 import Services from "./pages/Services";
+import Customers from "./pages/Customers";
 import Team from "./pages/Team";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
