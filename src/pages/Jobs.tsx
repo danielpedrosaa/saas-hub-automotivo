@@ -29,18 +29,21 @@ const statusConfig: Record<JobStatus, { label: string; className: string }> = {
   waiting: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
   in_progress: { label: "Em Execução", className: "bg-primary text-primary-foreground" },
   done: { label: "Finalizado", className: "bg-success text-success-foreground" },
+  delivered: { label: "Entregue", className: "bg-[hsl(var(--delivered))] text-[hsl(var(--delivered-foreground))]" },
 };
 
 const nextStatus: Record<JobStatus, JobStatus | null> = {
   waiting: "in_progress",
   in_progress: "done",
-  done: null,
+  done: "delivered",
+  delivered: null,
 };
 
 const nextLabel: Record<JobStatus, string> = {
   waiting: "Iniciar",
   in_progress: "Finalizar",
-  done: "",
+  done: "Marcar Entregue",
+  delivered: "",
 };
 
 function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; initialValue: string; onSaved: () => void }) {
@@ -211,7 +214,7 @@ export default function Jobs() {
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {(["all", "waiting", "in_progress", "done"] as const).map((s) => (
+          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => (
             <Button
               key={s}
               variant={filter === s ? "default" : "secondary"}
@@ -400,7 +403,7 @@ export default function Jobs() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-muted-foreground">Serviços</p>
-                      {selectedJob.status !== "done" && !editing && (
+                      {selectedJob.status !== "done" && selectedJob.status !== "delivered" && !editing && (
                         <Button variant="ghost" size="sm" onClick={() => openEdit(selectedJob)} className="h-7 gap-1 text-xs">
                           <Pencil className="h-3 w-3" /> Editar
                         </Button>
@@ -524,7 +527,7 @@ export default function Jobs() {
                   </div>
 
                   {/* Photos section */}
-                  {selectedJob.status === "done" ? (
+                  {selectedJob.status === "done" || selectedJob.status === "delivered" ? (
                     <JobPhotoGallery photos={(selectedJob as any).job_photos || []} />
                   ) : (
                     <div className="space-y-3">

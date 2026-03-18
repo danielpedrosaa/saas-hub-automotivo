@@ -26,18 +26,21 @@ const statusConfig: Record<JobStatus, { label: string; className: string }> = {
   waiting: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
   in_progress: { label: "Em Execução", className: "bg-primary text-primary-foreground" },
   done: { label: "Finalizado", className: "bg-success text-success-foreground" },
+  delivered: { label: "Entregue", className: "bg-[hsl(var(--delivered))] text-[hsl(var(--delivered-foreground))]" },
 };
 
 const nextStatus: Record<JobStatus, JobStatus | null> = {
   waiting: "in_progress",
   in_progress: "done",
-  done: null,
+  done: "delivered",
+  delivered: null,
 };
 
 const nextLabel: Record<JobStatus, string> = {
   waiting: "Iniciar",
   in_progress: "Finalizar",
-  done: "",
+  done: "Marcar Entregue",
+  delivered: "",
 };
 
 export default function CustomerDetail() {
@@ -314,7 +317,7 @@ export default function CustomerDetail() {
                     </div>
                   </div>
 
-                  {fullJob.status === "done" ? (
+                  {(fullJob.status === "done" || fullJob.status === "delivered") ? (
                     <JobPhotoGallery photos={fullJob.job_photos || []} />
                   ) : (
                     <div className="space-y-3">
