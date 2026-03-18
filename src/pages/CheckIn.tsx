@@ -487,7 +487,19 @@ export default function CheckIn() {
                     maxLength={500}
                   />
                 </div>
-              </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-muted-foreground">
+                    <Lock className="h-3.5 w-3.5" /> Observações internas
+                  </Label>
+                  <Textarea
+                    value={internalNotes}
+                    onChange={(e) => setInternalNotes(e.target.value)}
+                    placeholder="Anotações da equipe, alertas, instruções..."
+                    className="min-h-[60px] bg-muted/50 border-dashed"
+                    maxLength={1000}
+                  />
+                </div>
             )}
           </motion.div>
         </AnimatePresence>
