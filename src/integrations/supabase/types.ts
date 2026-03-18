@@ -22,6 +22,7 @@ export type Database = {
           name: string
           phone: string | null
           shop_id: string
+          whatsapp: string | null
         }
         Insert: {
           created_at?: string
@@ -30,6 +31,7 @@ export type Database = {
           name: string
           phone?: string | null
           shop_id: string
+          whatsapp?: string | null
         }
         Update: {
           created_at?: string
@@ -38,6 +40,7 @@ export type Database = {
           name?: string
           phone?: string | null
           shop_id?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {
