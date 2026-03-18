@@ -43,7 +43,42 @@ const nextLabel: Record<JobStatus, string> = {
   done: "",
 };
 
-export default function Jobs() {
+function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; initialValue: string; onSaved: () => void }) {
+  const [value, setValue] = useState(initialValue);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+  const changed = value !== initialValue;
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("jobs").update({ internal_notes: value.trim() || null }).eq("id", jobId);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Anotação salva!" }); onSaved(); }
+    setSaving(false);
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <Lock className="h-3 w-3" /> Observações internas
+      </p>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Anotações da equipe, alertas, instruções..."
+        className="min-h-[60px] text-sm bg-muted/50 border-dashed"
+        maxLength={1000}
+      />
+      {changed && (
+        <Button size="sm" onClick={save} disabled={saving} className="h-8 gap-1 text-xs">
+          {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+          Salvar
+        </Button>
+      )}
+    </div>
+  );
+}
+
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
   const [filter, setFilter] = useState<JobStatus | "all">("all");
