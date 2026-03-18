@@ -14,7 +14,32 @@ export interface WhatsAppJobData {
   shopName: string;
 }
 
-export function buildCompletionMessage(data: WhatsAppJobData): string {
+export interface MessageTemplate {
+  greeting: string;
+  main_text: string;
+  thanks_message: string;
+  signature: string;
+}
+
+const DEFAULT_TEMPLATE: MessageTemplate = {
+  greeting: "Olá, {{nome_cliente}}! 👋",
+  main_text: "Seu veículo *{{placa}}* foi finalizado com sucesso! ✅",
+  thanks_message: "Agradecemos a preferência! 🙏",
+  signature: "",
+};
+
+function applyVariables(text: string, data: WhatsAppJobData): string {
+  return text
+    .replace(/\{\{nome_cliente\}\}/g, data.customerName)
+    .replace(/\{\{placa\}\}/g, data.vehiclePlate)
+    .replace(/\{\{modelo\}\}/g, data.vehicleModel || "")
+    .replace(/\{\{valor\}\}/g, `R$ ${Number(data.totalPrice).toFixed(2)}`)
+    .replace(/\{\{loja\}\}/g, data.shopName);
+}
+
+export function buildCompletionMessage(data: WhatsAppJobData, template?: MessageTemplate | null): string {
+  const t = template || DEFAULT_TEMPLATE;
+
   const servicesText = data.services
     .map((s) => `• ${s.name}`)
     .join("\n");
@@ -22,9 +47,9 @@ export function buildCompletionMessage(data: WhatsAppJobData): string {
   const finalPrice = Number(data.totalPrice).toFixed(2);
 
   return [
-    `Olá, ${data.customerName}! 👋`,
+    applyVariables(t.greeting, data),
     ``,
-    `Seu veículo *${data.vehiclePlate}*${data.vehicleModel ? ` (${data.vehicleModel})` : ""} foi finalizado com sucesso! ✅`,
+    applyVariables(t.main_text, data),
     ``,
     `*Serviços realizados:*`,
     servicesText,
@@ -34,21 +59,23 @@ export function buildCompletionMessage(data: WhatsAppJobData): string {
       : []),
     `💲 *Valor total: R$ ${finalPrice}*`,
     ``,
-    `Agradecemos a preferência! 🙏`,
-    `*${data.shopName}*`,
+    applyVariables(t.thanks_message, data),
+    ...(t.signature ? [`*${applyVariables(t.signature, data)}*`] : [`*${data.shopName}*`]),
   ].join("\n");
 }
 
-export function buildReadyMessage(data: WhatsAppJobData): string {
+export function buildReadyMessage(data: WhatsAppJobData, template?: MessageTemplate | null): string {
+  const t = template || DEFAULT_TEMPLATE;
+
   return [
-    `Olá, ${data.customerName}! 👋`,
+    applyVariables(t.greeting, data),
     ``,
     `Seu veículo *${data.vehiclePlate}* está pronto para retirada! 🚗`,
     ``,
     `💲 *Valor: R$ ${Number(data.totalPrice).toFixed(2)}*`,
     ``,
     `Estamos te aguardando!`,
-    `*${data.shopName}*`,
+    ...(t.signature ? [`*${applyVariables(t.signature, data)}*`] : [`*${data.shopName}*`]),
   ].join("\n");
 }
 
@@ -58,9 +85,7 @@ export function buildReadyMessage(data: WhatsAppJobData): string {
  */
 function formatPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
-  // If already has country code (13+ digits or starts with 55)
   if (digits.length >= 12) return digits;
-  // Add Brazil country code
   return `55${digits}`;
 }
 

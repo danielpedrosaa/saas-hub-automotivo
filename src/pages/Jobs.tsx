@@ -26,6 +26,7 @@ import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram
 import JobPhotoUpload from "@/components/photos/JobPhotoUpload";
 import JobPhotoGallery from "@/components/photos/JobPhotoGallery";
 import { buildCompletionMessage, buildReadyMessage, sendWhatsApp, type WhatsAppJobData } from "@/lib/whatsapp";
+import { useMessageTemplate } from "@/hooks/useMessageTemplate";
 
 type JobStatus = Enums<"job_status">;
 
@@ -92,6 +93,7 @@ export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
   const { data: shop } = useShop();
+  const { data: messageTemplate } = useMessageTemplate();
   const [filter, setFilter] = useState<JobStatus | "all">(initialStatus && ["waiting", "in_progress", "done", "delivered"].includes(initialStatus) ? initialStatus : "all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
@@ -210,7 +212,7 @@ export default function Jobs() {
 
   const handleSendWhatsApp = (job: any, type: "completion" | "ready") => {
     const data = getWhatsAppData(job);
-    const message = type === "completion" ? buildCompletionMessage(data) : buildReadyMessage(data);
+    const message = type === "completion" ? buildCompletionMessage(data, messageTemplate) : buildReadyMessage(data, messageTemplate);
     const sent = sendWhatsApp(data.customerWhatsapp, message);
     if (!sent) {
       toast({ title: "⚠️ Sem WhatsApp", description: "Cliente não possui número de WhatsApp cadastrado.", variant: "destructive" });
