@@ -403,7 +403,7 @@ export default function Jobs() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <p className="text-xs text-muted-foreground">Serviços</p>
-                      {selectedJob.status !== "done" && !editing && (
+                      {selectedJob.status !== "done" && selectedJob.status !== "delivered" && !editing && (
                         <Button variant="ghost" size="sm" onClick={() => openEdit(selectedJob)} className="h-7 gap-1 text-xs">
                           <Pencil className="h-3 w-3" /> Editar
                         </Button>
