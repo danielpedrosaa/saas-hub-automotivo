@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon, Percent } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
 import StructuredChecklist, {
@@ -42,6 +42,7 @@ export default function CheckIn() {
   const [vehicleId, setVehicleId] = useState("");
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [notes, setNotes] = useState("");
+  const [discount, setDiscount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   // Checklist state
@@ -53,6 +54,7 @@ export default function CheckIn() {
   const selectedCustomer = customers?.find((c) => c.id === customerId);
   const selectedVehicle = customerVehicles?.find((v) => v.id === vehicleId);
   const totalPrice = selectedServices.reduce((sum, s) => sum + s.price, 0);
+  const finalPrice = Math.max(0, totalPrice - discount);
 
   const toggleService = (svc: { id: string; name: string; price: number }) => {
     setSelectedServices((prev) => {
@@ -98,7 +100,8 @@ export default function CheckIn() {
         .insert({
           shop_id: shopId,
           vehicle_id: vehicleId,
-          total_price: totalPrice,
+          total_price: finalPrice,
+          discount: discount,
           notes: notes.trim() || null,
           created_by: user.id,
         })
@@ -439,11 +442,36 @@ export default function CheckIn() {
                         </div>
                       ))}
                     </div>
-                    <div className="flex justify-between border-t border-border pt-2">
-                      <span className="font-semibold text-foreground">Total</span>
-                      <span className="text-xl font-bold tabular-nums text-primary">
-                        R$ {totalPrice.toFixed(2)}
-                      </span>
+
+                    {/* Discount */}
+                    <div className="border-t border-border pt-2 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Subtotal</span>
+                        <span className="tabular-nums text-foreground">R$ {totalPrice.toFixed(2)}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Label className="text-xs text-muted-foreground flex items-center gap-1 shrink-0">
+                          <Percent className="h-3 w-3" /> Desconto
+                        </Label>
+                        <div className="relative flex-1">
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            max={totalPrice}
+                            value={discount}
+                            onChange={(e) => setDiscount(Math.min(Number(e.target.value), totalPrice))}
+                            className="h-9 pl-8 text-sm tabular-nums"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="font-semibold text-foreground">Valor Final</span>
+                        <span className="text-xl font-bold tabular-nums text-primary">
+                          R$ {finalPrice.toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
