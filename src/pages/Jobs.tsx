@@ -201,6 +201,12 @@ export default function Jobs() {
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
     } else {
+      const statusLabels: Record<string, string> = {
+        in_progress: "🔧 Serviço iniciado!",
+        done: "✅ Serviço finalizado!",
+        delivered: "🚗 Veículo entregue!",
+      };
+      toast({ title: statusLabels[next] || "Status atualizado!" });
       queryClient.invalidateQueries({ queryKey: ["jobs", shopId] });
       setSelectedJob(null);
     }

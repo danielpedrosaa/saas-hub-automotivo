@@ -105,24 +105,30 @@ export default function Index() {
           >
             {/* Status cards */}
             <motion.div variants={item} className="grid grid-cols-3 gap-2">
-              <StatCard
-                icon={<Clock className="h-4 w-4" />}
-                value={waiting}
-                label="Aguardando"
-                color="text-warning"
-              />
-              <StatCard
-                icon={<Car className="h-4 w-4" />}
-                value={inProgress}
-                label="Em execução"
-                color="text-primary"
-              />
-              <StatCard
-                icon={<CheckCircle2 className="h-4 w-4" />}
-                value={doneToday}
-                label="Concluídos"
-                color="text-success"
-              />
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=waiting")}>
+                <StatCard
+                  icon={<Clock className="h-4 w-4" />}
+                  value={waiting}
+                  label="Aguardando"
+                  color="text-warning"
+                />
+              </div>
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=in_progress")}>
+                <StatCard
+                  icon={<Car className="h-4 w-4" />}
+                  value={inProgress}
+                  label="Em execução"
+                  color="text-primary"
+                />
+              </div>
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=done")}>
+                <StatCard
+                  icon={<CheckCircle2 className="h-4 w-4" />}
+                  value={doneToday}
+                  label="Concluídos"
+                  color="text-success"
+                />
+              </div>
             </motion.div>
 
             {/* Dashboard row */}
