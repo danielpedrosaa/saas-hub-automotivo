@@ -42,6 +42,7 @@ export default function CheckIn() {
   const [vehicleId, setVehicleId] = useState("");
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [notes, setNotes] = useState("");
+  const [discount, setDiscount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
   // Checklist state
