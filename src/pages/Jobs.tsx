@@ -214,7 +214,7 @@ export default function Jobs() {
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {(["all", "waiting", "in_progress", "done"] as const).map((s) => (
+          {(["all", "waiting", "in_progress", "done", "delivered"] as const).map((s) => (
             <Button
               key={s}
               variant={filter === s ? "default" : "secondary"}
