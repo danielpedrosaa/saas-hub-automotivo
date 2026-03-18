@@ -361,21 +361,129 @@ export default function Jobs() {
 
                   {/* Services */}
                   <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground">Serviços</p>
-                    {((selectedJob as any).job_services || []).map((js: any) => (
-                      <div key={js.id} className="flex justify-between text-sm">
-                        <span className="text-foreground">{js.service_name}</span>
-                        <span className="tabular-nums text-muted-foreground">
-                          R$ {Number(js.price).toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                    <div className="flex justify-between border-t border-border pt-2">
-                      <span className="font-semibold text-foreground">Total</span>
-                      <span className="text-lg font-bold tabular-nums text-primary">
-                        R$ {Number(selectedJob.total_price).toFixed(2)}
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">Serviços</p>
+                      {selectedJob.status !== "done" && !editing && (
+                        <Button variant="ghost" size="sm" onClick={() => openEdit(selectedJob)} className="h-7 gap-1 text-xs">
+                          <Pencil className="h-3 w-3" /> Editar
+                        </Button>
+                      )}
                     </div>
+
+                    {editing ? (
+                      <div className="space-y-2">
+                        {editServices.map((s) => (
+                          <div key={s.id} className="flex items-center gap-2">
+                            <span className="text-sm text-foreground flex-1 truncate">{s.service_name}</span>
+                            <div className="relative w-28">
+                              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={s.price}
+                                onChange={(e) => updateEditPrice(s.id, Number(e.target.value))}
+                                className="h-8 pl-8 text-sm tabular-nums"
+                              />
+                            </div>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => removeEditService(s.id)}>
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        ))}
+
+                        {/* Add service */}
+                        {allServices && allServices.filter((s) => s.active && !editServices.find((es) => es.service_id === s.id)).length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Adicionar serviço</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {allServices.filter((s) => s.active && !editServices.find((es) => es.service_id === s.id)).map((svc) => (
+                                <Button key={svc.id} variant="outline" size="sm" className="h-7 text-xs" onClick={() => addServiceToEdit(svc)}>
+                                  + {svc.name}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Subtotal + discount */}
+                        <div className="border-t border-border pt-2 space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Subtotal</span>
+                            <span className="tabular-nums text-foreground">R$ {editSubtotal.toFixed(2)}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Label className="text-xs text-muted-foreground flex items-center gap-1 shrink-0">
+                              <Percent className="h-3 w-3" /> Desconto
+                            </Label>
+                            <div className="relative flex-1">
+                              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                max={editSubtotal}
+                                value={editDiscount}
+                                onChange={(e) => setEditDiscount(Math.min(Number(e.target.value), editSubtotal))}
+                                className="h-8 pl-8 text-sm tabular-nums"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="font-semibold text-foreground">Valor Final</span>
+                            <span className="text-lg font-bold tabular-nums text-primary">R$ {editFinal.toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button variant="secondary" onClick={cancelEdit} className="flex-1 h-10">
+                            Cancelar
+                          </Button>
+                          <Button onClick={saveEdit} disabled={savingEdit || editServices.length === 0} className="flex-1 h-10">
+                            {savingEdit ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        {((selectedJob as any).job_services || []).map((js: any) => (
+                          <div key={js.id} className="flex justify-between text-sm">
+                            <span className="text-foreground">{js.service_name}</span>
+                            <span className="tabular-nums text-muted-foreground">
+                              R$ {Number(js.price).toFixed(2)}
+                            </span>
+                          </div>
+                        ))}
+                        <div className="border-t border-border pt-2 space-y-1">
+                          {Number(selectedJob.discount || 0) > 0 && (
+                            <>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">Subtotal</span>
+                                <span className="tabular-nums text-muted-foreground">
+                                  R$ {(Number(selectedJob.total_price) + Number(selectedJob.discount)).toFixed(2)}
+                                </span>
+                              </div>
+                              <div className="flex justify-between text-sm">
+                                <span className="text-destructive flex items-center gap-1">
+                                  <Percent className="h-3 w-3" /> Desconto
+                                </span>
+                                <span className="tabular-nums text-destructive">
+                                  - R$ {Number(selectedJob.discount).toFixed(2)}
+                                </span>
+                              </div>
+                            </>
+                          )}
+                          <div className="flex justify-between">
+                            <span className="font-semibold text-foreground">
+                              {Number(selectedJob.discount || 0) > 0 ? "Valor Final" : "Total"}
+                            </span>
+                            <span className="text-lg font-bold tabular-nums text-primary">
+                              R$ {Number(selectedJob.total_price).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Photos section */}
@@ -420,7 +528,7 @@ export default function Jobs() {
                   </div>
 
                   {/* Status action */}
-                  {nextStatus[selectedJob.status] && (
+                  {!editing && nextStatus[selectedJob.status] && (
                     <motion.div whileTap={{ scale: 0.97 }}>
                       <Button
                         onClick={() => advanceStatus(selectedJob.id, selectedJob.status)}
