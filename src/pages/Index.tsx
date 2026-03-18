@@ -240,7 +240,7 @@ function StatCard({
   color: string;
 }) {
   return (
-    <Card className="border-border bg-secondary">
+    <Card className="border-border bg-secondary hover:bg-muted active:scale-95 transition-all">
       <CardContent className="flex flex-col items-center gap-0.5 p-3 text-center">
         <span className={color}>{icon}</span>
         <span className="text-xl font-bold tabular-nums text-foreground">{value}</span>
