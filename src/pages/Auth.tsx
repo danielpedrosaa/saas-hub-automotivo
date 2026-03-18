@@ -79,17 +79,52 @@ export default function Auth() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Nome completo</Label>
-              <Input
-                id="fullName"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="Seu nome"
-                className="h-12"
-                required
-              />
-            </div>
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nome completo</Label>
+                <Input
+                  id="fullName"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="Seu nome"
+                  className="h-12"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="shopName">Nome da empresa *</Label>
+                <Input
+                  id="shopName"
+                  value={shopName}
+                  onChange={(e) => setShopName(e.target.value)}
+                  placeholder="Ex: Auto Brilho Estética"
+                  className="h-12"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="shopPhone">Telefone da loja</Label>
+                <Input
+                  id="shopPhone"
+                  value={shopPhone}
+                  onChange={(e) => setShopPhone(e.target.value)}
+                  placeholder="(11) 1234-5678"
+                  className="h-12"
+                  type="tel"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="shopWhatsapp">WhatsApp</Label>
+                <Input
+                  id="shopWhatsapp"
+                  value={shopWhatsapp}
+                  onChange={(e) => setShopWhatsapp(e.target.value)}
+                  placeholder="(11) 91234-5678"
+                  className="h-12"
+                  type="tel"
+                />
+              </div>
+            </>
           )}
 
           <div className="space-y-2">
