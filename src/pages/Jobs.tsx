@@ -104,6 +104,27 @@ export default function Jobs() {
           ))}
         </div>
 
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por cliente ou placa..."
+              className="h-10 pl-10 text-sm"
+            />
+          </div>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setSortAsc(!sortAsc)}
+            className="h-10 w-10 shrink-0"
+            title={sortAsc ? "Mais antigas primeiro" : "Mais recentes primeiro"}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        </div>
+
         {isLoading ? (
           <div className="flex justify-center py-12">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
