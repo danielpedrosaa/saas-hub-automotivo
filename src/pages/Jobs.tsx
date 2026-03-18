@@ -313,6 +313,28 @@ export default function Jobs() {
                     </div>
                   </div>
 
+                  {/* Photos section */}
+                  {selectedJob.status === "done" ? (
+                    <JobPhotoGallery photos={(selectedJob as any).job_photos || []} />
+                  ) : (
+                    <div className="space-y-3">
+                      <JobPhotoUpload
+                        jobId={selectedJob.id}
+                        photoType="before"
+                        photos={((selectedJob as any).job_photos || []).filter((p: any) => p.photo_type === "before")}
+                        onPhotosChange={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                      />
+                      {selectedJob.status === "in_progress" && (
+                        <JobPhotoUpload
+                          jobId={selectedJob.id}
+                          photoType="after"
+                          photos={((selectedJob as any).job_photos || []).filter((p: any) => p.photo_type === "after")}
+                          onPhotosChange={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                        />
+                      )}
+                    </div>
+                  )}
+
                   {/* Notes */}
                   {selectedJob.notes && (
                     <div className="space-y-1">
