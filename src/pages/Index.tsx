@@ -105,24 +105,30 @@ export default function Index() {
           >
             {/* Status cards */}
             <motion.div variants={item} className="grid grid-cols-3 gap-2">
-              <StatCard
-                icon={<Clock className="h-4 w-4" />}
-                value={waiting}
-                label="Aguardando"
-                color="text-warning"
-              />
-              <StatCard
-                icon={<Car className="h-4 w-4" />}
-                value={inProgress}
-                label="Em execução"
-                color="text-primary"
-              />
-              <StatCard
-                icon={<CheckCircle2 className="h-4 w-4" />}
-                value={doneToday}
-                label="Concluídos"
-                color="text-success"
-              />
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=waiting")}>
+                <StatCard
+                  icon={<Clock className="h-4 w-4" />}
+                  value={waiting}
+                  label="Aguardando"
+                  color="text-warning"
+                />
+              </div>
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=in_progress")}>
+                <StatCard
+                  icon={<Car className="h-4 w-4" />}
+                  value={inProgress}
+                  label="Em execução"
+                  color="text-primary"
+                />
+              </div>
+              <div className="cursor-pointer" onClick={() => navigate("/jobs?status=done")}>
+                <StatCard
+                  icon={<CheckCircle2 className="h-4 w-4" />}
+                  value={doneToday}
+                  label="Concluídos"
+                  color="text-success"
+                />
+              </div>
             </motion.div>
 
             {/* Dashboard row */}
@@ -234,7 +240,7 @@ function StatCard({
   color: string;
 }) {
   return (
-    <Card className="border-border bg-secondary">
+    <Card className="border-border bg-secondary hover:bg-muted active:scale-95 transition-all">
       <CardContent className="flex flex-col items-center gap-0.5 p-3 text-center">
         <span className={color}>{icon}</span>
         <span className="text-xl font-bold tabular-nums text-foreground">{value}</span>

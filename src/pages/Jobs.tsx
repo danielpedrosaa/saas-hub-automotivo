@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Enums } from "@/integrations/supabase/types";
@@ -86,9 +86,11 @@ function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; i
 }
 
 export default function Jobs() {
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get("status") as JobStatus | null;
   const { data: jobs, isLoading } = useJobs();
   const { data: allServices } = useServices();
-  const [filter, setFilter] = useState<JobStatus | "all">("all");
+  const [filter, setFilter] = useState<JobStatus | "all">(initialStatus && ["waiting", "in_progress", "done", "delivered"].includes(initialStatus) ? initialStatus : "all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
@@ -201,6 +203,12 @@ export default function Jobs() {
     if (error) {
       toast({ title: "Erro", description: error.message, variant: "destructive" });
     } else {
+      const statusLabels: Record<string, string> = {
+        in_progress: "🔧 Serviço iniciado!",
+        done: "✅ Serviço finalizado!",
+        delivered: "🚗 Veículo entregue!",
+      };
+      toast({ title: statusLabels[next] || "Status atualizado!" });
       queryClient.invalidateQueries({ queryKey: ["jobs", shopId] });
       setSelectedJob(null);
     }
@@ -342,9 +350,11 @@ export default function Jobs() {
                     transition={{ duration: 0.15 }}
                   >
                     <Card
-                      className="cursor-pointer border-border bg-secondary active:bg-muted transition-colors"
+                      className="cursor-pointer border-border bg-secondary active:bg-muted transition-colors overflow-hidden"
                       onClick={() => setSelectedJob(job)}
                     >
+                      {/* Status color bar */}
+                      <div className={cn("h-1", statusConfig[job.status].className)} />
                       <CardContent className="p-4 space-y-2">
                         <div className="flex items-start justify-between">
                           <div className="space-y-1">
@@ -380,6 +390,25 @@ export default function Jobs() {
                             R$ {Number(job.total_price).toFixed(2)}
                           </span>
                         </div>
+                        {/* Quick action button inline */}
+                        {nextStatus[job.status] && (
+                          <motion.div whileTap={{ scale: 0.95 }}>
+                            <Button
+                              size="sm"
+                              variant={job.status === "waiting" ? "default" : job.status === "in_progress" ? "default" : "secondary"}
+                              className={cn(
+                                "w-full h-10 text-xs font-bold uppercase tracking-wider",
+                                job.status === "done" && "bg-[hsl(var(--delivered))] hover:bg-[hsl(var(--delivered))]/90 text-[hsl(var(--delivered-foreground))]"
+                              )}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                advanceStatus(job.id, job.status);
+                              }}
+                            >
+                              {nextLabel[job.status]}
+                            </Button>
+                          </motion.div>
+                        )}
                       </CardContent>
                     </Card>
                   </motion.div>
