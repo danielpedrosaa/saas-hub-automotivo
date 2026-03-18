@@ -11,7 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle, Pencil, Trash2, X, Check, Percent } from "lucide-react";
+import { Loader2, Plus, ClipboardList, Calendar, Search, ArrowUpDown, ClipboardCheck, AlertTriangle, Pencil, Trash2, X, Check, Percent, Lock, Save } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -41,6 +42,42 @@ const nextLabel: Record<JobStatus, string> = {
   in_progress: "Finalizar",
   done: "",
 };
+
+function InternalNotesField({ jobId, initialValue, onSaved }: { jobId: string; initialValue: string; onSaved: () => void }) {
+  const [value, setValue] = useState(initialValue);
+  const [saving, setSaving] = useState(false);
+  const { toast } = useToast();
+  const changed = value !== initialValue;
+
+  const save = async () => {
+    setSaving(true);
+    const { error } = await supabase.from("jobs").update({ internal_notes: value.trim() || null }).eq("id", jobId);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Anotação salva!" }); onSaved(); }
+    setSaving(false);
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <Lock className="h-3 w-3" /> Observações internas
+      </p>
+      <Textarea
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Anotações da equipe, alertas, instruções..."
+        className="min-h-[60px] text-sm bg-muted/50 border-dashed"
+        maxLength={1000}
+      />
+      {changed && (
+        <Button size="sm" onClick={save} disabled={saving} className="h-8 gap-1 text-xs">
+          {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+          Salvar
+        </Button>
+      )}
+    </div>
+  );
+}
 
 export default function Jobs() {
   const { data: jobs, isLoading } = useJobs();
@@ -515,6 +552,13 @@ export default function Jobs() {
                       <p className="text-sm text-foreground">{selectedJob.notes}</p>
                     </div>
                   )}
+
+                  {/* Internal Notes */}
+                  <InternalNotesField
+                    jobId={selectedJob.id}
+                    initialValue={selectedJob.internal_notes || ""}
+                    onSaved={() => queryClient.invalidateQueries({ queryKey: ["jobs", shopId] })}
+                  />
 
                   {/* Timestamps */}
                   <div className="space-y-1 text-xs text-muted-foreground">

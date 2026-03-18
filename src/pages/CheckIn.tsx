@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon, Percent } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Check, ClipboardCheck, Car as CarIcon, Percent, Lock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CarDiagram, { type VisualMarker } from "@/components/checklist/CarDiagram";
 import StructuredChecklist, {
@@ -43,6 +43,7 @@ export default function CheckIn() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [notes, setNotes] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [internalNotes, setInternalNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   // Checklist state
@@ -103,6 +104,7 @@ export default function CheckIn() {
           total_price: finalPrice,
           discount: discount,
           notes: notes.trim() || null,
+          internal_notes: internalNotes.trim() || null,
           created_by: user.id,
         })
         .select("id")
@@ -484,6 +486,19 @@ export default function CheckIn() {
                     placeholder="Detalhes adicionais sobre esta OS..."
                     className="min-h-[80px]"
                     maxLength={500}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-1.5 text-muted-foreground">
+                    <Lock className="h-3.5 w-3.5" /> Observações internas
+                  </Label>
+                  <Textarea
+                    value={internalNotes}
+                    onChange={(e) => setInternalNotes(e.target.value)}
+                    placeholder="Anotações da equipe, alertas, instruções..."
+                    className="min-h-[60px] bg-muted/50 border-dashed"
+                    maxLength={1000}
                   />
                 </div>
               </div>

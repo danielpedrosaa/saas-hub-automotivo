@@ -178,6 +178,7 @@ export type Database = {
           entry_photo_url: string | null
           finished_at: string | null
           id: string
+          internal_notes: string | null
           notes: string | null
           service_id: string | null
           shop_id: string
@@ -193,6 +194,7 @@ export type Database = {
           entry_photo_url?: string | null
           finished_at?: string | null
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           service_id?: string | null
           shop_id: string
@@ -208,6 +210,7 @@ export type Database = {
           entry_photo_url?: string | null
           finished_at?: string | null
           id?: string
+          internal_notes?: string | null
           notes?: string | null
           service_id?: string | null
           shop_id?: string
