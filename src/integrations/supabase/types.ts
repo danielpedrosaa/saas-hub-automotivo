@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          customer_id: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          scheduled_at: string
+          service_id: string
+          shop_id: string
+          status: string
+          vehicle_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          customer_id: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          scheduled_at: string
+          service_id: string
+          shop_id: string
+          status?: string
+          vehicle_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          customer_id?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          scheduled_at?: string
+          service_id?: string
+          shop_id?: string
+          status?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "appointments_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           created_at: string
@@ -437,6 +508,47 @@ export type Database = {
           },
           {
             foreignKeyName: "vehicles_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_templates: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          message_template: string
+          name: string
+          shop_id: string
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          message_template: string
+          name: string
+          shop_id: string
+          trigger_type?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          message_template?: string
+          name?: string
+          shop_id?: string
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_templates_shop_id_fkey"
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
