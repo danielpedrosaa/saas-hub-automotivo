@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sun, Moon } from "lucide-react";
 
 export default function Auth() {
   const { user, loading } = useAuth();
@@ -20,6 +20,32 @@ export default function Auth() {
   const [submitting, setSubmitting] = useState(false);
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
+
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const saved = localStorage.getItem("theme");
+    if (saved) return saved === "dark";
+    return document.documentElement.classList.contains("dark");
+  });
+
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    if (isDark) {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
+  };
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isDark) root.classList.add("dark");
+    else root.classList.remove("dark");
+  }, [isDark]);
 
   if (loading) {
     return (
@@ -46,7 +72,7 @@ export default function Auth() {
         await signUp(email, password, fullName, shopData);
         toast({
           title: "Conta criada!",
-          description: "Verifique seu email para confirmar o cadastro.",
+          description: "Verifique seu e-mail para confirmar o cadastro.",
         });
       }
     } catch (err: any) {
@@ -61,7 +87,15 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 relative">
+      {/* Theme toggle */}
+      <button
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 h-9 w-9 flex items-center justify-center rounded-xl bg-muted/50 hover:bg-muted transition-colors"
+      >
+        {isDark ? <Sun className="h-4.5 w-4.5 text-yellow-400" /> : <Moon className="h-4.5 w-4.5 text-muted-foreground" />}
+      </button>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -69,10 +103,12 @@ export default function Auth() {
         className="w-full max-w-sm space-y-8"
       >
         <div className="text-center">
-          <h1 className="text-3xl font-black uppercase tracking-widest text-primary">
-            GLOSS
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <img
+            src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
+            alt="NovaCar"
+            className="h-8 w-auto mx-auto"
+          />
+          <p className="mt-3 text-sm text-muted-foreground">
             Gestão de Estética Automotiva
           </p>
         </div>
@@ -88,6 +124,7 @@ export default function Auth() {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Seu nome"
                   className="h-12"
+                  autoComplete="name"
                   required
                 />
               </div>
@@ -111,6 +148,7 @@ export default function Auth() {
                   placeholder="(11) 1234-5678"
                   className="h-12"
                   type="tel"
+                  autoComplete="tel"
                 />
               </div>
               <div className="space-y-2">
@@ -128,14 +166,16 @@ export default function Auth() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">E-mail</Label>
             <Input
               id="email"
               type="email"
+              name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="seu@email.com"
               className="h-12"
+              autoComplete="email"
               required
             />
           </div>
@@ -145,10 +185,12 @@ export default function Auth() {
             <Input
               id="password"
               type="password"
+              name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               className="h-12"
+              autoComplete={isLogin ? "current-password" : "new-password"}
               minLength={6}
               required
             />
