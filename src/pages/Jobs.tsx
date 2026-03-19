@@ -267,7 +267,7 @@ export default function Jobs() {
 
   const cancelJobStatus = async (jobId: string) => {
      if (!confirm("Tem certeza que deseja cancelar essa OS?")) return;
-     const { error } = await supabase.from("jobs").update({ status: 'cancelled' }).eq("id", jobId);
+     const { error } = await supabase.from("jobs").update({ status: 'waiting' as any }).eq("id", jobId);
      if (error) {
         toast({ title: "Erro", description: error.message, variant: "destructive" });
      } else {
