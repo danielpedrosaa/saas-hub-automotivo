@@ -251,6 +251,7 @@ export type Database = {
           id: string
           internal_notes: string | null
           notes: string | null
+          payment_method: string | null
           service_id: string | null
           shop_id: string
           started_at: string | null
@@ -267,6 +268,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_method?: string | null
           service_id?: string | null
           shop_id: string
           started_at?: string | null
@@ -283,6 +285,7 @@ export type Database = {
           id?: string
           internal_notes?: string | null
           notes?: string | null
+          payment_method?: string | null
           service_id?: string | null
           shop_id?: string
           started_at?: string | null
