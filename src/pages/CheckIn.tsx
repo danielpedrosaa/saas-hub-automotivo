@@ -533,14 +533,13 @@ export default function CheckIn() {
                        <SelectTrigger className="w-full h-12 rounded-xl bg-card border-border shadow-sm">
                           <SelectValue placeholder="Selecione o método..." />
                        </SelectTrigger>
-                        <SelectContent className="rounded-xl">
-                           <SelectItem value="Débito">Débito</SelectItem>
-                           <SelectItem value="Crédito">Crédito</SelectItem>
-                           <SelectItem value="Dinheiro">Dinheiro</SelectItem>
-                           <SelectItem value="Boleto">Boleto</SelectItem>
-                           <SelectItem value="Transferência">Transferência</SelectItem>
-                           <SelectItem value="PIX">PIX</SelectItem>
-                        </SelectContent>
+                       <SelectContent className="rounded-xl">
+                          <SelectItem value="Pix">Pix via Chave/QR Code</SelectItem>
+                          <SelectItem value="Débito">Cartão de Débito</SelectItem>
+                          <SelectItem value="Crédito">Cartão de Crédito</SelectItem>
+                          <SelectItem value="Dinheiro">Dinheiro Espécie</SelectItem>
+                          <SelectItem value="A Receber">A Receber Diário</SelectItem>
+                       </SelectContent>
                     </Select>
                  </div>
 

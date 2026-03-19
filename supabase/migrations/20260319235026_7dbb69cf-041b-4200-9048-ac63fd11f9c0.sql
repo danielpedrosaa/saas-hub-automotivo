@@ -1,1 +1,0 @@
-ALTER TABLE public.jobs ADD COLUMN IF NOT EXISTS payment_method text DEFAULT NULL;
