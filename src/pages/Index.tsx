@@ -408,6 +408,77 @@ export default function Index() {
           ))}
         </motion.div>
 
+        {/* ── ROW 0.5: Fila do Dia + Próximos ─────────────────── */}
+        <motion.div variants={item} className="grid grid-cols-12 gap-3">
+          {/* Fila do Dia */}
+          <C className="col-span-8 flex flex-col">
+            <CH
+              left="Fila do dia"
+              right={
+                <button onClick={() => navigate("/jobs")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+                  ver todas <ChevronRight className="h-3 w-3" />
+                </button>
+              }
+            />
+            <div className="flex-1 flex flex-col divide-y divide-border/50">
+              {[
+                { time: "08:30", name: "Ricardo Mendes", plate: "ABC-1C23", service: "Polimento cristalizado", price: "R$ 380", status: "delivered" as JobStatus },
+                { time: "09:15", name: "Fernanda Lima", plate: "XY7-4F56", service: "Lavagem completa", price: "R$ 120", status: "done" as JobStatus },
+                { time: "10:00", name: "Carlos Oliveira", plate: "QRS-7F98", service: "Higienização interna", price: "R$ 250", status: "in_progress" as JobStatus },
+                { time: "11:30", name: "Bruno Ferreira", plate: "MNO-2S34", service: "Vitrificação", price: "R$ 800", status: "waiting" as JobStatus },
+                { time: "14:00", name: "Nikolas Souza", plate: "DEF-5H67", service: "Lavagem + cera", price: "R$ 180", status: "waiting" as JobStatus },
+              ].map((row) => {
+                const st = statusConfig[row.status];
+                return (
+                  <div key={row.time} className="flex items-center gap-4 py-2.5 first:pt-0 last:pb-0">
+                    <span className="text-[13px] text-muted-foreground font-medium w-10 shrink-0">{row.time}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[13px] font-semibold text-foreground truncate">{row.name}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{row.plate}</p>
+                    </div>
+                    <span className="text-[12px] text-muted-foreground hidden lg:block">{row.service}</span>
+                    <span className="text-[13px] font-medium text-foreground w-16 text-right shrink-0">{mask(row.price)}</span>
+                    <span className={cn("shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold", st.bg, st.color)}>
+                      {st.label}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </C>
+
+          {/* Próximos agendamentos */}
+          <C className="col-span-4 flex flex-col">
+            <CH
+              left="Próximos"
+              right={
+                <button onClick={() => navigate("/agenda")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+                  agenda <ChevronRight className="h-3 w-3" />
+                </button>
+              }
+            />
+            <div className="flex-1 flex flex-col gap-3">
+              {[
+                { hour: "15", min: "30", name: "Ana Beatriz", detail: "Lavagem cristalizada · LKR-8J32" },
+                { hour: "16", min: "00", name: "Marcos Vinícius", detail: "Polimento + cera · DFQ-3K45" },
+                { hour: "17", min: "00", name: "Juliana Rocha", detail: "Higienização completa · WGR-6L78" },
+                { hour: "17", min: "45", name: "Pedro Almeida", detail: "Lavagem simples · GY8-8M90" },
+              ].map((a) => (
+                <div key={a.hour + a.min} className="flex items-center gap-3">
+                  <div className="flex h-[38px] w-[38px] shrink-0 flex-col items-center justify-center rounded-lg bg-secondary text-foreground">
+                    <span className="text-[14px] font-semibold leading-none">{a.hour}</span>
+                    <span className="text-[9px] text-muted-foreground leading-none">{a.min}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-foreground truncate">{a.name}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{a.detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </C>
+        </motion.div>
+
         {isLoading ? (
           <div className="flex justify-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : (
