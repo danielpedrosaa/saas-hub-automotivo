@@ -349,6 +349,65 @@ export default function Index() {
           </div>
         </motion.div>
 
+        {/* ── ROW 0: KPI Cards ─────────────────────────────────────── */}
+        <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            {
+              label: "Serviços hoje",
+              value: "5",
+              badge: "↑ 25% vs ontem",
+              badgeColor: "bg-success/15 text-success",
+              icon: ClipboardList,
+              iconBg: "bg-info/15",
+              iconColor: "text-info",
+            },
+            {
+              label: "Ticket médio",
+              value: "R$ 346",
+              badge: "↑ 12%",
+              badgeColor: "bg-success/15 text-success",
+              icon: DollarSign,
+              iconBg: "bg-teal/15",
+              iconColor: "text-teal",
+            },
+            {
+              label: "Receita hoje",
+              value: "R$ 1.730",
+              badge: "↓ 8%",
+              badgeColor: "bg-destructive/15 text-destructive",
+              icon: TrendingUp,
+              iconBg: "bg-success/15",
+              iconColor: "text-success",
+            },
+            {
+              label: "Oportunidades abertas",
+              value: "3",
+              badge: "R$ 3.750 em aberto",
+              badgeColor: "bg-warning/15 text-warning",
+              icon: Target,
+              iconBg: "bg-pink/15",
+              iconColor: "text-pink",
+            },
+          ].map((kpi) => (
+            <C key={kpi.label}>
+              <div className="flex items-start justify-between mb-3">
+                <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", kpi.iconBg)}>
+                  <kpi.icon className={cn("h-3.5 w-3.5", kpi.iconColor)} strokeWidth={2} />
+                </div>
+              </div>
+              <p className="text-[20px] font-extralight text-foreground leading-none tracking-tight">
+                {mask(kpi.value)}
+              </p>
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.1em] mt-1.5">
+                {kpi.label}
+              </p>
+              <span className={cn("inline-block mt-2 text-[10px] font-semibold rounded-full px-2 py-0.5", kpi.badgeColor)}>
+                {kpi.badge}
+              </span>
+            </C>
+          ))}
+        </motion.div>
+
         {isLoading ? (
           <div className="flex justify-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : (
