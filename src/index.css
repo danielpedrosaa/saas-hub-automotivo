@@ -86,3 +86,25 @@
     @apply text-[24px] font-extralight leading-tight;
   }
 }
+
+/* Custom sidebar scrollbar */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.sidebar-scroll:hover {
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 2px;
+}
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+}
