@@ -10,7 +10,7 @@ import {
   CalendarDays, CalendarRange, DollarSign, ChevronRight,
   TrendingUp, Activity, ArrowUpRight, ArrowUp, ArrowDown,
   Users, FileText, Zap, Building2, Eye, EyeOff, CreditCard,
-  ClipboardList, Target,
+  ClipboardList, Target, MessageSquare, AlertTriangle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, type Variants } from "framer-motion";
