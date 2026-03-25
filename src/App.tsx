@@ -31,6 +31,7 @@ import CrmRetornoPage from "./pages/CrmRetornoPage";
 import FidelidadePage from "./pages/FidelidadePage";
 import LembretesPage from "./pages/LembretesPage";
 import PosVendaPage from "./pages/PosVendaPage";
+import EstoquePage from "./pages/EstoquePage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -89,6 +90,7 @@ const AppRoutes = () => (
     <Route path="/fidelidade" element={<ProtectedRoute><OwnerRoute><FidelidadePage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/whatsapp/lembretes" element={<ProtectedRoute><OwnerRoute><LembretesPage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/whatsapp/pos-venda" element={<ProtectedRoute><OwnerRoute><PosVendaPage /></OwnerRoute></ProtectedRoute>} />
+    <Route path="/estoque" element={<ProtectedRoute><OwnerRoute><EstoquePage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* PUBLIC — sem ProtectedRoute */}
     <Route path="/vitrine/:shopSlug" element={<VitrinePage />} />
