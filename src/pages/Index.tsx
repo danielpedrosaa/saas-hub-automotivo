@@ -764,7 +764,7 @@ export default function Index() {
               {/* Serviços mais vendidos */}
               <C className="flex flex-col">
                 <CH left="Serviços mais vendidos" right="este mês" />
-                <div className="flex-1 space-y-2.5">
+                <div className="flex-1 flex flex-col gap-2">
                   {[
                     { name: "Lavagem completa", qty: 48 },
                     { name: "Polimento cristalizado", qty: 31 },
@@ -772,15 +772,17 @@ export default function Index() {
                     { name: "Vitrificação", qty: 12 },
                     { name: "Lavagem + cera", qty: 9 },
                   ].map((s, i) => (
-                    <div key={s.name} className="flex items-center gap-2">
-                      <span className="text-[11px] font-semibold text-muted-foreground w-4 shrink-0">{i + 1}.</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-medium text-foreground truncate mb-1">{s.name}</p>
-                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${(s.qty / 48) * 100}%` }} />
+                    <div key={s.name} className="flex items-start gap-2.5">
+                      <span className="text-[11px] font-light text-muted-foreground/60 w-4 text-right shrink-0 mt-px">{i + 1}</span>
+                      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[12px] font-light text-muted-foreground truncate">{s.name}</p>
+                          <span className="text-[11px] font-normal text-muted-foreground shrink-0">{maskNum(s.qty)}</span>
+                        </div>
+                        <div className="h-1 bg-border rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-muted-foreground/45" style={{ width: `${(s.qty / 48) * 100}%` }} />
                         </div>
                       </div>
-                      <span className="text-[11px] font-semibold text-foreground w-6 text-right shrink-0">{maskNum(s.qty)}</span>
                     </div>
                   ))}
                 </div>
