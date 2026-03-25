@@ -969,26 +969,26 @@ export default function Index() {
               {/* Pós-venda automático */}
               <C className="col-span-6 flex flex-col">
                 <CH left="Pós-venda automático" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">configurar →</span>} />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2.5">
                   {[
                     { icon: <CheckCircle2 className="h-4 w-4" />, iconBg: "bg-success/15 text-success", title: "Pesquisa de satisfação", desc: "Enviada 24h após o serviço via WhatsApp", status: "Ativo" },
                     { icon: <MessageSquare className="h-4 w-4" />, iconBg: "bg-blue-500/15 text-blue-400", title: "Pedido de avaliação Google", desc: "Enviado se nota ≥ 4 estrelas", status: "Ativo" },
                     { icon: <AlertTriangle className="h-4 w-4" />, iconBg: "bg-warning/15 text-warning", title: "Alerta nota baixa", desc: "Notifica o dono se nota ≤ 2", status: "Ativo" },
                   ].map((a) => (
-                    <div key={a.title} className="flex items-center gap-3 rounded-lg border border-border/40 p-3">
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${a.iconBg}`}>{a.icon}</div>
+                    <div key={a.title} className="flex items-center gap-3 rounded-[11px] bg-secondary/40 border border-border/40 p-3.5">
+                      <div className={`h-9 w-9 rounded-[9px] flex items-center justify-center shrink-0 ${a.iconBg}`}>{a.icon}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground">{a.title}</p>
-                        <p className="text-[9px] text-muted-foreground">{a.desc}</p>
+                        <p className="text-[13px] font-normal text-foreground">{a.title}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground">{a.desc}</p>
                       </div>
-                      <span className="text-[10px] font-semibold text-success shrink-0">{a.status}</span>
+                      <span className="text-[12px] font-light text-success shrink-0">{a.status}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-foreground">4.7</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">nota média</p></div>
-                  <div><span className="text-lg font-light text-foreground">89%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de resposta</p></div>
-                  <div><span className="text-lg font-light text-success">14</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">avaliações Google este mês</p></div>
+                <div className="flex items-center gap-5 mt-auto pt-3.5 border-t border-border">
+                  <div><span className="text-[18px] font-extralight text-foreground">4.7</span><p className="text-[10px] font-light text-muted-foreground">nota média</p></div>
+                  <div><span className="text-[18px] font-extralight text-foreground">89%</span><p className="text-[10px] font-light text-muted-foreground">taxa de resposta</p></div>
+                  <div><span className="text-[18px] font-extralight text-success">14</span><p className="text-[10px] font-light text-muted-foreground">avaliações Google este mês</p></div>
                 </div>
               </C>
             </motion.div>
