@@ -16,6 +16,8 @@ import ClientesPage from "./pages/ClientesPage";
 import ClienteDetailPage from "./pages/ClienteDetailPage";
 import Services from "./pages/Services";
 import Vehicles from "./pages/Vehicles";
+import VeiculosPage from "./pages/VeiculosPage";
+import VeiculoDetailPage from "./pages/VeiculoDetailPage";
 import Customers from "./pages/Customers";
 import CustomerDetail from "./pages/CustomerDetail";
 import Team from "./pages/Team";
@@ -69,6 +71,8 @@ const AppRoutes = () => (
     <Route path="/clientes" element={<ProtectedRoute><ClientesPage /></ProtectedRoute>} />
     <Route path="/clientes/:id" element={<ProtectedRoute><ClienteDetailPage /></ProtectedRoute>} />
     <Route path="/vehicles" element={<ProtectedRoute><Vehicles /></ProtectedRoute>} />
+    <Route path="/veiculos" element={<ProtectedRoute><VeiculosPage /></ProtectedRoute>} />
+    <Route path="/veiculos/:id" element={<ProtectedRoute><VeiculoDetailPage /></ProtectedRoute>} />
     <Route path="/services" element={<ProtectedRoute><OwnerRoute><Services /></OwnerRoute></ProtectedRoute>} />
     <Route path="/team" element={<ProtectedRoute><OwnerRoute><Team /></OwnerRoute></ProtectedRoute>} />
     <Route path="/financial" element={<ProtectedRoute><OwnerRoute><Financial /></OwnerRoute></ProtectedRoute>} />
