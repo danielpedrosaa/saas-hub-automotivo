@@ -745,14 +745,14 @@ export default function Index() {
                     { n: 8, label: "fechadas este mês", color: "text-success" },
                     { n: 2, label: "perdidas", color: "text-destructive" },
                   ].map((s) => (
-                    <div key={s.label} className="flex items-baseline gap-1">
+                    <div key={s.label}>
                       <span className={cn("text-[16px] font-extralight", s.color)}>{maskNum(s.n)}</span>
-                      <span className="text-[9px] text-muted-foreground">{s.label}</span>
+                      <p className="text-[9px] font-light text-muted-foreground">{s.label}</p>
                     </div>
                   ))}
-                  <div className="ml-auto text-right">
-                    <p className="text-[14px] font-semibold text-foreground">{mask("R$ 3.750")}</p>
-                    <p className="text-[9px] text-muted-foreground">valor em aberto</p>
+                  <div className="ml-auto">
+                    <span className="text-[16px] font-extralight text-foreground">{mask("R$ 3.750")}</span>
+                    <p className="text-[9px] font-light text-muted-foreground">valor em aberto</p>
                   </div>
                 </div>
               </C>
