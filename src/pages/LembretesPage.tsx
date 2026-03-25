@@ -61,7 +61,7 @@ const INITIAL_TRIGGERS = [
 ];
 
 const renderPreview = (template: string) =>
-  Object.entries(PREVIEW_VALUES).reduce((t, [k, v]) => t.replaceAll(k, v), template);
+  Object.entries(PREVIEW_VALUES).reduce((t, [k, v]) => t.split(k).join(v), template);
 
 export default function LembretesPage() {
   const [triggers, setTriggers] = useState(INITIAL_TRIGGERS);

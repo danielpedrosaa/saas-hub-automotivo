@@ -86,6 +86,7 @@ const AppRoutes = () => (
     <Route path="/oportunidades" element={<ProtectedRoute><OwnerRoute><OportunidadesPage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/whatsapp" element={<ProtectedRoute><OwnerRoute><WhatsApp /></OwnerRoute></ProtectedRoute>} />
     <Route path="/fidelidade" element={<ProtectedRoute><OwnerRoute><FidelidadePage /></OwnerRoute></ProtectedRoute>} />
+    <Route path="/whatsapp/lembretes" element={<ProtectedRoute><OwnerRoute><LembretesPage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* PUBLIC — sem ProtectedRoute */}
     <Route path="/vitrine/:shopSlug" element={<VitrinePage />} />
