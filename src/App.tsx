@@ -29,6 +29,7 @@ import OportunidadesPage from "./pages/OportunidadesPage";
 import VitrinePage from "./pages/VitrinePage";
 import CrmRetornoPage from "./pages/CrmRetornoPage";
 import FidelidadePage from "./pages/FidelidadePage";
+import LembretesPage from "./pages/LembretesPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
