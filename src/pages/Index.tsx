@@ -402,13 +402,13 @@ export default function Index() {
                   <kpi.icon className={cn("h-3.5 w-3.5", kpi.iconColor)} strokeWidth={2} />
                 </div>
               </div>
-              <p className="text-[20px] font-extralight text-foreground leading-none tracking-tight">
+              <p className="text-[20px] font-extralight text-foreground leading-none tracking-tight tabular-nums">
                 {mask(kpi.value)}
               </p>
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.1em] mt-1.5">
+              <p className="text-[10px] font-light text-muted-foreground mt-0.5">
                 {kpi.label}
               </p>
-              <span className={cn("inline-block mt-2 text-[10px] font-semibold rounded-full px-2 py-0.5", kpi.badgeColor)}>
+              <span className={cn("inline-block mt-1.5 text-[9px] font-normal rounded-[5px] px-1.5 py-0.5", kpi.badgeColor)}>
                 {kpi.badge}
               </span>
             </C>
