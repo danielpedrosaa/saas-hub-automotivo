@@ -959,10 +959,10 @@ export default function Index() {
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-destructive">5</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 30+ dias</p></div>
-                  <div><span className="text-lg font-light text-warning">3</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 15-30 dias</p></div>
-                  <div><span className="text-lg font-light text-success">68%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de reativação</p></div>
+                <div className="flex items-center gap-5 mt-auto pt-3.5 border-t border-border">
+                  <div><span className="text-[18px] font-extralight text-destructive">5</span><p className="text-[10px] font-light text-muted-foreground">inativos 30+ dias</p></div>
+                  <div><span className="text-[18px] font-extralight text-warning">3</span><p className="text-[10px] font-light text-muted-foreground">inativos 15-30 dias</p></div>
+                  <div><span className="text-[18px] font-extralight text-success">68%</span><p className="text-[10px] font-light text-muted-foreground">taxa de reativação</p></div>
                 </div>
               </C>
 
