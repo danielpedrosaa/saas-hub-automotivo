@@ -566,62 +566,146 @@ export default function Index() {
               </C>
             </motion.div>
 
-            {/* ── ROW 2: 4 cards operacionais ─────────────────────────── */}
+            {/* ── ROW 2: Pátio + Orçamentos + Vendas + Tempo ────────── */}
             <motion.div variants={item} className="grid grid-cols-4 gap-3">
 
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/jobs?filter=quotes")}
-              >
-                <CH left="Orçamentos esse mês" />
-                <div className="flex items-end gap-4">
+              {/* Pátio agora */}
+              <C className="flex flex-col">
+                <CH left="Pátio agora" />
+                <div className="flex-1">
+                  <div className="grid grid-cols-5 grid-rows-2 gap-1.5">
+                    {Array.from({ length: 10 }).map((_, i) => {
+                      const occupied = i < 3;
+                      return (
+                        <div
+                          key={i}
+                          className={cn(
+                            "aspect-square rounded-lg flex items-center justify-center",
+                            occupied
+                              ? "bg-secondary border border-border"
+                              : "border border-dashed border-border/50"
+                          )}
+                        >
+                          {occupied && <Car className="h-4 w-4 text-muted-foreground" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="mt-auto pt-3 border-t border-border/50">
+                  <p className="text-[16px] font-extralight text-foreground leading-none">
+                    <span className="font-semibold">3</span> / 10 vagas
+                  </p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">7 vagas disponíveis</p>
+                </div>
+              </C>
+
+              {/* Orçamentos */}
+              <C className="flex flex-col">
+                <CH left="Orçamentos" right="este mês" />
+                <div className="flex items-end gap-5">
+                  {[
+                    { n: 2, label: "pendentes", color: "text-warning" },
+                    { n: 5, label: "aprovados", color: "text-success" },
+                    { n: 1, label: "recusados", color: "text-destructive" },
+                  ].map((q) => (
+                    <div key={q.label}>
+                      <p className={cn("text-[28px] font-extralight leading-none", q.color)}>{maskNum(q.n)}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">{q.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-auto pt-3 border-t border-border/50 flex items-center justify-between">
                   <div>
-                    <p className="text-3xl font-extrabold text-foreground leading-none">{maskNum(pendingJobs)}</p>
-                    <p className="text-[10px] text-warning mt-1">pendentes</p>
+                    <p className="text-[10px] text-muted-foreground">Valor total</p>
+                    <p className="text-[13px] font-semibold text-foreground">{mask("R$ 4.280")}</p>
                   </div>
-                  <div className="border-l border-border pl-4 mb-0.5">
-                    <p className="text-3xl font-extrabold text-foreground leading-none">{maskNum(approvedJobs)}</p>
-                    <p className="text-[10px] text-primary mt-1">aprovados</p>
-                  </div>
-                </div>
-              </C>
-
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/settings?tab=space")}
-              >
-                <CH left="Vagas no espaço hoje" right={<span className="text-primary font-bold">{maskNum(inProgress)} / 10</span>} />
-                <div className="mt-1 mb-3 h-1.5 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full transition-all" style={{ width: hideValues ? "0%" : `${Math.min((inProgress / 10) * 100, 100)}%` }} />
-                </div>
-                <p className="text-[10px] text-muted-foreground">{maskNum(doneToday)} concluídas hoje</p>
-                <p className="text-[10px] text-primary font-semibold mt-0.5">{maskNum(waiting)} aguardando</p>
-              </C>
-
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/jobs?filter=opportunities")}
-              >
-                <CH left="Oportunidades para hoje" />
-                <div className="flex items-end gap-4">
-                  <div>
-                    <p className="text-3xl font-extrabold text-foreground leading-none">{maskNum(waiting)}</p>
-                    <p className="text-[10px] text-muted-foreground mt-1">pendentes</p>
-                  </div>
-                  <div className="border-l border-border pl-4 mb-0.5">
-                    <p className="text-3xl font-extrabold text-foreground leading-none">{maskNum(doneToday)}</p>
-                    <p className="text-[10px] text-primary mt-1">realizadas</p>
+                  <div className="text-right">
+                    <p className="text-[10px] text-muted-foreground">Taxa de conversão</p>
+                    <p className="text-[13px] font-semibold text-success">62%</p>
                   </div>
                 </div>
               </C>
 
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/team")}
-              >
-                <CH left="Funcionários cadastrados" />
-                <p className="text-3xl font-extrabold text-foreground leading-none">{maskNum(team?.length ?? 0)}</p>
-                <p className="text-[10px] text-muted-foreground mt-1.5">cadastrados no sistema</p>
+              {/* Resumo de vendas */}
+              <C className="flex flex-col">
+                <CH left="Resumo de vendas" right={<span className="font-semibold text-foreground">{mask("R$ 2.320,00")}</span>} />
+                {/* Legend */}
+                <div className="flex flex-wrap gap-x-2 gap-y-0.5 mb-2">
+                  {[
+                    { label: "Crédito", color: "#34d399" },
+                    { label: "Débito", color: "#d4a017" },
+                    { label: "Pix", color: "#2dd4bf" },
+                    { label: "Dinheiro", color: "#60a5fa" },
+                    { label: "Boleto", color: "#a78bfa" },
+                    { label: "Transf.", color: "#f87171" },
+                  ].map((l) => (
+                    <span key={l.label} className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
+                      {l.label}
+                    </span>
+                  ))}
+                </div>
+                {/* CSS bar chart */}
+                <div className="flex-1 flex items-end gap-1.5 min-h-[60px]">
+                  {[
+                    { day: "Seg", h: 45, color: "#a78bfa" },
+                    { day: "Ter", h: 70, color: "#34d399" },
+                    { day: "Qua", h: 55, color: "#d4a017" },
+                    { day: "Qui", h: 80, color: "#2dd4bf" },
+                    { day: "Sex", h: 60, color: "#60a5fa" },
+                    { day: "Sáb", h: 40, color: "#60a5fa" },
+                    { day: "Dom", h: 20, color: "#a78bfa" },
+                  ].map((b) => (
+                    <div key={b.day} className="flex-1 flex flex-col items-center gap-1">
+                      <div
+                        className="w-full rounded-t-sm transition-all"
+                        style={{ height: `${b.h}%`, backgroundColor: b.color, minHeight: 4 }}
+                      />
+                      <span className="text-[8px] text-muted-foreground">{b.day}</span>
+                    </div>
+                  ))}
+                </div>
+                {/* Breakdown */}
+                <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
+                  {[
+                    { label: "Crédito", value: "R$ 800,00", color: "#34d399" },
+                    { label: "Dinheiro", value: "R$ 650,00", color: "#60a5fa" },
+                    { label: "Pix", value: "R$ 450,00", color: "#2dd4bf" },
+                    { label: "Débito", value: "R$ 420,00", color: "#d4a017" },
+                  ].map((r) => (
+                    <div key={r.label} className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">{r.label}</span>
+                      <span className="text-[10px] font-semibold" style={{ color: r.color }}>{mask(r.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </C>
+
+              {/* Tempo médio por serviço */}
+              <C className="flex flex-col">
+                <CH left="Tempo médio por serviço" />
+                <div className="flex-1 flex items-end gap-2 min-h-[80px]">
+                  {[
+                    { label: "Lavagem\nsimples", h: 30, time: "25 min" },
+                    { label: "Lavagem\ncompleta", h: 50, time: "45 min" },
+                    { label: "Higieni-\nzação", h: 65, time: "1h10" },
+                    { label: "Polimento", h: 80, time: "1h30" },
+                    { label: "Vitrifi-\ncação", h: 95, time: "2h15" },
+                  ].map((b) => (
+                    <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
+                      {/* Tooltip */}
+                      <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-medium rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                        {b.time}
+                      </div>
+                      <div
+                        className="w-full rounded-t-sm bg-muted-foreground/30 hover:bg-primary/60 transition-colors cursor-default"
+                        style={{ height: `${b.h}%`, minHeight: 4 }}
+                      />
+                      <span className="text-[7px] text-muted-foreground text-center leading-tight whitespace-pre-line">{b.label}</span>
+                    </div>
+                  ))}
+                </div>
               </C>
             </motion.div>
 
