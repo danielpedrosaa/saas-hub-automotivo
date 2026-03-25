@@ -10,7 +10,7 @@ import {
   CalendarDays, CalendarRange, DollarSign, ChevronRight,
   TrendingUp, Activity, ArrowUpRight, ArrowUp, ArrowDown,
   Users, FileText, Zap, Building2, Eye, EyeOff, CreditCard,
-  ClipboardList, Target,
+  ClipboardList, Target, MessageSquare, AlertTriangle,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, type Variants } from "framer-motion";
@@ -920,6 +920,147 @@ export default function Index() {
                       <span className="text-[12px] font-semibold text-primary shrink-0">{mask(c.spent)}</span>
                     </div>
                   ))}
+                </div>
+              </C>
+            </motion.div>
+
+            {/* ── ROW 4: Fidelidade + Clientes com plano ─────── */}
+            <motion.div variants={item} className="grid grid-cols-12 gap-3">
+
+              {/* Planos de fidelidade */}
+              <C className="col-span-6 flex flex-col">
+                <CH left="Planos de fidelidade" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">gerenciar →</span>} />
+                <div className="grid grid-cols-2 gap-2 flex-1">
+                  {/* Básico */}
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
+                    <p className="text-[11px] font-semibold text-foreground">Plano Básico</p>
+                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens simples por mês</p>
+                    <p className="text-lg font-light text-foreground">R$ 119 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[9px] text-muted-foreground">👥 7 assinantes</span>
+                      <span className="text-[9px] text-success">↗ Economia 30%</span>
+                    </div>
+                  </div>
+                  {/* Premium */}
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col relative">
+                    <div className="absolute -top-1.5 right-2 bg-success/20 text-success text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Popular</div>
+                    <p className="text-[11px] font-semibold text-foreground">Plano Premium</p>
+                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens completas + 1 polimento</p>
+                    <p className="text-lg font-light text-foreground">R$ 299 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[9px] text-muted-foreground">👥 3 assinantes</span>
+                      <span className="text-[9px] text-success">↗ Economia 25%</span>
+                    </div>
+                  </div>
+                  {/* Frota */}
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
+                    <p className="text-[11px] font-semibold text-foreground">Plano Frota</p>
+                    <p className="text-[9px] text-muted-foreground mb-2">8 lavagens simples (até 3 veículos)</p>
+                    <p className="text-lg font-light text-foreground">R$ 199 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-[9px] text-muted-foreground">👥 2 assinantes</span>
+                      <span className="text-[9px] text-muted-foreground">🚗 Multi-veículo</span>
+                    </div>
+                  </div>
+                  {/* Criar novo */}
+                  <div className="rounded-lg border border-dashed border-border/40 p-3 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary/40 transition-colors">
+                    <Plus className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground">Criar novo plano</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
+                  <div><span className="text-lg font-light text-foreground">12</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">assinantes ativos</p></div>
+                  <div><span className="text-lg font-light text-success">R$ 2.966</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">receita recorrente/mês</p></div>
+                  <div><span className="text-lg font-light text-foreground">92%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de retenção</p></div>
+                </div>
+              </C>
+
+              {/* Clientes com plano ativo */}
+              <C className="col-span-6 flex flex-col">
+                <CH left="Clientes com plano ativo" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
+                <div className="flex-1 space-y-3">
+                  {[
+                    { initials: "RM", name: "Ricardo Mendes", plan: "Plano Básico · desde jan/26", used: 3, total: 4, color: "bg-success" },
+                    { initials: "FL", name: "Fernanda Lima", plan: "Plano Premium · desde fev/26", used: 2, total: 5, color: "bg-primary" },
+                    { initials: "CO", name: "Carlos Oliveira", plan: "Plano Básico · desde mar/26", used: 1, total: 4, color: "bg-primary" },
+                    { initials: "AB", name: "Ana Beatriz", plan: "Plano Frota · desde jan/26", used: 8, total: 8, color: "bg-success" },
+                    { initials: "BF", name: "Bruno Ferreira", plan: "Plano Premium · desde fev/26", used: 3, total: 5, color: "bg-primary" },
+                    { initials: "MV", name: "Marcos Vinícius", plan: "Plano Básico · desde mar/26", used: 2, total: 4, color: "bg-primary" },
+                  ].map((c) => (
+                    <div key={c.initials} className="flex items-center gap-2.5">
+                      <Avatar className="h-7 w-7 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
+                        <p className="text-[9px] text-muted-foreground">{c.plan}</p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${c.used === c.total ? "bg-success" : "bg-primary/60"}`} style={{ width: `${(c.used / c.total) * 100}%` }} />
+                        </div>
+                        <span className="text-[10px] text-muted-foreground w-12 text-right">
+                          {c.used}/{c.total} usadas{c.used === c.total && " ✓"}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </C>
+            </motion.div>
+
+            {/* ── ROW 5: CRM de retorno + Pós-venda ─────── */}
+            <motion.div variants={item} className="grid grid-cols-12 gap-3">
+
+              {/* CRM de retorno */}
+              <C className="col-span-6 flex flex-col">
+                <CH left="CRM de retorno" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
+                <div className="flex-1 space-y-0 divide-y divide-border/30">
+                  {[
+                    { name: "Pedro Henrique", days: 47, plate: "JKL-3M56", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
+                    { name: "Camila Santos", days: 33, plate: "NOP-7Q89", risk: "Atenção", riskColor: "bg-warning/15 text-warning border-warning/20" },
+                    { name: "Lucas Martins", days: 62, plate: "RST-1U23", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
+                  ].map((c) => (
+                    <div key={c.name} className="flex items-center gap-3 py-3 first:pt-0">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold text-foreground">{c.name}</p>
+                        <p className="text-[9px] text-muted-foreground">Última visita: {c.days} dias · {c.plate}</p>
+                      </div>
+                      <Badge variant="outline" className={`text-[9px] px-2 py-0.5 ${c.riskColor} shrink-0`}>{c.risk}</Badge>
+                      <span className="text-[10px] text-primary cursor-pointer hover:underline shrink-0">Enviar msg →</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
+                  <div><span className="text-lg font-light text-destructive">5</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 30+ dias</p></div>
+                  <div><span className="text-lg font-light text-warning">3</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 15-30 dias</p></div>
+                  <div><span className="text-lg font-light text-success">68%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de reativação</p></div>
+                </div>
+              </C>
+
+              {/* Pós-venda automático */}
+              <C className="col-span-6 flex flex-col">
+                <CH left="Pós-venda automático" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">configurar →</span>} />
+                <div className="flex-1 space-y-3">
+                  {[
+                    { icon: <CheckCircle2 className="h-4 w-4" />, iconBg: "bg-success/15 text-success", title: "Pesquisa de satisfação", desc: "Enviada 24h após o serviço via WhatsApp", status: "Ativo" },
+                    { icon: <MessageSquare className="h-4 w-4" />, iconBg: "bg-blue-500/15 text-blue-400", title: "Pedido de avaliação Google", desc: "Enviado se nota ≥ 4 estrelas", status: "Ativo" },
+                    { icon: <AlertTriangle className="h-4 w-4" />, iconBg: "bg-warning/15 text-warning", title: "Alerta nota baixa", desc: "Notifica o dono se nota ≤ 2", status: "Ativo" },
+                  ].map((a) => (
+                    <div key={a.title} className="flex items-center gap-3 rounded-lg border border-border/40 p-3">
+                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${a.iconBg}`}>{a.icon}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold text-foreground">{a.title}</p>
+                        <p className="text-[9px] text-muted-foreground">{a.desc}</p>
+                      </div>
+                      <span className="text-[10px] font-semibold text-success shrink-0">{a.status}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
+                  <div><span className="text-lg font-light text-foreground">4.7</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">nota média</p></div>
+                  <div><span className="text-lg font-light text-foreground">89%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de resposta</p></div>
+                  <div><span className="text-lg font-light text-success">14</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">avaliações Google este mês</p></div>
                 </div>
               </C>
             </motion.div>
