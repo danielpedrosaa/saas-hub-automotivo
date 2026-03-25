@@ -718,23 +718,23 @@ export default function Index() {
                     </button>
                   }
                 />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2">
                   {[
                     { initials: "ML", name: "Marina Lopes", detail: "Pediu orçamento de vitrificação", value: "R$ 900", ago: "há 5 dias", agoColor: "text-destructive" },
                     { initials: "TP", name: "Thiago Pires", detail: "Interessado em polimento + PPF", value: "R$ 2.400", ago: "há 2 dias", agoColor: "text-warning" },
                     { initials: "RS", name: "Renata Silva", detail: "Lavagem recorrente mensal (3 carros)", value: "R$ 450/mês", ago: "hoje", agoColor: "text-success" },
                   ].map((opp) => (
-                    <div key={opp.initials} className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">{opp.initials}</AvatarFallback>
+                    <div key={opp.initials} className="flex items-center gap-3 p-2.5 rounded-[9px] bg-secondary/40 border border-border/40 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[10px] font-normal">{opp.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground truncate">{opp.name}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{opp.detail}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{opp.name}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground truncate mt-0.5">{opp.detail}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-[13px] font-semibold text-foreground">{mask(opp.value)}</p>
-                        <p className={cn("text-[10px] font-medium", opp.agoColor)}>{opp.ago}</p>
+                        <p className="text-[12px] font-light text-foreground tabular-nums">{mask(opp.value)}</p>
+                        <p className={cn("text-[9px] font-light mt-0.5", opp.agoColor)}>{opp.ago}</p>
                       </div>
                     </div>
                   ))}
@@ -837,15 +837,15 @@ export default function Index() {
                     { initials: "BF", name: "Bruno Ferreira", visits: 1, spent: "R$ 150" },
                     { initials: "NS", name: "Nikolas Souza", visits: 1, spent: "R$ 120" },
                   ].map((c) => (
-                    <div key={c.initials} className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
+                    <div key={c.initials} className="flex items-center gap-2.5 py-2.5 first:pt-0 last:pb-0 rounded-lg hover:bg-secondary/40 transition-colors cursor-pointer px-2 -mx-2">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{c.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{c.visits} {c.visits === 1 ? "visita" : "visitas"}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{c.name}</p>
+                        <p className="text-[9px] font-extralight text-muted-foreground mt-0.5">{c.visits} {c.visits === 1 ? "visita" : "visitas"}</p>
                       </div>
-                      <span className="text-[12px] font-semibold text-primary shrink-0">{mask(c.spent)}</span>
+                      <span className="text-[12px] font-light text-foreground tabular-nums shrink-0">{mask(c.spent)}</span>
                     </div>
                   ))}
                 </div>
