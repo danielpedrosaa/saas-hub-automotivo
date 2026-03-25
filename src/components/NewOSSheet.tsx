@@ -145,8 +145,8 @@ function StepClienteVeiculo({
         plate: newVehPlate.trim().toUpperCase(),
         model: newVehModel.trim(),
         color: newVehColor.trim() || null,
-        year: newVehYear ? Number(newVehYear) : null,
-        notes: newVehNotes.trim() || null,
+        year: newVehYear ? newVehYear.trim() : null,
+        observations: newVehNotes.trim() || null,
       }).select().single();
       if (error) throw error;
       toast({ title: "✅ Veículo cadastrado!" });
