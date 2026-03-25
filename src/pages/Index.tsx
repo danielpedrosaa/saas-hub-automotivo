@@ -906,28 +906,28 @@ export default function Index() {
               {/* Clientes com plano ativo */}
               <C className="col-span-6 flex flex-col">
                 <CH left="Clientes com plano ativo" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-1.5">
                   {[
-                    { initials: "RM", name: "Ricardo Mendes", plan: "Plano Básico · desde jan/26", used: 3, total: 4, color: "bg-success" },
-                    { initials: "FL", name: "Fernanda Lima", plan: "Plano Premium · desde fev/26", used: 2, total: 5, color: "bg-primary" },
-                    { initials: "CO", name: "Carlos Oliveira", plan: "Plano Básico · desde mar/26", used: 1, total: 4, color: "bg-primary" },
-                    { initials: "AB", name: "Ana Beatriz", plan: "Plano Frota · desde jan/26", used: 8, total: 8, color: "bg-success" },
-                    { initials: "BF", name: "Bruno Ferreira", plan: "Plano Premium · desde fev/26", used: 3, total: 5, color: "bg-primary" },
-                    { initials: "MV", name: "Marcos Vinícius", plan: "Plano Básico · desde mar/26", used: 2, total: 4, color: "bg-primary" },
+                    { initials: "RM", name: "Ricardo Mendes", plan: "Plano Básico · desde jan/26", used: 3, total: 4 },
+                    { initials: "FL", name: "Fernanda Lima", plan: "Plano Premium · desde fev/26", used: 2, total: 5 },
+                    { initials: "CO", name: "Carlos Oliveira", plan: "Plano Básico · desde mar/26", used: 1, total: 4 },
+                    { initials: "AB", name: "Ana Beatriz", plan: "Plano Frota · desde jan/26", used: 8, total: 8 },
+                    { initials: "BF", name: "Bruno Ferreira", plan: "Plano Premium · desde fev/26", used: 3, total: 5 },
+                    { initials: "MV", name: "Marcos Vinícius", plan: "Plano Básico · desde mar/26", used: 2, total: 4 },
                   ].map((c) => (
-                    <div key={c.initials} className="flex items-center gap-2.5">
+                    <div key={c.initials} className="flex items-center gap-2 rounded-lg bg-secondary/40 border border-border/40 p-2 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{c.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
-                        <p className="text-[9px] text-muted-foreground">{c.plan}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{c.name}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground">{c.plan}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <div className="w-[60px] h-1 bg-border rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${c.used === c.total ? "bg-success" : "bg-primary/60"}`} style={{ width: `${(c.used / c.total) * 100}%` }} />
                         </div>
-                        <span className="text-[10px] text-muted-foreground w-12 text-right">
+                        <span className="text-[10px] font-light text-muted-foreground tabular-nums w-16 text-right">
                           {c.used}/{c.total} usadas{c.used === c.total && " ✓"}
                         </span>
                       </div>
