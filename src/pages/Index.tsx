@@ -858,21 +858,21 @@ export default function Index() {
                 <CH left="Planos de fidelidade" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">gerenciar →</span>} />
                 <div className="grid grid-cols-2 gap-2 flex-1">
                   {/* Básico */}
-                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
-                    <p className="text-[11px] font-semibold text-foreground">Plano Básico</p>
-                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens simples por mês</p>
-                    <p className="text-lg font-light text-foreground">R$ 119 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col relative overflow-hidden">
+                    <div className="absolute top-2 right-[-22px] bg-success text-black text-[8px] font-semibold px-7 py-0.5 rotate-45 uppercase tracking-wider">Popular</div>
+                    <p className="text-[12px] font-normal text-foreground">Plano Básico</p>
+                    <p className="text-[10px] font-extralight text-muted-foreground mb-2 leading-tight">4 lavagens simples por mês</p>
+                    <p className="text-lg font-extralight text-foreground">R$ 119 <span className="text-[10px] text-muted-foreground font-light">/mês</span></p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[9px] text-muted-foreground">👥 7 assinantes</span>
                       <span className="text-[9px] text-success">↗ Economia 30%</span>
                     </div>
                   </div>
                   {/* Premium */}
-                  <div className="rounded-lg border border-border/60 p-3 flex flex-col relative">
-                    <div className="absolute -top-1.5 right-2 bg-success/20 text-success text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Popular</div>
-                    <p className="text-[11px] font-semibold text-foreground">Plano Premium</p>
-                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens completas + 1 polimento</p>
-                    <p className="text-lg font-light text-foreground">R$ 299 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
+                    <p className="text-[12px] font-normal text-foreground">Plano Premium</p>
+                    <p className="text-[10px] font-extralight text-muted-foreground mb-2 leading-tight">4 lavagens completas + 1 polimento</p>
+                    <p className="text-lg font-extralight text-foreground">R$ 299 <span className="text-[10px] text-muted-foreground font-light">/mês</span></p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[9px] text-muted-foreground">👥 3 assinantes</span>
                       <span className="text-[9px] text-success">↗ Economia 25%</span>
