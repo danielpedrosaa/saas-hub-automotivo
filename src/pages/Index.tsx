@@ -741,8 +741,8 @@ export default function Index() {
                 </div>
                 <div className="mt-auto pt-3 border-t border-border/50 flex items-center gap-4">
                   {[
-                    { n: 3, label: "pendentes", color: "text-success" },
-                    { n: 8, label: "fechadas este mês", color: "text-teal" },
+                    { n: 3, label: "pendentes", color: "text-warning" },
+                    { n: 8, label: "fechadas este mês", color: "text-success" },
                     { n: 2, label: "perdidas", color: "text-destructive" },
                   ].map((s) => (
                     <div key={s.label} className="flex items-baseline gap-1">
