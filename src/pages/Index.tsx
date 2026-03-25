@@ -313,32 +313,29 @@ export default function Index() {
         {/* ── PAGE HEADER ──────────────────────────────────────────────── */}
         <motion.div variants={item} className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-foreground">
-              Olá, <span className="text-primary">{profile?.full_name?.split(" ")[0] ?? ""}!</span>
+            <h1 className="text-2xl font-extralight text-foreground tracking-tight">
+              Olá, <strong className="font-normal">{profile?.full_name?.split(" ")[0] ?? ""}</strong>
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground font-extralight mt-0.5">
               {format(today, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={() => navigate("/checkin")} className="h-8 bg-primary hover:bg-primary/90 text-black font-bold text-xs rounded-lg px-4">
-              <Plus className="h-3.5 w-3.5 mr-1.5" strokeWidth={3} /> Nova OS
+            <Button onClick={() => navigate("/checkin")} className="h-9 bg-primary hover:bg-primary/90 text-black font-medium text-xs rounded-[10px] px-4">
+              <Plus className="h-3.5 w-3.5 mr-1.5" strokeWidth={2} /> Nova OS
             </Button>
-            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Novo Agendamento
+            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
+              Agendamento
             </Button>
-            <Button variant="outline" onClick={() => navigate("/jobs")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Novo Orçamento
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Preencher Vagas
+            <Button variant="outline" onClick={() => navigate("/jobs")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
+              Orçamento
             </Button>
             {/* Eye toggle */}
             <button
               onClick={() => setHideValues(v => !v)}
               title={hideValues ? "Exibir valores" : "Ocultar valores sensíveis"}
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-lg border transition-colors",
+                "flex h-9 w-9 items-center justify-center rounded-[10px] border transition-colors",
                 hideValues
                   ? "border-primary/50 bg-primary/10 text-primary"
                   : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
@@ -347,6 +344,16 @@ export default function Index() {
               {hideValues ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
           </div>
+        </motion.div>
+
+        {/* ── Search Bar ──────────────────────────────────────────────── */}
+        <motion.div variants={item} className="flex items-center gap-2.5 bg-secondary/40 border border-border rounded-xl px-4 py-0">
+          <svg className="h-4 w-4 text-muted-foreground shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            className="flex-1 bg-transparent border-none outline-none text-[13px] font-light text-foreground py-3 placeholder:text-muted-foreground"
+            placeholder="Buscar ordens, clientes, placas..."
+          />
+          <span className="text-[10px] font-normal text-muted-foreground/60 bg-secondary/60 px-2 py-0.5 rounded shrink-0">⌘K</span>
         </motion.div>
 
         {/* ── ROW 0: KPI Cards ─────────────────────────────────────── */}
@@ -385,8 +392,8 @@ export default function Index() {
               badge: "R$ 3.750 em aberto",
               badgeColor: "bg-warning/15 text-warning",
               icon: Target,
-              iconBg: "bg-pink/15",
-              iconColor: "text-pink",
+              iconBg: "bg-warning/15",
+              iconColor: "text-warning",
             },
           ].map((kpi) => (
             <C key={kpi.label}>
@@ -483,88 +490,7 @@ export default function Index() {
           <div className="flex justify-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : (
           <>
-            {/* ── ROW 1: Calendário | Resumo Vendas | Resumo Financeiro ── */}
-            <motion.div variants={item} className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.7fr 1.2fr" }}>
-
-              {/* Calendário — clicável */}
-              <C>
-                <CH
-                  left="Calendário"
-                  right={
-                    <Badge className={cn("text-[9px] font-semibold rounded-full border-0 px-2",
-                      appointmentsToday > 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                    )}>
-                      {appointmentsToday > 0 ? `${appointmentsToday} hoje` : "Sem agendamentos"}
-                    </Badge>
-                  }
-                />
-                <Calendar
-                  mode="single"
-                  selected={today}
-                  onSelect={(date) => {
-                    if (date) navigate(`/jobs?date=${format(date, "yyyy-MM-dd")}`);
-                  }}
-                  className="p-0 w-full [&_.rdp]:w-full [&_.rdp-months]:w-full [&_.rdp-month]:w-full [&_.rdp-table]:w-full [&_.rdp-day_button]:h-7 [&_.rdp-day_button]:w-7 [&_.rdp-day_button]:text-[11px] [&_.rdp-head_cell]:text-[9px] [&_.rdp-caption_label]:text-[11px] [&_.rdp-caption_label]:font-semibold"
-                  modifiers={{ hasAppt: appointmentDates }}
-                  modifiersClassNames={{ hasAppt: "relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-primary" }}
-                />
-              </C>
-
-              {/* Resumo Vendas */}
-              <C>
-                <CH
-                  left="Resumo das vendas"
-                  right={<span className="text-primary font-bold">{formatCurrency(revenueMonth)}</span>}
-                />
-                {/* Legend */}
-                <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
-                  {Object.entries(pmLabels).map(([key, lbl]) => (
-                    <span key={key} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: pmColors[key] }} />
-                      {lbl}
-                    </span>
-                  ))}
-                </div>
-                {salesByMethod.length > 0 ? (
-                  <div className="h-[80px]">
-                    <ChartContainer config={{ value: { label: "Valor", color: "#C8FF00" } }} className="h-full w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={salesByMethod} barSize={22} barCategoryGap="20%">
-                          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))", fontFamily: "Outfit" }} tickFormatter={v => pmLabels[v]?.substring(0, 3) || v} />
-                          <ChartTooltip content={<ChartTooltipContent formatter={(v: number) => formatCurrency(v)} />} />
-                          <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                            {salesByMethod.map((e, i) => <Cell key={i} fill={pmColors[e.name] || "#C8FF00"} />)}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
-                  </div>
-                ) : (
-                  <div className="h-[80px] flex items-center justify-center">
-                    <p className="text-xs text-muted-foreground italic">Nenhuma venda registrada ainda</p>
-                  </div>
-                )}
-              </C>
-
-              {/* Resumo Financeiro */}
-              <C>
-                <CH left="Resumo financeiro" right={<span className="text-primary font-bold tracking-tight">{mask(formatCurrency(revenueMonth))}</span>} />
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Entradas hoje</p>
-                    <p className="text-xs font-extrabold text-[#22c55e]">↑ {mask(formatCurrency(revenueToday))}</p>
-                  </div>
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Saídas hoje</p>
-                    <p className="text-xs font-extrabold text-[#ef4444]">↓ {mask(formatCurrency(0))}</p>
-                  </div>
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Fatura cartão</p>
-                    <p className="text-xs font-extrabold text-primary">⇄ {mask(formatCurrency(0))}</p>
-                  </div>
-                </div>
-              </C>
-            </motion.div>
+            {/* (Calendar row removed — not in reference) */}
 
             {/* ── ROW 2: Pátio + Orçamentos + Vendas + Tempo ────────── */}
             <motion.div variants={item} className="grid grid-cols-4 gap-3">
