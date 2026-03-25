@@ -709,6 +709,129 @@ export default function Index() {
               </C>
             </motion.div>
 
+            {/* ── ROW 2.5: Financeiro + Oportunidades ─────────────────── */}
+            <motion.div variants={item} className="grid grid-cols-12 gap-3">
+
+              {/* Resumo financeiro */}
+              <C className="col-span-6 flex flex-col">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
+                  <div className="flex items-center gap-2">
+                    <div className="flex bg-secondary rounded-lg overflow-hidden">
+                      {["Diário", "Semanal", "Mensal"].map((p) => (
+                        <button
+                          key={p}
+                          className={cn(
+                            "px-2.5 py-1 text-[10px] font-medium transition-colors",
+                            p === "Diário"
+                              ? "bg-foreground text-background"
+                              : "text-muted-foreground hover:text-foreground"
+                          )}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+                      detalhes <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Entradas / Saídas */}
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-secondary/60 rounded-lg p-3">
+                    <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Entradas hoje</p>
+                    <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
+                    <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
+                  </div>
+                  <div className="bg-secondary/60 rounded-lg p-3">
+                    <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Saídas hoje</p>
+                    <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
+                    <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
+                  </div>
+                </div>
+
+                {/* Faturas pendentes */}
+                <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
+                  <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
+                  <span className="text-[12px] font-semibold text-pink">{mask("R$ 1.220,00")}</span>
+                </div>
+
+                {/* Receita semanal */}
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Receita semanal</p>
+                <div className="flex-1 min-h-[80px] relative">
+                  <svg viewBox="0 0 300 80" className="w-full h-full" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,40 L50,35 L100,30 L150,25 L200,20 L250,30 L300,55 L300,80 L0,80 Z" fill="url(#areaGrad)" />
+                    <polyline points="0,40 50,35 100,30 150,25 200,20 250,30 300,55" fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
+                    {[[0,40],[50,35],[100,30],[150,25],[200,20],[250,30],[300,55]].map(([x,y],i) => (
+                      <circle key={i} cx={x} cy={y} r="3" fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" />
+                    ))}
+                  </svg>
+                </div>
+                <div className="flex justify-between mt-1">
+                  {["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"].map((d) => (
+                    <span key={d} className="text-[9px] text-muted-foreground">{d}</span>
+                  ))}
+                </div>
+              </C>
+
+              {/* Oportunidades */}
+              <C className="col-span-6 flex flex-col">
+                <CH
+                  left="Oportunidades"
+                  right={
+                    <button onClick={() => navigate("/jobs?filter=opportunities")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+                      ver todas <ChevronRight className="h-3 w-3" />
+                    </button>
+                  }
+                />
+                <div className="flex-1 space-y-3">
+                  {[
+                    { initials: "ML", name: "Marina Lopes", detail: "Pediu orçamento de vitrificação", value: "R$ 900", ago: "há 5 dias", agoColor: "text-destructive" },
+                    { initials: "TP", name: "Thiago Pires", detail: "Interessado em polimento + PPF", value: "R$ 2.400", ago: "há 2 dias", agoColor: "text-warning" },
+                    { initials: "RS", name: "Renata Silva", detail: "Lavagem recorrente mensal (3 carros)", value: "R$ 450/mês", ago: "hoje", agoColor: "text-success" },
+                  ].map((opp) => (
+                    <div key={opp.initials} className="flex items-center gap-3">
+                      <Avatar className="h-9 w-9 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">{opp.initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-semibold text-foreground truncate">{opp.name}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">{opp.detail}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-[13px] font-semibold text-foreground">{mask(opp.value)}</p>
+                        <p className={cn("text-[10px] font-medium", opp.agoColor)}>{opp.ago}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-auto pt-3 border-t border-border/50 flex items-center gap-4">
+                  {[
+                    { n: 3, label: "pendentes", color: "text-success" },
+                    { n: 8, label: "fechadas este mês", color: "text-teal" },
+                    { n: 2, label: "perdidas", color: "text-destructive" },
+                  ].map((s) => (
+                    <div key={s.label} className="flex items-baseline gap-1">
+                      <span className={cn("text-[16px] font-extralight", s.color)}>{maskNum(s.n)}</span>
+                      <span className="text-[9px] text-muted-foreground">{s.label}</span>
+                    </div>
+                  ))}
+                  <div className="ml-auto text-right">
+                    <p className="text-[14px] font-semibold text-foreground">{mask("R$ 3.750")}</p>
+                    <p className="text-[9px] text-muted-foreground">valor em aberto</p>
+                  </div>
+                </div>
+              </C>
+            </motion.div>
+
             {/* ── ROW 3: Empresa | Top 5 ──────────────────────────────── */}
             <motion.div variants={item} className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.6fr" }}>
 
