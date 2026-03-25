@@ -31,6 +31,7 @@ import CrmRetornoPage from "./pages/CrmRetornoPage";
 import FidelidadePage from "./pages/FidelidadePage";
 import LembretesPage from "./pages/LembretesPage";
 import PosVendaPage from "./pages/PosVendaPage";
+import EstoquePage from "./pages/EstoquePage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
