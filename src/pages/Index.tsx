@@ -896,10 +896,10 @@ export default function Index() {
                     <span className="text-[10px] text-muted-foreground">Criar novo plano</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-foreground">12</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">assinantes ativos</p></div>
-                  <div><span className="text-lg font-light text-success">R$ 2.966</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">receita recorrente/mês</p></div>
-                  <div><span className="text-lg font-light text-foreground">92%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de retenção</p></div>
+                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border">
+                  <div><span className="text-[16px] font-extralight text-foreground">12</span><p className="text-[9px] font-light text-muted-foreground">assinantes ativos</p></div>
+                  <div><span className="text-[16px] font-extralight text-success">R$ 2.966</span><p className="text-[9px] font-light text-muted-foreground">receita recorrente/mês</p></div>
+                  <div><span className="text-[16px] font-extralight text-foreground">92%</span><p className="text-[9px] font-light text-muted-foreground">taxa de retenção</p></div>
                 </div>
               </C>
 
