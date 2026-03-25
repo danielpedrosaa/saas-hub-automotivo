@@ -16,6 +16,8 @@ import ClientesPage from "./pages/ClientesPage";
 import ClienteDetailPage from "./pages/ClienteDetailPage";
 import Services from "./pages/Services";
 import Vehicles from "./pages/Vehicles";
+import VeiculosPage from "./pages/VeiculosPage";
+import VeiculoDetailPage from "./pages/VeiculoDetailPage";
 import Customers from "./pages/Customers";
 import CustomerDetail from "./pages/CustomerDetail";
 import Team from "./pages/Team";
