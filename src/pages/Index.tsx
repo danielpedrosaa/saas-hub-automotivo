@@ -789,7 +789,7 @@ export default function Index() {
               {/* Performance dos técnicos */}
               <C className="flex flex-col">
                 <CH left="Performance dos técnicos" right="este mês" />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 flex flex-col gap-6">
                   {[
                     { initials: "JC", name: "João Carlos", role: "Polimento / Vitrificação", services: 24, rating: 4.8, pct: 100 },
                     { initials: "MS", name: "Marcos Silva", role: "Lavagem / Higienização", services: 19, rating: 4.6, pct: 79 },
@@ -798,25 +798,25 @@ export default function Index() {
                   ].map((t) => (
                     <div key={t.initials} className="flex items-center gap-2.5">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{t.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{t.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-0.5">
-                          <p className="text-[11px] font-semibold text-foreground truncate">{t.name}</p>
-                          <div className="flex items-center gap-3 shrink-0">
-                            <div className="text-center">
-                              <span className="text-[11px] font-semibold text-foreground">{maskNum(t.services)}</span>
-                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">serviços</p>
-                            </div>
-                            <div className="text-center">
-                              <span className="text-[11px] font-semibold text-foreground">{t.rating}</span>
-                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">avaliação</p>
-                            </div>
-                          </div>
+                        <p className="text-[12px] font-normal text-foreground truncate">{t.name}</p>
+                        <p className="text-[8px] font-extralight text-muted-foreground">{t.role}</p>
+                      </div>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <div className="text-center">
+                          <span className="text-[12px] font-light text-foreground tabular-nums">{maskNum(t.services)}</span>
+                          <p className="text-[7px] font-light uppercase tracking-[0.06em] text-muted-foreground">serviços</p>
                         </div>
-                        <p className="text-[9px] text-muted-foreground mb-1.5">{t.role}</p>
-                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${t.pct}%` }} />
+                        <div className="text-center">
+                          <span className="text-[12px] font-light text-foreground tabular-nums">{t.rating}</span>
+                          <p className="text-[7px] font-light uppercase tracking-[0.06em] text-muted-foreground">avaliação</p>
+                        </div>
+                      </div>
+                      <div className="w-20 shrink-0">
+                        <div className="h-1 bg-border rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-muted-foreground/40" style={{ width: `${t.pct}%` }} />
                         </div>
                       </div>
                     </div>
