@@ -832,59 +832,88 @@ export default function Index() {
               </C>
             </motion.div>
 
-            {/* ── ROW 3: Empresa | Top 5 ──────────────────────────────── */}
-            <motion.div variants={item} className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.6fr" }}>
+            {/* ── ROW 3: Serviços + Performance + Top Clientes ─────── */}
+            <motion.div variants={item} className="grid grid-cols-3 gap-3">
 
-              {/* Empresa */}
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/settings?tab=company")}
-              >
-                <CH left="Sua empresa" />
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-                    <span className="text-lg font-extrabold text-primary">
-                      {(shop as any)?.name?.substring(0, 1).toUpperCase() ?? "H"}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-foreground text-sm leading-tight">{(shop as any)?.name ?? "HubAuto"}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Desde {(shop as any)?.created_at
-                        ? format(new Date((shop as any).created_at), "MMM yyyy", { locale: ptBR })
-                        : "—"}
-                    </p>
-                  </div>
+              {/* Serviços mais vendidos */}
+              <C className="flex flex-col">
+                <CH left="Serviços mais vendidos" right="este mês" />
+                <div className="flex-1 space-y-2.5">
+                  {[
+                    { name: "Lavagem completa", qty: 48 },
+                    { name: "Polimento cristalizado", qty: 31 },
+                    { name: "Higienização interna", qty: 24 },
+                    { name: "Vitrificação", qty: 12 },
+                    { name: "Lavagem + cera", qty: 9 },
+                  ].map((s, i) => (
+                    <div key={s.name} className="flex items-center gap-2">
+                      <span className="text-[11px] font-semibold text-muted-foreground w-4 shrink-0">{i + 1}.</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-medium text-foreground truncate mb-1">{s.name}</p>
+                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${(s.qty / 48) * 100}%` }} />
+                        </div>
+                      </div>
+                      <span className="text-[11px] font-semibold text-foreground w-6 text-right shrink-0">{maskNum(s.qty)}</span>
+                    </div>
+                  ))}
                 </div>
-                <Badge className="bg-primary/10 text-primary border-0 font-semibold text-[10px]">Plano Essencial</Badge>
               </C>
 
-              {/* Top 5 */}
-              <C
-                className="cursor-pointer hover:border-primary/30 transition-colors"
-                onClick={() => navigate("/customers")}
-              >
-                <CH left="Top 5 clientes" right={<span className="text-primary text-[10px] font-semibold">Este mês</span>} />
-                {topCustomers.length === 0 ? (
-                  <p className="text-xs text-muted-foreground italic py-4 text-center">Não há clientes no momento</p>
-                ) : (
-                  <div className="divide-y divide-border/50">
-                    {topCustomers.map((c: any, i) => (
-                      <div key={i} className="flex items-center gap-3 py-2 first:pt-0 last:pb-0">
-                        <Avatar className="h-7 w-7 shrink-0">
-                          <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">
-                            {c.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[12px] font-semibold text-foreground truncate">{c.name}</p>
-                          <p className="text-[10px] text-muted-foreground">{c.count} OS</p>
+              {/* Performance dos técnicos */}
+              <C className="flex flex-col">
+                <CH left="Performance dos técnicos" right="este mês" />
+                <div className="flex-1 space-y-3">
+                  {[
+                    { initials: "JC", name: "João Carlos", services: 24, rating: 4.8, pct: 100 },
+                    { initials: "MS", name: "Marcos Silva", services: 19, rating: 4.6, pct: 79 },
+                    { initials: "RL", name: "Rafael Lima", services: 15, rating: 4.3, pct: 63 },
+                    { initials: "AP", name: "André Pereira", services: 11, rating: 4.9, pct: 46 },
+                  ].map((t) => (
+                    <div key={t.initials} className="flex items-center gap-2.5">
+                      <Avatar className="h-7 w-7 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{t.initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-[11px] font-semibold text-foreground truncate">{t.name}</p>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[10px] text-muted-foreground">{maskNum(t.services)} serv.</span>
+                            <span className="text-[10px] font-semibold text-warning">★ {t.rating}</span>
+                          </div>
                         </div>
-                        <span className="font-mono text-[12px] font-bold text-primary shrink-0">{mask(formatCurrency(c.spent))}</span>
+                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${t.pct}%` }} />
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
+              </C>
+
+              {/* Top clientes */}
+              <C className="flex flex-col">
+                <CH left="Top clientes" right="este mês" />
+                <div className="flex-1 divide-y divide-border/50">
+                  {[
+                    { initials: "RM", name: "Ricardo Mendes", visits: 6, spent: "R$ 2.840" },
+                    { initials: "FL", name: "Fernanda Lima", visits: 4, spent: "R$ 1.920" },
+                    { initials: "CO", name: "Carlos Oliveira", visits: 3, spent: "R$ 1.450" },
+                    { initials: "AB", name: "Ana Beatriz", visits: 3, spent: "R$ 1.200" },
+                    { initials: "BF", name: "Bruno Ferreira", visits: 2, spent: "R$ 980" },
+                  ].map((c) => (
+                    <div key={c.initials} className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
+                      <Avatar className="h-7 w-7 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{c.visits} visitas</p>
+                      </div>
+                      <span className="text-[12px] font-semibold text-primary shrink-0">{mask(c.spent)}</span>
+                    </div>
+                  ))}
+                </div>
               </C>
             </motion.div>
           </>
