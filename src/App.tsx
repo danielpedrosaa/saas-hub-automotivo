@@ -28,6 +28,7 @@ import WhatsApp from "./pages/WhatsApp";
 import OportunidadesPage from "./pages/OportunidadesPage";
 import VitrinePage from "./pages/VitrinePage";
 import CrmRetornoPage from "./pages/CrmRetornoPage";
+import FidelidadePage from "./pages/FidelidadePage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
