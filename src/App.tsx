@@ -23,6 +23,7 @@ import CustomerDetail from "./pages/CustomerDetail";
 import Team from "./pages/Team";
 import Settings from "./pages/Settings";
 import Financial from "./pages/Financial";
+import FinanceiroPage from "./pages/FinanceiroPage";
 import WhatsApp from "./pages/WhatsApp";
 import VitrinePage from "./pages/VitrinePage";
 import NotFound from "./pages/NotFound";
