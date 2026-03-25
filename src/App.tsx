@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Jobs from "./pages/Jobs";
 import CheckIn from "./pages/CheckIn";
 import Agenda from "./pages/Agenda";
+import Agendamentos from "./pages/Agendamentos";
 import Services from "./pages/Services";
 import Vehicles from "./pages/Vehicles";
 import Customers from "./pages/Customers";
