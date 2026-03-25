@@ -313,32 +313,29 @@ export default function Index() {
         {/* ── PAGE HEADER ──────────────────────────────────────────────── */}
         <motion.div variants={item} className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-foreground">
-              Olá, <span className="text-primary">{profile?.full_name?.split(" ")[0] ?? ""}!</span>
+            <h1 className="text-2xl font-extralight text-foreground tracking-tight">
+              Olá, <strong className="font-normal">{profile?.full_name?.split(" ")[0] ?? ""}</strong>
             </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-xs text-muted-foreground font-extralight mt-0.5">
               {format(today, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={() => navigate("/checkin")} className="h-8 bg-primary hover:bg-primary/90 text-black font-bold text-xs rounded-lg px-4">
-              <Plus className="h-3.5 w-3.5 mr-1.5" strokeWidth={3} /> Nova OS
+            <Button onClick={() => navigate("/checkin")} className="h-9 bg-primary hover:bg-primary/90 text-black font-medium text-xs rounded-[10px] px-4">
+              <Plus className="h-3.5 w-3.5 mr-1.5" strokeWidth={2} /> Nova OS
             </Button>
-            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Novo Agendamento
+            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
+              Agendamento
             </Button>
-            <Button variant="outline" onClick={() => navigate("/jobs")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Novo Orçamento
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/agenda")} className="h-8 text-xs border border-white/10 hover:border-primary/30 text-foreground hover:text-primary rounded-lg px-4">
-              Preencher Vagas
+            <Button variant="outline" onClick={() => navigate("/jobs")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
+              Orçamento
             </Button>
             {/* Eye toggle */}
             <button
               onClick={() => setHideValues(v => !v)}
               title={hideValues ? "Exibir valores" : "Ocultar valores sensíveis"}
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-lg border transition-colors",
+                "flex h-9 w-9 items-center justify-center rounded-[10px] border transition-colors",
                 hideValues
                   ? "border-primary/50 bg-primary/10 text-primary"
                   : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
@@ -347,6 +344,16 @@ export default function Index() {
               {hideValues ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             </button>
           </div>
+        </motion.div>
+
+        {/* ── Search Bar ──────────────────────────────────────────────── */}
+        <motion.div variants={item} className="flex items-center gap-2.5 bg-secondary/40 border border-border rounded-xl px-4 py-0">
+          <svg className="h-4 w-4 text-muted-foreground shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            className="flex-1 bg-transparent border-none outline-none text-[13px] font-light text-foreground py-3 placeholder:text-muted-foreground"
+            placeholder="Buscar ordens, clientes, placas..."
+          />
+          <span className="text-[10px] font-normal text-muted-foreground/60 bg-secondary/60 px-2 py-0.5 rounded shrink-0">⌘K</span>
         </motion.div>
 
         {/* ── ROW 0: KPI Cards ─────────────────────────────────────── */}
@@ -385,8 +392,8 @@ export default function Index() {
               badge: "R$ 3.750 em aberto",
               badgeColor: "bg-warning/15 text-warning",
               icon: Target,
-              iconBg: "bg-pink/15",
-              iconColor: "text-pink",
+              iconBg: "bg-warning/15",
+              iconColor: "text-warning",
             },
           ].map((kpi) => (
             <C key={kpi.label}>
@@ -483,88 +490,7 @@ export default function Index() {
           <div className="flex justify-center py-24"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
         ) : (
           <>
-            {/* ── ROW 1: Calendário | Resumo Vendas | Resumo Financeiro ── */}
-            <motion.div variants={item} className="grid gap-3" style={{ gridTemplateColumns: "1fr 1.7fr 1.2fr" }}>
-
-              {/* Calendário — clicável */}
-              <C>
-                <CH
-                  left="Calendário"
-                  right={
-                    <Badge className={cn("text-[9px] font-semibold rounded-full border-0 px-2",
-                      appointmentsToday > 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"
-                    )}>
-                      {appointmentsToday > 0 ? `${appointmentsToday} hoje` : "Sem agendamentos"}
-                    </Badge>
-                  }
-                />
-                <Calendar
-                  mode="single"
-                  selected={today}
-                  onSelect={(date) => {
-                    if (date) navigate(`/jobs?date=${format(date, "yyyy-MM-dd")}`);
-                  }}
-                  className="p-0 w-full [&_.rdp]:w-full [&_.rdp-months]:w-full [&_.rdp-month]:w-full [&_.rdp-table]:w-full [&_.rdp-day_button]:h-7 [&_.rdp-day_button]:w-7 [&_.rdp-day_button]:text-[11px] [&_.rdp-head_cell]:text-[9px] [&_.rdp-caption_label]:text-[11px] [&_.rdp-caption_label]:font-semibold"
-                  modifiers={{ hasAppt: appointmentDates }}
-                  modifiersClassNames={{ hasAppt: "relative after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:h-1 after:w-1 after:rounded-full after:bg-primary" }}
-                />
-              </C>
-
-              {/* Resumo Vendas */}
-              <C>
-                <CH
-                  left="Resumo das vendas"
-                  right={<span className="text-primary font-bold">{formatCurrency(revenueMonth)}</span>}
-                />
-                {/* Legend */}
-                <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
-                  {Object.entries(pmLabels).map(([key, lbl]) => (
-                    <span key={key} className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: pmColors[key] }} />
-                      {lbl}
-                    </span>
-                  ))}
-                </div>
-                {salesByMethod.length > 0 ? (
-                  <div className="h-[80px]">
-                    <ChartContainer config={{ value: { label: "Valor", color: "#C8FF00" } }} className="h-full w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={salesByMethod} barSize={22} barCategoryGap="20%">
-                          <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))", fontFamily: "Outfit" }} tickFormatter={v => pmLabels[v]?.substring(0, 3) || v} />
-                          <ChartTooltip content={<ChartTooltipContent formatter={(v: number) => formatCurrency(v)} />} />
-                          <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                            {salesByMethod.map((e, i) => <Cell key={i} fill={pmColors[e.name] || "#C8FF00"} />)}
-                          </Bar>
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
-                  </div>
-                ) : (
-                  <div className="h-[80px] flex items-center justify-center">
-                    <p className="text-xs text-muted-foreground italic">Nenhuma venda registrada ainda</p>
-                  </div>
-                )}
-              </C>
-
-              {/* Resumo Financeiro */}
-              <C>
-                <CH left="Resumo financeiro" right={<span className="text-primary font-bold tracking-tight">{mask(formatCurrency(revenueMonth))}</span>} />
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Entradas hoje</p>
-                    <p className="text-xs font-extrabold text-[#22c55e]">↑ {mask(formatCurrency(revenueToday))}</p>
-                  </div>
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Saídas hoje</p>
-                    <p className="text-xs font-extrabold text-[#ef4444]">↓ {mask(formatCurrency(0))}</p>
-                  </div>
-                  <div className="bg-secondary/50 rounded-lg p-2 flex flex-col">
-                    <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest mb-1">Fatura cartão</p>
-                    <p className="text-xs font-extrabold text-primary">⇄ {mask(formatCurrency(0))}</p>
-                  </div>
-                </div>
-              </C>
-            </motion.div>
+            {/* (Calendar row removed — not in reference) */}
 
             {/* ── ROW 2: Pátio + Orçamentos + Vendas + Tempo ────────── */}
             <motion.div variants={item} className="grid grid-cols-4 gap-3">
@@ -792,41 +718,41 @@ export default function Index() {
                     </button>
                   }
                 />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2">
                   {[
                     { initials: "ML", name: "Marina Lopes", detail: "Pediu orçamento de vitrificação", value: "R$ 900", ago: "há 5 dias", agoColor: "text-destructive" },
                     { initials: "TP", name: "Thiago Pires", detail: "Interessado em polimento + PPF", value: "R$ 2.400", ago: "há 2 dias", agoColor: "text-warning" },
                     { initials: "RS", name: "Renata Silva", detail: "Lavagem recorrente mensal (3 carros)", value: "R$ 450/mês", ago: "hoje", agoColor: "text-success" },
                   ].map((opp) => (
-                    <div key={opp.initials} className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[10px] font-bold">{opp.initials}</AvatarFallback>
+                    <div key={opp.initials} className="flex items-center gap-3 p-2.5 rounded-[9px] bg-secondary/40 border border-border/40 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
+                      <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[10px] font-normal">{opp.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground truncate">{opp.name}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{opp.detail}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{opp.name}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground truncate mt-0.5">{opp.detail}</p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-[13px] font-semibold text-foreground">{mask(opp.value)}</p>
-                        <p className={cn("text-[10px] font-medium", opp.agoColor)}>{opp.ago}</p>
+                        <p className="text-[12px] font-light text-foreground tabular-nums">{mask(opp.value)}</p>
+                        <p className={cn("text-[9px] font-light mt-0.5", opp.agoColor)}>{opp.ago}</p>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="mt-auto pt-3 border-t border-border/50 flex items-center gap-4">
                   {[
-                    { n: 3, label: "pendentes", color: "text-success" },
-                    { n: 8, label: "fechadas este mês", color: "text-teal" },
+                    { n: 3, label: "pendentes", color: "text-warning" },
+                    { n: 8, label: "fechadas este mês", color: "text-success" },
                     { n: 2, label: "perdidas", color: "text-destructive" },
                   ].map((s) => (
-                    <div key={s.label} className="flex items-baseline gap-1">
+                    <div key={s.label}>
                       <span className={cn("text-[16px] font-extralight", s.color)}>{maskNum(s.n)}</span>
-                      <span className="text-[9px] text-muted-foreground">{s.label}</span>
+                      <p className="text-[9px] font-light text-muted-foreground">{s.label}</p>
                     </div>
                   ))}
-                  <div className="ml-auto text-right">
-                    <p className="text-[14px] font-semibold text-foreground">{mask("R$ 3.750")}</p>
-                    <p className="text-[9px] text-muted-foreground">valor em aberto</p>
+                  <div className="ml-auto">
+                    <span className="text-[16px] font-extralight text-foreground">{mask("R$ 3.750")}</span>
+                    <p className="text-[9px] font-light text-muted-foreground">valor em aberto</p>
                   </div>
                 </div>
               </C>
@@ -838,7 +764,7 @@ export default function Index() {
               {/* Serviços mais vendidos */}
               <C className="flex flex-col">
                 <CH left="Serviços mais vendidos" right="este mês" />
-                <div className="flex-1 space-y-2.5">
+                <div className="flex-1 flex flex-col gap-2">
                   {[
                     { name: "Lavagem completa", qty: 48 },
                     { name: "Polimento cristalizado", qty: 31 },
@@ -846,15 +772,17 @@ export default function Index() {
                     { name: "Vitrificação", qty: 12 },
                     { name: "Lavagem + cera", qty: 9 },
                   ].map((s, i) => (
-                    <div key={s.name} className="flex items-center gap-2">
-                      <span className="text-[11px] font-semibold text-muted-foreground w-4 shrink-0">{i + 1}.</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-medium text-foreground truncate mb-1">{s.name}</p>
-                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${(s.qty / 48) * 100}%` }} />
+                    <div key={s.name} className="flex items-start gap-2.5">
+                      <span className="text-[11px] font-light text-muted-foreground/60 w-4 text-right shrink-0 mt-px">{i + 1}</span>
+                      <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[12px] font-light text-muted-foreground truncate">{s.name}</p>
+                          <span className="text-[11px] font-normal text-muted-foreground shrink-0">{maskNum(s.qty)}</span>
+                        </div>
+                        <div className="h-1 bg-border rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-muted-foreground/45" style={{ width: `${(s.qty / 48) * 100}%` }} />
                         </div>
                       </div>
-                      <span className="text-[11px] font-semibold text-foreground w-6 text-right shrink-0">{maskNum(s.qty)}</span>
                     </div>
                   ))}
                 </div>
@@ -863,7 +791,7 @@ export default function Index() {
               {/* Performance dos técnicos */}
               <C className="flex flex-col">
                 <CH left="Performance dos técnicos" right="este mês" />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 flex flex-col gap-6">
                   {[
                     { initials: "JC", name: "João Carlos", role: "Polimento / Vitrificação", services: 24, rating: 4.8, pct: 100 },
                     { initials: "MS", name: "Marcos Silva", role: "Lavagem / Higienização", services: 19, rating: 4.6, pct: 79 },
@@ -872,25 +800,25 @@ export default function Index() {
                   ].map((t) => (
                     <div key={t.initials} className="flex items-center gap-2.5">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{t.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{t.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-0.5">
-                          <p className="text-[11px] font-semibold text-foreground truncate">{t.name}</p>
-                          <div className="flex items-center gap-3 shrink-0">
-                            <div className="text-center">
-                              <span className="text-[11px] font-semibold text-foreground">{maskNum(t.services)}</span>
-                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">serviços</p>
-                            </div>
-                            <div className="text-center">
-                              <span className="text-[11px] font-semibold text-foreground">{t.rating}</span>
-                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">avaliação</p>
-                            </div>
-                          </div>
+                        <p className="text-[12px] font-normal text-foreground truncate">{t.name}</p>
+                        <p className="text-[8px] font-extralight text-muted-foreground">{t.role}</p>
+                      </div>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <div className="text-center">
+                          <span className="text-[12px] font-light text-foreground tabular-nums">{maskNum(t.services)}</span>
+                          <p className="text-[7px] font-light uppercase tracking-[0.06em] text-muted-foreground">serviços</p>
                         </div>
-                        <p className="text-[9px] text-muted-foreground mb-1.5">{t.role}</p>
-                        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                          <div className="h-full bg-primary/60 rounded-full" style={{ width: `${t.pct}%` }} />
+                        <div className="text-center">
+                          <span className="text-[12px] font-light text-foreground tabular-nums">{t.rating}</span>
+                          <p className="text-[7px] font-light uppercase tracking-[0.06em] text-muted-foreground">avaliação</p>
+                        </div>
+                      </div>
+                      <div className="w-20 shrink-0">
+                        <div className="h-1 bg-border rounded-full overflow-hidden">
+                          <div className="h-full rounded-full bg-muted-foreground/40" style={{ width: `${t.pct}%` }} />
                         </div>
                       </div>
                     </div>
@@ -909,15 +837,15 @@ export default function Index() {
                     { initials: "BF", name: "Bruno Ferreira", visits: 1, spent: "R$ 150" },
                     { initials: "NS", name: "Nikolas Souza", visits: 1, spent: "R$ 120" },
                   ].map((c) => (
-                    <div key={c.initials} className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
+                    <div key={c.initials} className="flex items-center gap-2.5 py-2.5 first:pt-0 last:pb-0 rounded-lg hover:bg-secondary/40 transition-colors cursor-pointer px-2 -mx-2">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{c.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{c.visits} {c.visits === 1 ? "visita" : "visitas"}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{c.name}</p>
+                        <p className="text-[9px] font-extralight text-muted-foreground mt-0.5">{c.visits} {c.visits === 1 ? "visita" : "visitas"}</p>
                       </div>
-                      <span className="text-[12px] font-semibold text-primary shrink-0">{mask(c.spent)}</span>
+                      <span className="text-[12px] font-light text-foreground tabular-nums shrink-0">{mask(c.spent)}</span>
                     </div>
                   ))}
                 </div>
@@ -932,21 +860,21 @@ export default function Index() {
                 <CH left="Planos de fidelidade" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">gerenciar →</span>} />
                 <div className="grid grid-cols-2 gap-2 flex-1">
                   {/* Básico */}
-                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
-                    <p className="text-[11px] font-semibold text-foreground">Plano Básico</p>
-                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens simples por mês</p>
-                    <p className="text-lg font-light text-foreground">R$ 119 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col relative overflow-hidden">
+                    <div className="absolute top-2 right-[-22px] bg-success text-black text-[8px] font-semibold px-7 py-0.5 rotate-45 uppercase tracking-wider">Popular</div>
+                    <p className="text-[12px] font-normal text-foreground">Plano Básico</p>
+                    <p className="text-[10px] font-extralight text-muted-foreground mb-2 leading-tight">4 lavagens simples por mês</p>
+                    <p className="text-lg font-extralight text-foreground">R$ 119 <span className="text-[10px] text-muted-foreground font-light">/mês</span></p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[9px] text-muted-foreground">👥 7 assinantes</span>
                       <span className="text-[9px] text-success">↗ Economia 30%</span>
                     </div>
                   </div>
                   {/* Premium */}
-                  <div className="rounded-lg border border-border/60 p-3 flex flex-col relative">
-                    <div className="absolute -top-1.5 right-2 bg-success/20 text-success text-[8px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Popular</div>
-                    <p className="text-[11px] font-semibold text-foreground">Plano Premium</p>
-                    <p className="text-[9px] text-muted-foreground mb-2">4 lavagens completas + 1 polimento</p>
-                    <p className="text-lg font-light text-foreground">R$ 299 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                  <div className="rounded-lg border border-border/60 p-3 flex flex-col">
+                    <p className="text-[12px] font-normal text-foreground">Plano Premium</p>
+                    <p className="text-[10px] font-extralight text-muted-foreground mb-2 leading-tight">4 lavagens completas + 1 polimento</p>
+                    <p className="text-lg font-extralight text-foreground">R$ 299 <span className="text-[10px] text-muted-foreground font-light">/mês</span></p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[9px] text-muted-foreground">👥 3 assinantes</span>
                       <span className="text-[9px] text-success">↗ Economia 25%</span>
