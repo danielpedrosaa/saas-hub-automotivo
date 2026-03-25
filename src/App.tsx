@@ -25,6 +25,7 @@ import Settings from "./pages/Settings";
 import Financial from "./pages/Financial";
 import FinanceiroPage from "./pages/FinanceiroPage";
 import WhatsApp from "./pages/WhatsApp";
+import OportunidadesPage from "./pages/OportunidadesPage";
 import VitrinePage from "./pages/VitrinePage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
