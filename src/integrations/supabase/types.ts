@@ -87,35 +87,101 @@ export type Database = {
       }
       customers: {
         Row: {
+          address: string | null
+          cpf: string | null
           created_at: string
           email: string | null
           id: string
           name: string
+          notes: string | null
           phone: string | null
           shop_id: string
+          tags: string[] | null
           whatsapp: string | null
         }
         Insert: {
+          address?: string | null
+          cpf?: string | null
           created_at?: string
           email?: string | null
           id?: string
           name: string
+          notes?: string | null
           phone?: string | null
           shop_id: string
+          tags?: string[] | null
           whatsapp?: string | null
         }
         Update: {
+          address?: string | null
+          cpf?: string | null
           created_at?: string
           email?: string | null
           id?: string
           name?: string
+          notes?: string | null
           phone?: string | null
           shop_id?: string
+          tags?: string[] | null
           whatsapp?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "customers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_entries: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          job_id: string | null
+          payment_method: string | null
+          shop_id: string
+          type: string
+        }
+        Insert: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          job_id?: string | null
+          payment_method?: string | null
+          shop_id: string
+          type?: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          job_id?: string | null
+          payment_method?: string | null
+          shop_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_entries_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_entries_shop_id_fkey"
             columns: ["shop_id"]
             isOneToOne: false
             referencedRelation: "shops"
@@ -317,6 +383,105 @@ export type Database = {
           },
         ]
       }
+      loyalty_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          max_uses: number
+          multi_vehicle: boolean
+          name: string
+          price: number
+          services_included: string[]
+          shop_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          max_uses?: number
+          multi_vehicle?: boolean
+          name: string
+          price?: number
+          services_included?: string[]
+          shop_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          max_uses?: number
+          multi_vehicle?: boolean
+          name?: string
+          price?: number
+          services_included?: string[]
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_plans_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loyalty_subscriptions: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          plan_id: string
+          renewal_date: string
+          shop_id: string
+          status: string
+          uses_this_month: number
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          plan_id: string
+          renewal_date: string
+          shop_id: string
+          status?: string
+          uses_this_month?: number
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          plan_id?: string
+          renewal_date?: string
+          shop_id?: string
+          status?: string
+          uses_this_month?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_subscriptions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "loyalty_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loyalty_subscriptions_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_templates: {
         Row: {
           created_at: string
@@ -358,8 +523,155 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          content: string
+          customer_id: string | null
+          direction: string
+          id: string
+          sent_at: string
+          shop_id: string
+          status: string
+          template_type: string | null
+        }
+        Insert: {
+          content: string
+          customer_id?: string | null
+          direction?: string
+          id?: string
+          sent_at?: string
+          shop_id: string
+          status?: string
+          template_type?: string | null
+        }
+        Update: {
+          content?: string
+          customer_id?: string | null
+          direction?: string
+          id?: string
+          sent_at?: string
+          shop_id?: string
+          status?: string
+          template_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      opportunities: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          estimated_value: number
+          id: string
+          last_contact_date: string | null
+          notes: string | null
+          responsible_id: string | null
+          service_interest: string | null
+          shop_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          estimated_value?: number
+          id?: string
+          last_contact_date?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          service_interest?: string | null
+          shop_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          estimated_value?: number
+          id?: string
+          last_contact_date?: string | null
+          notes?: string | null
+          responsible_id?: string | null
+          service_interest?: string | null
+          shop_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "opportunities_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          min_stock: number
+          name: string
+          quantity: number
+          shop_id: string
+          supplier: string | null
+          unit_cost: number
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name: string
+          quantity?: number
+          shop_id: string
+          supplier?: string | null
+          unit_cost?: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          min_stock?: number
+          name?: string
+          quantity?: number
+          shop_id?: string
+          supplier?: string | null
+          unit_cost?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           full_name: string
           id: string
@@ -367,6 +679,7 @@ export type Database = {
           shop_id: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           full_name: string
           id: string
@@ -374,6 +687,7 @@ export type Database = {
           shop_id?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           full_name?: string
           id?: string
@@ -390,9 +704,65 @@ export type Database = {
           },
         ]
       }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_id: string | null
+          id: string
+          job_id: string | null
+          platform: string
+          rating: number
+          shop_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          job_id?: string | null
+          platform?: string
+          rating: number
+          shop_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          job_id?: string | null
+          platform?: string
+          rating?: number
+          shop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           active: boolean
+          category: string | null
           created_at: string
           duration_minutes: number
           id: string
@@ -402,6 +772,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          category?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
@@ -411,6 +782,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          category?: string | null
           created_at?: string
           duration_minutes?: number
           id?: string
@@ -430,27 +802,132 @@ export type Database = {
       }
       shops: {
         Row: {
+          address: string | null
+          cnpj: string | null
           created_at: string
           id: string
+          logo_url: string | null
           name: string
           phone: string | null
           whatsapp: string | null
         }
         Insert: {
+          address?: string | null
+          cnpj?: string | null
           created_at?: string
           id?: string
+          logo_url?: string | null
           name: string
           phone?: string | null
           whatsapp?: string | null
         }
         Update: {
+          address?: string | null
+          cnpj?: string | null
           created_at?: string
           id?: string
+          logo_url?: string | null
           name?: string
           phone?: string | null
           whatsapp?: string | null
         }
         Relationships: []
+      }
+      stock_movements: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          job_id: string | null
+          product_id: string
+          quantity: number
+          reason: string | null
+          shop_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          job_id?: string | null
+          product_id: string
+          quantity: number
+          reason?: string | null
+          shop_id: string
+          type?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          job_id?: string | null
+          product_id?: string
+          quantity?: number
+          reason?: string | null
+          shop_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_movements_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      technicians: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          shop_id: string
+          specialization: string | null
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          shop_id: string
+          specialization?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          shop_id?: string
+          specialization?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "technicians_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -476,30 +953,39 @@ export type Database = {
           created_at: string
           customer_id: string | null
           id: string
+          km: number | null
           model: string | null
           observations: string | null
+          photo_url: string | null
           plate: string
           shop_id: string
+          year: string | null
         }
         Insert: {
           color?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
+          km?: number | null
           model?: string | null
           observations?: string | null
+          photo_url?: string | null
           plate: string
           shop_id: string
+          year?: string | null
         }
         Update: {
           color?: string | null
           created_at?: string
           customer_id?: string | null
           id?: string
+          km?: number | null
           model?: string | null
           observations?: string | null
+          photo_url?: string | null
           plate?: string
           shop_id?: string
+          year?: string | null
         }
         Relationships: [
           {
