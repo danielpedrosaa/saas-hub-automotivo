@@ -10,6 +10,8 @@ import Jobs from "./pages/Jobs";
 import CheckIn from "./pages/CheckIn";
 import Agenda from "./pages/Agenda";
 import Agendamentos from "./pages/Agendamentos";
+import OrdensServico from "./pages/OrdensServico";
+import OSDetail from "./pages/OSDetail";
 import Services from "./pages/Services";
 import Vehicles from "./pages/Vehicles";
 import Customers from "./pages/Customers";
@@ -55,6 +57,8 @@ const AppRoutes = () => (
     <Route path="/auth" element={<Auth />} />
     <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
     <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+    <Route path="/os" element={<ProtectedRoute><OrdensServico /></ProtectedRoute>} />
+    <Route path="/os/:id" element={<ProtectedRoute><OSDetail /></ProtectedRoute>} />
     <Route path="/checkin" element={<ProtectedRoute><CheckIn /></ProtectedRoute>} />
     <Route path="/agenda" element={<ProtectedRoute><Agenda /></ProtectedRoute>} />
     <Route path="/agenda/agendamentos" element={<ProtectedRoute><Agendamentos /></ProtectedRoute>} />
