@@ -55,7 +55,7 @@ function C({ children, className, onClick }: {
 }) {
   return (
     <div
-      className={cn("bg-card border border-border rounded-xl p-[14px]", className)}
+      className={cn("bg-card border border-border rounded-[14px] p-[18px] hover:bg-card/80 hover:border-border/80 transition-all", className)}
       onClick={onClick}
     >
       {children}
@@ -67,8 +67,8 @@ function C({ children, className, onClick }: {
 function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{left}</p>
-      {right && <div className="text-[10px] text-muted-foreground">{right}</div>}
+      <p className="text-[11px] font-normal text-muted-foreground uppercase tracking-[0.1em]">{left}</p>
+      {right && <div className="text-[11px] text-muted-foreground font-light">{right}</div>}
     </div>
   );
 }
