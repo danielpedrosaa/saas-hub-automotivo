@@ -100,7 +100,7 @@ export function useTeam() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("*, user_roles(role)")
+        .select("*")
         .eq("shop_id", shopId!);
       if (error) throw error;
       return data;
@@ -133,7 +133,7 @@ export function useAppointments() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("appointments")
-        .select("*, customers(*), vehicles(*), services(*), profiles:created_by(id, full_name)")
+        .select("*, customers(*), vehicles(*), services(*)")
         .eq("shop_id", shopId!)
         .order("scheduled_at", { ascending: true });
       if (error) throw error;

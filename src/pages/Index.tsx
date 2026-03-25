@@ -55,7 +55,7 @@ function C({ children, className, onClick }: {
 }) {
   return (
     <div
-      className={cn("bg-card border border-border rounded-xl p-[14px]", className)}
+      className={cn("bg-card border border-border rounded-[14px] p-[18px] hover:bg-card/80 hover:border-border/80 transition-all", className)}
       onClick={onClick}
     >
       {children}
@@ -67,8 +67,8 @@ function C({ children, className, onClick }: {
 function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{left}</p>
-      {right && <div className="text-[10px] text-muted-foreground">{right}</div>}
+      <p className="text-[11px] font-normal text-muted-foreground uppercase tracking-[0.1em]">{left}</p>
+      {right && <div className="text-[11px] text-muted-foreground font-light">{right}</div>}
     </div>
   );
 }
@@ -402,13 +402,13 @@ export default function Index() {
                   <kpi.icon className={cn("h-3.5 w-3.5", kpi.iconColor)} strokeWidth={2} />
                 </div>
               </div>
-              <p className="text-[20px] font-extralight text-foreground leading-none tracking-tight">
+              <p className="text-[20px] font-extralight text-foreground leading-none tracking-tight tabular-nums">
                 {mask(kpi.value)}
               </p>
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-[0.1em] mt-1.5">
+              <p className="text-[10px] font-light text-muted-foreground mt-0.5">
                 {kpi.label}
               </p>
-              <span className={cn("inline-block mt-2 text-[10px] font-semibold rounded-full px-2 py-0.5", kpi.badgeColor)}>
+              <span className={cn("inline-block mt-1.5 text-[9px] font-normal rounded-[5px] px-1.5 py-0.5", kpi.badgeColor)}>
                 {kpi.badge}
               </span>
             </C>
@@ -896,38 +896,38 @@ export default function Index() {
                     <span className="text-[10px] text-muted-foreground">Criar novo plano</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-foreground">12</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">assinantes ativos</p></div>
-                  <div><span className="text-lg font-light text-success">R$ 2.966</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">receita recorrente/mês</p></div>
-                  <div><span className="text-lg font-light text-foreground">92%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de retenção</p></div>
+                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border">
+                  <div><span className="text-[16px] font-extralight text-foreground">12</span><p className="text-[9px] font-light text-muted-foreground">assinantes ativos</p></div>
+                  <div><span className="text-[16px] font-extralight text-success">R$ 2.966</span><p className="text-[9px] font-light text-muted-foreground">receita recorrente/mês</p></div>
+                  <div><span className="text-[16px] font-extralight text-foreground">92%</span><p className="text-[9px] font-light text-muted-foreground">taxa de retenção</p></div>
                 </div>
               </C>
 
               {/* Clientes com plano ativo */}
               <C className="col-span-6 flex flex-col">
                 <CH left="Clientes com plano ativo" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-1.5">
                   {[
-                    { initials: "RM", name: "Ricardo Mendes", plan: "Plano Básico · desde jan/26", used: 3, total: 4, color: "bg-success" },
-                    { initials: "FL", name: "Fernanda Lima", plan: "Plano Premium · desde fev/26", used: 2, total: 5, color: "bg-primary" },
-                    { initials: "CO", name: "Carlos Oliveira", plan: "Plano Básico · desde mar/26", used: 1, total: 4, color: "bg-primary" },
-                    { initials: "AB", name: "Ana Beatriz", plan: "Plano Frota · desde jan/26", used: 8, total: 8, color: "bg-success" },
-                    { initials: "BF", name: "Bruno Ferreira", plan: "Plano Premium · desde fev/26", used: 3, total: 5, color: "bg-primary" },
-                    { initials: "MV", name: "Marcos Vinícius", plan: "Plano Básico · desde mar/26", used: 2, total: 4, color: "bg-primary" },
+                    { initials: "RM", name: "Ricardo Mendes", plan: "Plano Básico · desde jan/26", used: 3, total: 4 },
+                    { initials: "FL", name: "Fernanda Lima", plan: "Plano Premium · desde fev/26", used: 2, total: 5 },
+                    { initials: "CO", name: "Carlos Oliveira", plan: "Plano Básico · desde mar/26", used: 1, total: 4 },
+                    { initials: "AB", name: "Ana Beatriz", plan: "Plano Frota · desde jan/26", used: 8, total: 8 },
+                    { initials: "BF", name: "Bruno Ferreira", plan: "Plano Premium · desde fev/26", used: 3, total: 5 },
+                    { initials: "MV", name: "Marcos Vinícius", plan: "Plano Básico · desde mar/26", used: 2, total: 4 },
                   ].map((c) => (
-                    <div key={c.initials} className="flex items-center gap-2.5">
+                    <div key={c.initials} className="flex items-center gap-2 rounded-lg bg-secondary/40 border border-border/40 p-2 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
                       <Avatar className="h-7 w-7 shrink-0">
-                        <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{c.initials}</AvatarFallback>
+                        <AvatarFallback className="bg-secondary text-muted-foreground text-[9px] font-normal">{c.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
-                        <p className="text-[9px] text-muted-foreground">{c.plan}</p>
+                        <p className="text-[12px] font-normal text-foreground truncate">{c.name}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground">{c.plan}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <div className="w-16 h-1.5 bg-secondary rounded-full overflow-hidden">
+                        <div className="w-[60px] h-1 bg-border rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${c.used === c.total ? "bg-success" : "bg-primary/60"}`} style={{ width: `${(c.used / c.total) * 100}%` }} />
                         </div>
-                        <span className="text-[10px] text-muted-foreground w-12 text-right">
+                        <span className="text-[10px] font-light text-muted-foreground tabular-nums w-16 text-right">
                           {c.used}/{c.total} usadas{c.used === c.total && " ✓"}
                         </span>
                       </div>
@@ -943,52 +943,52 @@ export default function Index() {
               {/* CRM de retorno */}
               <C className="col-span-6 flex flex-col">
                 <CH left="CRM de retorno" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
-                <div className="flex-1 space-y-0 divide-y divide-border/30">
+                <div className="flex-1 space-y-1.5">
                   {[
                     { name: "Pedro Henrique", days: 47, plate: "JKL-3M56", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
                     { name: "Camila Santos", days: 33, plate: "NOP-7Q89", risk: "Atenção", riskColor: "bg-warning/15 text-warning border-warning/20" },
                     { name: "Lucas Martins", days: 62, plate: "RST-1U23", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
                   ].map((c) => (
-                    <div key={c.name} className="flex items-center gap-3 py-3 first:pt-0">
+                    <div key={c.name} className="flex items-center gap-3 rounded-[10px] bg-secondary/40 border border-border/40 p-2.5 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground">{c.name}</p>
-                        <p className="text-[9px] text-muted-foreground">Última visita: {c.days} dias · {c.plate}</p>
+                        <p className="text-[12px] font-normal text-foreground">{c.name}</p>
+                        <p className="text-[10px] font-light text-muted-foreground tracking-wide">Última visita: {c.days} dias · {c.plate}</p>
                       </div>
-                      <Badge variant="outline" className={`text-[9px] px-2 py-0.5 ${c.riskColor} shrink-0`}>{c.risk}</Badge>
-                      <span className="text-[10px] text-primary cursor-pointer hover:underline shrink-0">Enviar msg →</span>
+                      <span className={cn("text-[10px] font-normal px-2.5 py-1 rounded-full shrink-0", c.riskColor)}>{c.risk}</span>
+                      <button className="text-[10px] font-light text-muted-foreground hover:text-foreground hover:bg-secondary/60 px-2 py-1 rounded-md transition-all shrink-0">Enviar msg →</button>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-destructive">5</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 30+ dias</p></div>
-                  <div><span className="text-lg font-light text-warning">3</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">inativos 15-30 dias</p></div>
-                  <div><span className="text-lg font-light text-success">68%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de reativação</p></div>
+                <div className="flex items-center gap-5 mt-auto pt-3.5 border-t border-border">
+                  <div><span className="text-[18px] font-extralight text-destructive">5</span><p className="text-[10px] font-light text-muted-foreground">inativos 30+ dias</p></div>
+                  <div><span className="text-[18px] font-extralight text-warning">3</span><p className="text-[10px] font-light text-muted-foreground">inativos 15-30 dias</p></div>
+                  <div><span className="text-[18px] font-extralight text-success">68%</span><p className="text-[10px] font-light text-muted-foreground">taxa de reativação</p></div>
                 </div>
               </C>
 
               {/* Pós-venda automático */}
               <C className="col-span-6 flex flex-col">
                 <CH left="Pós-venda automático" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">configurar →</span>} />
-                <div className="flex-1 space-y-3">
+                <div className="flex-1 space-y-2.5">
                   {[
                     { icon: <CheckCircle2 className="h-4 w-4" />, iconBg: "bg-success/15 text-success", title: "Pesquisa de satisfação", desc: "Enviada 24h após o serviço via WhatsApp", status: "Ativo" },
                     { icon: <MessageSquare className="h-4 w-4" />, iconBg: "bg-blue-500/15 text-blue-400", title: "Pedido de avaliação Google", desc: "Enviado se nota ≥ 4 estrelas", status: "Ativo" },
                     { icon: <AlertTriangle className="h-4 w-4" />, iconBg: "bg-warning/15 text-warning", title: "Alerta nota baixa", desc: "Notifica o dono se nota ≤ 2", status: "Ativo" },
                   ].map((a) => (
-                    <div key={a.title} className="flex items-center gap-3 rounded-lg border border-border/40 p-3">
-                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${a.iconBg}`}>{a.icon}</div>
+                    <div key={a.title} className="flex items-center gap-3 rounded-[11px] bg-secondary/40 border border-border/40 p-3.5">
+                      <div className={`h-9 w-9 rounded-[9px] flex items-center justify-center shrink-0 ${a.iconBg}`}>{a.icon}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground">{a.title}</p>
-                        <p className="text-[9px] text-muted-foreground">{a.desc}</p>
+                        <p className="text-[13px] font-normal text-foreground">{a.title}</p>
+                        <p className="text-[10px] font-extralight text-muted-foreground">{a.desc}</p>
                       </div>
-                      <span className="text-[10px] font-semibold text-success shrink-0">{a.status}</span>
+                      <span className="text-[12px] font-light text-success shrink-0">{a.status}</span>
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 mt-auto pt-3 border-t border-border/30">
-                  <div><span className="text-lg font-light text-foreground">4.7</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">nota média</p></div>
-                  <div><span className="text-lg font-light text-foreground">89%</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">taxa de resposta</p></div>
-                  <div><span className="text-lg font-light text-success">14</span><p className="text-[8px] text-muted-foreground uppercase tracking-wider">avaliações Google este mês</p></div>
+                <div className="flex items-center gap-5 mt-auto pt-3.5 border-t border-border">
+                  <div><span className="text-[18px] font-extralight text-foreground">4.7</span><p className="text-[10px] font-light text-muted-foreground">nota média</p></div>
+                  <div><span className="text-[18px] font-extralight text-foreground">89%</span><p className="text-[10px] font-light text-muted-foreground">taxa de resposta</p></div>
+                  <div><span className="text-[18px] font-extralight text-success">14</span><p className="text-[10px] font-light text-muted-foreground">avaliações Google este mês</p></div>
                 </div>
               </C>
             </motion.div>
