@@ -865,23 +865,30 @@ export default function Index() {
                 <CH left="Performance dos técnicos" right="este mês" />
                 <div className="flex-1 space-y-3">
                   {[
-                    { initials: "JC", name: "João Carlos", services: 24, rating: 4.8, pct: 100 },
-                    { initials: "MS", name: "Marcos Silva", services: 19, rating: 4.6, pct: 79 },
-                    { initials: "RL", name: "Rafael Lima", services: 15, rating: 4.3, pct: 63 },
-                    { initials: "AP", name: "André Pereira", services: 11, rating: 4.9, pct: 46 },
+                    { initials: "JC", name: "João Carlos", role: "Polimento / Vitrificação", services: 24, rating: 4.8, pct: 100 },
+                    { initials: "MS", name: "Marcos Silva", role: "Lavagem / Higienização", services: 19, rating: 4.6, pct: 79 },
+                    { initials: "RL", name: "Rafael Lima", role: "Lavagem geral", services: 15, rating: 4.3, pct: 63 },
+                    { initials: "AP", name: "André Pereira", role: "Detalhamento", services: 11, rating: 4.9, pct: 46 },
                   ].map((t) => (
                     <div key={t.initials} className="flex items-center gap-2.5">
                       <Avatar className="h-7 w-7 shrink-0">
                         <AvatarFallback className="bg-primary/10 text-primary text-[9px] font-bold">{t.initials}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center justify-between mb-0.5">
                           <p className="text-[11px] font-semibold text-foreground truncate">{t.name}</p>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[10px] text-muted-foreground">{maskNum(t.services)} serv.</span>
-                            <span className="text-[10px] font-semibold text-warning">★ {t.rating}</span>
+                          <div className="flex items-center gap-3 shrink-0">
+                            <div className="text-center">
+                              <span className="text-[11px] font-semibold text-foreground">{maskNum(t.services)}</span>
+                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">serviços</p>
+                            </div>
+                            <div className="text-center">
+                              <span className="text-[11px] font-semibold text-foreground">{t.rating}</span>
+                              <p className="text-[8px] uppercase tracking-wider text-muted-foreground">avaliação</p>
+                            </div>
                           </div>
                         </div>
+                        <p className="text-[9px] text-muted-foreground mb-1.5">{t.role}</p>
                         <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
                           <div className="h-full bg-primary/60 rounded-full" style={{ width: `${t.pct}%` }} />
                         </div>
@@ -896,11 +903,11 @@ export default function Index() {
                 <CH left="Top clientes" right="este mês" />
                 <div className="flex-1 divide-y divide-border/50">
                   {[
-                    { initials: "RM", name: "Ricardo Mendes", visits: 6, spent: "R$ 2.840" },
-                    { initials: "FL", name: "Fernanda Lima", visits: 4, spent: "R$ 1.920" },
-                    { initials: "CO", name: "Carlos Oliveira", visits: 3, spent: "R$ 1.450" },
-                    { initials: "AB", name: "Ana Beatriz", visits: 3, spent: "R$ 1.200" },
-                    { initials: "BF", name: "Bruno Ferreira", visits: 2, spent: "R$ 980" },
+                    { initials: "RM", name: "Ricardo Mendes", visits: 3, spent: "R$ 880" },
+                    { initials: "FL", name: "Fernanda Lima", visits: 4, spent: "R$ 600" },
+                    { initials: "CO", name: "Carlos Oliveira", visits: 2, spent: "R$ 280" },
+                    { initials: "BF", name: "Bruno Ferreira", visits: 1, spent: "R$ 150" },
+                    { initials: "NS", name: "Nikolas Souza", visits: 1, spent: "R$ 120" },
                   ].map((c) => (
                     <div key={c.initials} className="flex items-center gap-2.5 py-2 first:pt-0 last:pb-0">
                       <Avatar className="h-7 w-7 shrink-0">
@@ -908,7 +915,7 @@ export default function Index() {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-[11px] font-semibold text-foreground truncate">{c.name}</p>
-                        <p className="text-[10px] text-muted-foreground">{c.visits} visitas</p>
+                        <p className="text-[10px] text-muted-foreground">{c.visits} {c.visits === 1 ? "visita" : "visitas"}</p>
                       </div>
                       <span className="text-[12px] font-semibold text-primary shrink-0">{mask(c.spent)}</span>
                     </div>
