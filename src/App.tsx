@@ -79,6 +79,7 @@ const AppRoutes = () => (
     <Route path="/team" element={<ProtectedRoute><OwnerRoute><Team /></OwnerRoute></ProtectedRoute>} />
     <Route path="/financial" element={<ProtectedRoute><OwnerRoute><Financial /></OwnerRoute></ProtectedRoute>} />
     <Route path="/financeiro" element={<ProtectedRoute><OwnerRoute><FinanceiroPage /></OwnerRoute></ProtectedRoute>} />
+    <Route path="/oportunidades" element={<ProtectedRoute><OwnerRoute><OportunidadesPage /></OwnerRoute></ProtectedRoute>} />
     <Route path="/whatsapp" element={<ProtectedRoute><OwnerRoute><WhatsApp /></OwnerRoute></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
     {/* PUBLIC — sem ProtectedRoute */}
