@@ -943,19 +943,19 @@ export default function Index() {
               {/* CRM de retorno */}
               <C className="col-span-6 flex flex-col">
                 <CH left="CRM de retorno" right={<span className="text-[10px] text-primary cursor-pointer hover:underline">ver todos →</span>} />
-                <div className="flex-1 space-y-0 divide-y divide-border/30">
+                <div className="flex-1 space-y-1.5">
                   {[
                     { name: "Pedro Henrique", days: 47, plate: "JKL-3M56", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
                     { name: "Camila Santos", days: 33, plate: "NOP-7Q89", risk: "Atenção", riskColor: "bg-warning/15 text-warning border-warning/20" },
                     { name: "Lucas Martins", days: 62, plate: "RST-1U23", risk: "Risco alto", riskColor: "bg-destructive/15 text-destructive border-destructive/20" },
                   ].map((c) => (
-                    <div key={c.name} className="flex items-center gap-3 py-3 first:pt-0">
+                    <div key={c.name} className="flex items-center gap-3 rounded-[10px] bg-secondary/40 border border-border/40 p-2.5 hover:bg-secondary/60 hover:border-border transition-all cursor-pointer">
                       <div className="flex-1 min-w-0">
-                        <p className="text-[11px] font-semibold text-foreground">{c.name}</p>
-                        <p className="text-[9px] text-muted-foreground">Última visita: {c.days} dias · {c.plate}</p>
+                        <p className="text-[12px] font-normal text-foreground">{c.name}</p>
+                        <p className="text-[10px] font-light text-muted-foreground tracking-wide">Última visita: {c.days} dias · {c.plate}</p>
                       </div>
-                      <Badge variant="outline" className={`text-[9px] px-2 py-0.5 ${c.riskColor} shrink-0`}>{c.risk}</Badge>
-                      <span className="text-[10px] text-primary cursor-pointer hover:underline shrink-0">Enviar msg →</span>
+                      <span className={cn("text-[10px] font-normal px-2.5 py-1 rounded-full shrink-0", c.riskColor)}>{c.risk}</span>
+                      <button className="text-[10px] font-light text-muted-foreground hover:text-foreground hover:bg-secondary/60 px-2 py-1 rounded-md transition-all shrink-0">Enviar msg →</button>
                     </div>
                   ))}
                 </div>
