@@ -138,14 +138,52 @@ export default function Sidebar() {
       </nav>
 
       {/* ── Footer ── */}
-      <div className="border-t border-border shrink-0 p-2 space-y-1">
-        <SidebarButton
-          collapsed={collapsed}
-          icon={isDark ? <Moon style={{ width: 19, height: 19 }} strokeWidth={1.5} /> : <Sun style={{ width: 19, height: 19 }} strokeWidth={1.5} />}
-          label={isDark ? "Tema escuro" : "Tema claro"}
-          onClick={() => setIsDark(!isDark)}
-          tooltipLabel="Alternar tema"
-        />
+      <div className="border-t border-border shrink-0 space-y-2 pt-3">
+        {/* Theme toggle */}
+        {!collapsed ? (
+          <div
+            className="flex items-center justify-between rounded-[11px] border border-border bg-muted/50"
+            style={{ padding: "12px 14px" }}
+          >
+            <span className="text-[12px] font-light text-muted-foreground">Tema</span>
+            <button
+              onClick={() => setIsDark(!isDark)}
+              className={cn(
+                "relative flex items-center rounded-[13px] transition-colors duration-300",
+                isDark ? "bg-foreground/20" : "bg-foreground/10"
+              )}
+              style={{ width: 48, height: 26 }}
+            >
+              <span
+                className={cn(
+                  "absolute flex items-center justify-center rounded-full bg-background shadow-sm transition-transform duration-300"
+                )}
+                style={{
+                  width: 20, height: 20, top: 3, left: 3,
+                  transform: isDark ? "translateX(0)" : "translateX(22px)",
+                }}
+              >
+                {isDark ? (
+                  <Moon className="h-3 w-3 text-foreground" />
+                ) : (
+                  <Sun className="h-3 w-3 text-foreground" />
+                )}
+              </span>
+            </button>
+          </div>
+        ) : (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setIsDark(!isDark)}
+                className="flex h-9 w-9 mx-auto items-center justify-center rounded-[11px] text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+              >
+                {isDark ? <Moon style={{ width: 19, height: 19 }} strokeWidth={1.5} /> : <Sun style={{ width: 19, height: 19 }} strokeWidth={1.5} />}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="text-xs">Alternar tema</TooltipContent>
+          </Tooltip>
+        )}
 
         <SidebarButton
           collapsed={collapsed}
@@ -158,22 +196,25 @@ export default function Sidebar() {
 
         {/* User card */}
         <div className={cn(
-          "flex items-center gap-2.5 rounded-[11px] p-2 mt-1",
-          "bg-muted/50",
-          collapsed && "justify-center"
-        )}>
+          "flex items-center rounded-[12px] border border-border bg-muted/50",
+          collapsed ? "justify-center p-2" : "gap-3"
+        )}
+          style={collapsed ? undefined : { padding: 14 }}
+        >
           <div className={cn(
-            "h-7 w-7 shrink-0 flex items-center justify-center rounded-md text-[9px] font-normal",
-            "bg-background border border-border text-muted-foreground"
-          )}>
+            "shrink-0 flex items-center justify-center rounded-full text-[13px] font-medium",
+            "bg-background border border-border text-foreground"
+          )}
+            style={{ width: 36, height: 36 }}
+          >
             {initials}
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-normal truncate leading-tight text-foreground">
+              <p className="text-[13px] font-normal truncate leading-tight text-foreground">
                 {profile?.full_name ?? "Usuário"}
               </p>
-              <p className="text-[9px] font-light uppercase tracking-wider leading-tight text-muted-foreground">
+              <p className="text-[10px] font-light leading-tight text-muted-foreground" style={{ letterSpacing: "0.04em" }}>
                 {role === "owner" ? "proprietário" : "funcionário"}
               </p>
             </div>
@@ -181,7 +222,7 @@ export default function Sidebar() {
           {!collapsed && (
             <button
               onClick={async () => { await signOut(); navigate("/auth"); }}
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md hover:bg-muted transition-colors"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md hover:bg-muted transition-colors"
             >
               <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
