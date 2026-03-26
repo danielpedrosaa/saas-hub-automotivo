@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 // ── Colour swatches predefined ─────────────────────────────────────────────
 const PRESET_COLORS = [
-  { hex: "#C8FF00", label: "Lima (padrão)" },
+  { hex: "#C8FF00", label: "Lima" },
   { hex: "#FF5300", label: "Laranja Signal" },
   { hex: "#3b82f6", label: "Azul" },
   { hex: "#8b5cf6", label: "Violeta" },
@@ -44,11 +44,16 @@ function hexLuminosity(hex: string): number {
 }
 
 // ── Apply primary CSS variable globally ───────────────────────────────────
-function applyPrimary(hex: string) {
+function applyPrimary(hex: string | null) {
+  if (!hex) {
+    // Reset to CSS defaults (monochromatic)
+    document.documentElement.style.removeProperty("--primary");
+    document.documentElement.style.removeProperty("--primary-foreground");
+    return;
+  }
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
-  // Convert RGB to HSL for CSS variable
   const rn = r / 255, gn = g / 255, bn = b / 255;
   const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
   let h = 0, s = 0, l = (max + min) / 2;
@@ -63,7 +68,6 @@ function applyPrimary(hex: string) {
   }
   const hsl = `${Math.round(h * 360)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%`;
   document.documentElement.style.setProperty("--primary", hsl);
-  // foreground: black if light color, white if dark
   const fg = l > 0.5 ? "0 0% 0%" : "0 0% 100%";
   document.documentElement.style.setProperty("--primary-foreground", fg);
 }
@@ -99,8 +103,8 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
   // ── Color state ───────────────────────────────────────────────────────
-  const [primaryColor, setPrimaryColor] = useState("#C8FF00");
-  const [hexInput, setHexInput]         = useState("#C8FF00");
+  const [primaryColor, setPrimaryColor] = useState<string | null>(null);
+  const [hexInput, setHexInput]         = useState("");
   const [colorError, setColorError]     = useState("");
 
   // Populate form from shop data
@@ -118,9 +122,9 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
     setNumero(shopAny.number || "");
     setComplemento(shopAny.complement || "");
 
-    const savedColor = shopAny.primary_color || "#C8FF00";
+    const savedColor = shopAny.primary_color || null;
     setPrimaryColor(savedColor);
-    setHexInput(savedColor);
+    setHexInput(savedColor || "");
     applyPrimary(savedColor);
 
     if (shopAny.logo_url) setLogoPreview(shopAny.logo_url);
@@ -222,7 +226,7 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
           street: rua || null,
           number: numero || null,
           complement: complemento || null,
-          primary_color: primaryColor,
+          primary_color: primaryColor || null,
           logo_url: logoUrl || null,
         })
         .eq("id", shopId);
@@ -301,7 +305,7 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
         {/* Swatches grid */}
         <div className="grid grid-cols-10 gap-2">
           {PRESET_COLORS.map(({ hex, label }) => {
-            const active = primaryColor.toUpperCase() === hex.toUpperCase();
+            const active = primaryColor ? primaryColor.toUpperCase() === hex.toUpperCase() : false;
             return (
               <button
                 key={hex}
@@ -337,7 +341,12 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
             size="sm"
             variant="ghost"
             className="text-xs text-muted-foreground hover:text-foreground h-9 px-3 shrink-0"
-            onClick={() => selectColor("#C8FF00")}
+            onClick={() => {
+              setColorError("");
+              setPrimaryColor(null);
+              setHexInput("");
+              applyPrimary(null);
+            }}
           >
             Restaurar padrão
           </Button>
