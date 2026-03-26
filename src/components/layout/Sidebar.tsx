@@ -85,24 +85,34 @@ export default function Sidebar() {
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
       {/* ── Logo + Collapse ── */}
-      <div className="flex items-center justify-between h-[52px] px-3 border-b border-border shrink-0">
-        {!collapsed && (
-          <img
-            src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
-            alt="NovaCar"
-            className="h-[20px] w-auto object-contain"
-          />
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
-            "text-muted-foreground hover:text-foreground hover:bg-muted",
-            collapsed && "mx-auto"
+      <div className="shrink-0" style={{ padding: collapsed ? "4px 0 28px" : "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
+        <div className="flex items-center justify-between">
+          {collapsed ? (
+            <div
+              className="mx-auto flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
+              style={{ width: 34, height: 34 }}
+            >
+              NC
+            </div>
+          ) : (
+            <img
+              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
+              alt="NovaCar"
+              style={{ height: 28, width: "auto" }}
+              className="object-contain"
+            />
           )}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn(
+              "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
+              "text-muted-foreground hover:text-foreground hover:bg-muted",
+              collapsed && "mx-auto mt-2"
+            )}
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
 
       {/* ── Nav ── */}
