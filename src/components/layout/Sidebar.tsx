@@ -82,6 +82,7 @@ export default function Sidebar() {
         "bg-card",
         w,
       )}
+      style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
       {/* ── Logo + Collapse ── */}
       <div className="flex items-center justify-between h-[52px] px-3 border-b border-border shrink-0">
