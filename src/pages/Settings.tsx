@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 // ── Colour swatches predefined ─────────────────────────────────────────────
 const PRESET_COLORS = [
-  { hex: "#C8FF00", label: "Lima (padrão)" },
+  { hex: "#C8FF00", label: "Lima" },
   { hex: "#FF5300", label: "Laranja Signal" },
   { hex: "#3b82f6", label: "Azul" },
   { hex: "#8b5cf6", label: "Violeta" },
