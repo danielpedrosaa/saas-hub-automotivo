@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Sidebar from "./layout/Sidebar";
-import Header from "./layout/Header";
+
 import MobileBottomNav from "./layout/MobileBottomNav";
 import { cn } from "@/lib/utils";
 
@@ -52,7 +52,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       >
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto px-6 py-6">
-            <Header />
             {children}
           </div>
         </main>

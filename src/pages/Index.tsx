@@ -325,10 +325,10 @@ export default function Index() {
               <Plus className="h-3.5 w-3.5 mr-1.5" strokeWidth={2} /> Nova OS
             </Button>
             <Button variant="outline" onClick={() => navigate("/agenda")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
-              Agendamento
+              <CalendarDays className="h-3.5 w-3.5 mr-1.5" strokeWidth={2} /> Agendamento
             </Button>
             <Button variant="outline" onClick={() => navigate("/jobs")} className="h-9 text-xs border border-border hover:border-primary/30 text-muted-foreground hover:text-foreground font-light rounded-[10px] px-4">
-              Orçamento
+              <DollarSign className="h-3.5 w-3.5 mr-1.5" strokeWidth={2} /> Orçamento
             </Button>
             {/* Eye toggle */}
             <button
