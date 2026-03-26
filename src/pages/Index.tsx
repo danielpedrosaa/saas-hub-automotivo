@@ -29,8 +29,8 @@ type JobStatus = Enums<"job_status">;
 const statusConfig: Record<JobStatus, { label: string; color: string; bg: string }> = {
   waiting:     { label: "Aguardando",  color: "text-warning",  bg: "bg-warning/15 border-warning/20" },
   in_progress: { label: "Em execução", color: "text-primary",  bg: "bg-primary/15 border-primary/20" },
-  done:        { label: "Concluído",   color: "text-success",  bg: "bg-success/15 border-success/20" },
-  delivered:   { label: "Entregue",    color: "text-success",  bg: "bg-success/15 border-success/20" },
+  done:        { label: "Finalizado",  color: "text-success",  bg: "bg-success/15 border-success/20" },
+  delivered:   { label: "Entregue",    color: "text-muted-foreground", bg: "bg-muted border-border" },
 };
 
 // Payment method palette
@@ -232,7 +232,7 @@ export default function Index() {
                 {[
                   { label: "Aguardando", value: waiting, icon: Clock, icolor: "text-warning", bg: "bg-warning/10" },
                   { label: "Execução",   value: inProgress, icon: Car, icolor: "text-primary", bg: "bg-primary/10" },
-                  { label: "Concluídos", value: doneToday, icon: CheckCircle2, icolor: "text-success", bg: "bg-success/10" },
+                  { label: "Finalizados", value: doneToday, icon: CheckCircle2, icolor: "text-success", bg: "bg-success/10" },
                 ].map(({ label, value, icon: Icon, icolor, bg }) => (
                   <button key={label} onClick={() => navigate("/jobs")} className="bg-card border border-border rounded-xl p-3 flex flex-col items-center gap-2 text-center">
                     <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", bg)}>

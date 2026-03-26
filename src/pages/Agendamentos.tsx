@@ -42,7 +42,7 @@ interface MockAppointment {
 const statusCfg: Record<AppointmentStatus, { label: string; bg: string; text: string; border: string }> = {
   confirmed: { label: "Confirmado", bg: "bg-info/15", text: "text-info", border: "border-info/30" },
   pending: { label: "Pendente", bg: "bg-warning/15", text: "text-warning", border: "border-warning/30" },
-  done: { label: "Concluído", bg: "bg-success/15", text: "text-success", border: "border-success/30" },
+  done: { label: "Finalizado", bg: "bg-success/15", text: "text-success", border: "border-success/30" },
   cancelled: { label: "Cancelado", bg: "bg-destructive/15", text: "text-destructive", border: "border-destructive/30" },
 };
 
