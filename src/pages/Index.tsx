@@ -499,30 +499,36 @@ export default function Index() {
               <C className="flex flex-col">
                 <CH left="Pátio agora" />
                 <div className="flex-1">
-                  <div className="grid grid-cols-5 grid-rows-2 gap-1.5">
+                  <div className="grid grid-cols-5 gap-1.5">
                     {Array.from({ length: 10 }).map((_, i) => {
                       const occupied = i < 3;
                       return (
                         <div
                           key={i}
                           className={cn(
-                            "aspect-square rounded-lg flex items-center justify-center",
+                            "aspect-square rounded-md flex items-center justify-center",
                             occupied
-                              ? "bg-secondary border border-border"
-                              : "border border-dashed border-border/50"
+                              ? "bg-muted border border-border"
+                              : "border border-dashed border-border/40"
                           )}
                         >
-                          {occupied && <Car className="h-4 w-4 text-muted-foreground" />}
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className={cn("text-muted-foreground", !occupied && "opacity-20")}>
+                            <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+                            <circle cx="7" cy="17" r="2" />
+                            <path d="M9 17h6" />
+                            <circle cx="17" cy="17" r="2" />
+                          </svg>
                         </div>
                       );
                     })}
                   </div>
                 </div>
                 <div className="mt-auto pt-3 border-t border-border/50">
-                  <p className="text-[16px] font-extralight text-foreground leading-none">
-                    <span className="font-semibold">3</span> / 10 vagas
+                  <p className="text-foreground leading-none">
+                    <span className="text-[24px] font-extralight">3</span>
+                    <span className="text-[13px] text-muted-foreground ml-1">/ 10 vagas</span>
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">7 vagas disponíveis</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">7 vagas disponíveis</p>
                 </div>
               </C>
 
