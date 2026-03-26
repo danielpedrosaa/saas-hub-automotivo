@@ -85,40 +85,23 @@ export default function Sidebar() {
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
       {/* ── Logo + Collapse ── */}
-      <div className="shrink-0" style={{ padding: "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
+      <div className="shrink-0" style={{ padding: collapsed ? "4px 0 28px" : "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
         <div className="flex items-center justify-between">
-          <div className="relative flex-1 min-w-0">
-            {/* Expanded: full logo */}
-            <img
-              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
-              alt="NovaCar"
-              style={{
-                height: 36,
-                width: "auto",
-                maxWidth: "80%",
-                transition: "opacity 0.1s ease",
-                opacity: collapsed ? 0 : 1,
-                position: collapsed ? "absolute" : "relative",
-                pointerEvents: collapsed ? "none" : "auto",
-              }}
-              className="object-contain"
-            />
-            {/* Collapsed: favicon / initials */}
+          {collapsed ? (
             <div
-              className="mx-auto flex items-center justify-center rounded-[8px] bg-muted text-[13px] font-medium text-foreground"
-              style={{
-                width: 32,
-                height: 32,
-                transition: "opacity 0.1s ease",
-                opacity: collapsed ? 1 : 0,
-                position: collapsed ? "relative" : "absolute",
-                pointerEvents: collapsed ? "auto" : "none",
-                top: collapsed ? undefined : 0,
-              }}
+              className="mx-auto flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
+              style={{ width: 34, height: 34 }}
             >
               NC
             </div>
-          </div>
+          ) : (
+            <img
+              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
+              alt="NovaCar"
+              style={{ height: 28, width: "auto" }}
+              className="object-contain"
+            />
+          )}
           <button
             onClick={() => setCollapsed(!collapsed)}
             className={cn(
