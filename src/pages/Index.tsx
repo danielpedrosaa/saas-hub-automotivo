@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useJobs, useAppointments, useTeam } from "@/hooks/useShopData";
 import { useShop } from "@/hooks/useShopData";
@@ -70,6 +70,136 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
       <p className="text-[11px] font-light text-muted-foreground uppercase tracking-[0.1em]">{left}</p>
       {right && <div className="text-[11px] text-muted-foreground font-extralight">{right}</div>}
     </div>
+  );
+}
+
+// ── Resumo Financeiro (interactive) ─────────────────────────────────────────
+type FinancePeriod = "Diário" | "Semanal" | "Mensal";
+
+const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
+  "Diário": {
+    labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+    values: [120, 580, 430, 690, 510, 780, 340],
+  },
+  "Semanal": {
+    labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
+    values: [2100, 3400, 2800, 3150],
+  },
+  "Mensal": {
+    labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+    values: [8200, 9100, 7600, 10200, 9500, 11000, 8800, 9700, 10500, 11200, 9800, 10800],
+  },
+};
+
+function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navigate: (path: string) => void }) {
+  const [period, setPeriod] = useState<FinancePeriod>("Diário");
+  const data = financeData[period];
+  const maxVal = Math.max(...data.values, 1);
+
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  return (
+    <C className="col-span-6 flex flex-col">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
+        <div className="flex items-center gap-2">
+          <div className="flex bg-secondary rounded-lg overflow-hidden">
+            {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-light transition-colors",
+                  p === period
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+            detalhes <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+      </div>
+
+      {/* Entradas / Saídas */}
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
+          <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
+        </div>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
+          <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
+        </div>
+      </div>
+
+      {/* Faturas pendentes */}
+      <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
+        <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
+        <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
+      </div>
+
+      {/* Area chart label */}
+      <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">
+        Receita {period === "Diário" ? "semanal" : period === "Semanal" ? "mensal" : "anual"}
+      </p>
+
+      {/* Area chart */}
+      <div className="flex-1 min-h-[80px] relative">
+        <svg viewBox={`0 0 ${Math.max(data.labels.length - 1, 1) * 50} 80`} className="w-full h-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+          {(() => {
+            const w = Math.max(data.labels.length - 1, 1) * 50;
+            const pts = data.values.map((v, i) => {
+              const x = data.labels.length === 1 ? w / 2 : (i / (data.labels.length - 1)) * w;
+              const y = 75 - (v / maxVal) * 65;
+              return [x, y];
+            });
+            const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
+            const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},80 L${pts[0][0]},80 Z`;
+            return (
+              <>
+                <path d={area} fill="url(#areaGradFin)" />
+                <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
+                {pts.map(([x, y], i) => (
+                  <g key={i}
+                    onMouseEnter={() => setHoveredIdx(i)}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                    className="cursor-crosshair"
+                  >
+                    <circle cx={x} cy={y} r="8" fill="transparent" />
+                    <circle cx={x} cy={y} r={hoveredIdx === i ? 4.5 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+                    {hoveredIdx === i && (
+                      <foreignObject x={x - 35} y={y - 26} width="70" height="20">
+                        <div className="bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
+                          R$ {data.values[i].toLocaleString("pt-BR")}
+                        </div>
+                      </foreignObject>
+                    )}
+                  </g>
+                ))}
+              </>
+            );
+          })()}
+        </svg>
+      </div>
+      <div className="flex justify-between mt-1">
+        {data.labels.map((d) => (
+          <span key={d} className="text-[9px] text-muted-foreground">{d}</span>
+        ))}
+      </div>
+    </C>
   );
 }
 
@@ -535,15 +665,19 @@ export default function Index() {
               {/* Orçamentos */}
               <C className="flex flex-col">
                 <CH left="Orçamentos" right="este mês" />
-                <div className="flex items-end gap-5">
+                <div className="flex-1 flex flex-col items-center justify-center gap-1">
+                  <p className="text-[40px] font-extralight text-foreground leading-none tabular-nums">{maskNum(8)}</p>
+                  <p className="text-[11px] text-muted-foreground font-light">orçamentos no mês</p>
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-3">
                   {[
                     { n: 2, label: "pendentes", color: "text-warning" },
                     { n: 5, label: "aprovados", color: "text-success" },
                     { n: 1, label: "recusados", color: "text-destructive" },
                   ].map((q) => (
-                    <div key={q.label}>
-                      <p className={cn("text-[28px] font-extralight leading-none", q.color)}>{maskNum(q.n)}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">{q.label}</p>
+                    <div key={q.label} className="text-center">
+                      <p className={cn("text-[22px] font-extralight leading-none", q.color)}>{maskNum(q.n)}</p>
+                      <p className="text-[9px] text-muted-foreground mt-1">{q.label}</p>
                     </div>
                   ))}
                 </div>
@@ -559,55 +693,48 @@ export default function Index() {
                 </div>
               </C>
 
-              {/* Resumo de vendas */}
+              {/* Resumo de vendas — por método de pagamento */}
               <C className="flex flex-col">
                 <CH left="Resumo de vendas" right={<span className="font-light text-foreground">{mask("R$ 2.320,00")}</span>} />
-                {/* Legend */}
-                <div className="flex flex-wrap gap-x-2 gap-y-0.5 mb-2">
+                {/* Bar chart by payment method */}
+                <div className="flex-1 flex items-end gap-1.5 min-h-[80px]">
                   {[
-                    { label: "Crédito", color: "#34d399" },
-                    { label: "Débito", color: "#d4a017" },
-                    { label: "Pix", color: "#2dd4bf" },
-                    { label: "Dinheiro", color: "#60a5fa" },
-                    { label: "Boleto", color: "#a78bfa" },
-                    { label: "Transf.", color: "#f87171" },
-                  ].map((l) => (
-                    <span key={l.label} className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
-                      {l.label}
-                    </span>
-                  ))}
-                </div>
-                {/* CSS bar chart */}
-                <div className="flex-1 flex items-end gap-1.5 min-h-[60px]">
-                  {[
-                    { day: "Seg", h: 45, color: "#a78bfa" },
-                    { day: "Ter", h: 70, color: "#34d399" },
-                    { day: "Qua", h: 55, color: "#d4a017" },
-                    { day: "Qui", h: 80, color: "#2dd4bf" },
-                    { day: "Sex", h: 60, color: "#60a5fa" },
-                    { day: "Sáb", h: 40, color: "#60a5fa" },
-                    { day: "Dom", h: 20, color: "#a78bfa" },
-                  ].map((b) => (
-                    <div key={b.day} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full rounded-t-sm transition-all"
-                        style={{ height: `${b.h}%`, backgroundColor: b.color, minHeight: 4 }}
-                      />
-                      <span className="text-[8px] text-muted-foreground">{b.day}</span>
-                    </div>
-                  ))}
+                    { label: "Crédito", value: 800, color: "#a78bfa" },
+                    { label: "Débito", value: 420, color: "#60a5fa" },
+                    { label: "Pix", value: 450, color: "#2dd4bf" },
+                    { label: "Dinheiro", value: 650, color: "#34d399" },
+                    { label: "Boleto", value: 0, color: "#fb923c" },
+                    { label: "Transf.", value: 0, color: "#f472b6" },
+                  ].map((b) => {
+                    const maxVal = 800;
+                    const hPct = maxVal > 0 ? (b.value / maxVal) * 100 : 0;
+                    return (
+                      <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
+                        <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                          {b.value > 0 ? `R$ ${b.value.toLocaleString("pt-BR")}` : "—"}
+                        </div>
+                        <div
+                          className="w-full rounded-t-sm transition-all hover:opacity-80 cursor-default"
+                          style={{ height: `${Math.max(hPct, 3)}%`, backgroundColor: b.color, minHeight: 4, opacity: b.value === 0 ? 0.15 : 1 }}
+                        />
+                        <span className="text-[7px] text-muted-foreground text-center leading-tight">{b.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
                 {/* Breakdown */}
                 <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
                   {[
-                    { label: "Crédito", value: "R$ 800,00", color: "#34d399" },
-                    { label: "Dinheiro", value: "R$ 650,00", color: "#60a5fa" },
+                    { label: "Crédito", value: "R$ 800,00", color: "#a78bfa" },
+                    { label: "Dinheiro", value: "R$ 650,00", color: "#34d399" },
                     { label: "Pix", value: "R$ 450,00", color: "#2dd4bf" },
-                    { label: "Débito", value: "R$ 420,00", color: "#d4a017" },
+                    { label: "Débito", value: "R$ 420,00", color: "#60a5fa" },
                   ].map((r) => (
                     <div key={r.label} className="flex items-center justify-between">
-                      <span className="text-[10px] text-muted-foreground">{r.label}</span>
+                      <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                        <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
+                        {r.label}
+                      </span>
                       <span className="text-[10px] font-light" style={{ color: r.color }}>{mask(r.value)}</span>
                     </div>
                   ))}
@@ -617,102 +744,37 @@ export default function Index() {
               {/* Tempo médio por serviço */}
               <C className="flex flex-col">
                 <CH left="Tempo médio por serviço" />
-                <div className="flex-1 flex items-end gap-2 min-h-[80px]">
+                <div className="flex-1 flex flex-col gap-2.5 min-h-[80px]">
                   {[
-                    { label: "Lavagem\nsimples", h: 30, time: "25 min" },
-                    { label: "Lavagem\ncompleta", h: 50, time: "45 min" },
-                    { label: "Higieni-\nzação", h: 65, time: "1h10" },
-                    { label: "Polimento", h: 80, time: "1h30" },
-                    { label: "Vitrifi-\ncação", h: 95, time: "2h15" },
-                  ].map((b) => (
-                    <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
-                      {/* Tooltip */}
-                      <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
-                        {b.time}
+                    { label: "Lavagem simples", time: "25 min", mins: 25 },
+                    { label: "Lavagem completa", time: "45 min", mins: 45 },
+                    { label: "Higienização", time: "1h10", mins: 70 },
+                    { label: "Polimento", time: "1h30", mins: 90 },
+                    { label: "Vitrificação", time: "2h15", mins: 135 },
+                  ].map((s) => {
+                    const pct = (s.mins / 135) * 100;
+                    return (
+                      <div key={s.label} className="flex items-center gap-2">
+                        <span className="text-[9px] text-muted-foreground w-[72px] shrink-0 text-right truncate">{s.label}</span>
+                        <div className="flex-1 h-[10px] bg-border/40 rounded-sm overflow-hidden relative group">
+                          <div
+                            className="h-full rounded-sm bg-muted-foreground/35 hover:bg-primary/50 transition-colors"
+                            style={{ width: `${pct}%` }}
+                          />
+                          <div className="absolute right-1 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-[8px] text-foreground font-light pointer-events-none">
+                            {s.time}
+                          </div>
+                        </div>
+                        <span className="text-[9px] text-muted-foreground w-[36px] shrink-0 tabular-nums">{s.time}</span>
                       </div>
-                      <div
-                        className="w-full rounded-t-sm bg-muted-foreground/30 hover:bg-primary/60 transition-colors cursor-default"
-                        style={{ height: `${b.h}%`, minHeight: 4 }}
-                      />
-                      <span className="text-[7px] text-muted-foreground text-center leading-tight whitespace-pre-line">{b.label}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </C>
             </motion.div>
 
-            {/* ── ROW 2.5: Financeiro + Oportunidades ─────────────────── */}
             <motion.div variants={item} className="grid grid-cols-12 gap-3">
-
-              {/* Resumo financeiro */}
-              <C className="col-span-6 flex flex-col">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
-                  <div className="flex items-center gap-2">
-                    <div className="flex bg-secondary rounded-lg overflow-hidden">
-                      {["Diário", "Semanal", "Mensal"].map((p) => (
-                        <button
-                          key={p}
-                          className={cn(
-                            "px-2.5 py-1 text-[10px] font-light transition-colors",
-                            p === "Diário"
-                              ? "bg-foreground text-background"
-                              : "text-muted-foreground hover:text-foreground"
-                          )}
-                        >
-                          {p}
-                        </button>
-                      ))}
-                    </div>
-                    <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
-                      detalhes <ChevronRight className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Entradas / Saídas */}
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <div className="bg-secondary/60 rounded-lg p-3">
-                    <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
-                    <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
-                    <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
-                  </div>
-                  <div className="bg-secondary/60 rounded-lg p-3">
-                    <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
-                    <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
-                    <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
-                  </div>
-                </div>
-
-                {/* Faturas pendentes */}
-                <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
-                  <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
-                  <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
-                </div>
-
-                {/* Receita semanal */}
-                <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">Receita semanal</p>
-                <div className="flex-1 min-h-[80px] relative">
-                  <svg viewBox="0 0 300 80" className="w-full h-full" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M0,40 L50,35 L100,30 L150,25 L200,20 L250,30 L300,55 L300,80 L0,80 Z" fill="url(#areaGrad)" />
-                    <polyline points="0,40 50,35 100,30 150,25 200,20 250,30 300,55" fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
-                    {[[0,40],[50,35],[100,30],[150,25],[200,20],[250,30],[300,55]].map(([x,y],i) => (
-                      <circle key={i} cx={x} cy={y} r="3" fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" />
-                    ))}
-                  </svg>
-                </div>
-                <div className="flex justify-between mt-1">
-                  {["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"].map((d) => (
-                    <span key={d} className="text-[9px] text-muted-foreground">{d}</span>
-                  ))}
-                </div>
-              </C>
+              <FinanceiroCard mask={mask} navigate={navigate} />
 
               {/* Oportunidades */}
               <C className="col-span-6 flex flex-col">
@@ -1000,6 +1062,9 @@ export default function Index() {
             </motion.div>
           </>
         )}
+
+        {/* Bottom spacing */}
+        <div className="h-16" />
       </motion.div>
     </AppLayout>
   );
