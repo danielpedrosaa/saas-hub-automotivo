@@ -803,32 +803,59 @@ export type Database = {
       shops: {
         Row: {
           address: string | null
+          cep: string | null
+          city: string | null
           cnpj: string | null
+          complement: string | null
           created_at: string
+          email: string | null
           id: string
           logo_url: string | null
           name: string
+          neighborhood: string | null
+          number: string | null
           phone: string | null
+          primary_color: string | null
+          state: string | null
+          street: string | null
           whatsapp: string | null
         }
         Insert: {
           address?: string | null
+          cep?: string | null
+          city?: string | null
           cnpj?: string | null
+          complement?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           logo_url?: string | null
           name: string
+          neighborhood?: string | null
+          number?: string | null
           phone?: string | null
+          primary_color?: string | null
+          state?: string | null
+          street?: string | null
           whatsapp?: string | null
         }
         Update: {
           address?: string | null
+          cep?: string | null
+          city?: string | null
           cnpj?: string | null
+          complement?: string | null
           created_at?: string
+          email?: string | null
           id?: string
           logo_url?: string | null
           name?: string
+          neighborhood?: string | null
+          number?: string | null
           phone?: string | null
+          primary_color?: string | null
+          state?: string | null
+          street?: string | null
           whatsapp?: string | null
         }
         Relationships: []
