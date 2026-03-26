@@ -15,6 +15,7 @@ import {
 export default function Sidebar() {
   const { pathname } = useLocation();
   const { role, profile, signOut } = useAuth();
+  const { data: shop } = useShop();
   const navigate = useNavigate();
 
   const [collapsed, setCollapsed] = useState(() => {
