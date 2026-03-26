@@ -231,7 +231,7 @@ export default function Index() {
               <motion.div variants={item} className="grid grid-cols-3 gap-2">
                 {[
                   { label: "Aguardando", value: waiting, icon: Clock, icolor: "text-warning", bg: "bg-warning/10" },
-                  { label: "Execução",   value: inProgress, icon: Car, icolor: "text-primary", bg: "bg-primary/10" },
+                  { label: "Execução",   value: inProgress, icon: Car, icolor: "text-info", bg: "bg-info/10" },
                   { label: "Finalizados", value: doneToday, icon: CheckCircle2, icolor: "text-success", bg: "bg-success/10" },
                 ].map(({ label, value, icon: Icon, icolor, bg }) => (
                   <button key={label} onClick={() => navigate("/jobs")} className="bg-card border border-border rounded-xl p-3 flex flex-col items-center gap-2 text-center">
