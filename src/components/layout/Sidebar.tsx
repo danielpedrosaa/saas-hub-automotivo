@@ -110,7 +110,7 @@ export default function Sidebar() {
       {/* ── Logo ── */}
       <div
         className="flex items-center justify-center border-b border-border shrink-0"
-        style={{ padding: "20px 16px", marginBottom: 12 }}
+        style={{ padding: "5px 16px 20px", marginBottom: 12 }}
       >
         {collapsed ? (
           <img
@@ -124,7 +124,7 @@ export default function Sidebar() {
             src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
             alt="NovaCar"
             className="block mx-auto object-contain"
-            style={{ height: 36, width: "auto", maxWidth: "80%" }}
+            style={{ height: 42, width: "auto", maxWidth: "85%" }}
           />
         )}
       </div>
