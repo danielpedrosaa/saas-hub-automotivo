@@ -75,6 +75,13 @@ export default function Sidebar() {
     ? profile.full_name.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()
     : "U";
 
+  const shopInitials = shop?.name
+    ? shop.name.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()
+    : "NC";
+
+  const logoLight = shop?.logo_url || "/Logo_NovaCar.png";
+  const logoDark = shop?.logo_url || "/Logo_NovaCar_White.png";
+
   const w = collapsed ? "w-[72px]" : "w-[220px]";
 
   return (
