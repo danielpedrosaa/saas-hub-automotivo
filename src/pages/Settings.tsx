@@ -698,6 +698,85 @@ function VitrineEditor({ shopId }: { shopId: string }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// TAB: Meu Perfil
+// ═══════════════════════════════════════════════════════════════════════════
+function ProfileTab({ onLogout }: { onLogout: () => void }) {
+  const { profile, role } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (profile?.full_name) setFullName(profile.full_name);
+  }, [profile]);
+
+  const handleSaveName = async () => {
+    if (!fullName.trim()) {
+      toast({ title: "Nome é obrigatório.", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ full_name: fullName.trim() })
+        .eq("id", profile?.id!);
+      if (error) throw error;
+      toast({ title: "✅ Nome atualizado!" });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    } catch (err: any) {
+      toast({ title: "Erro ao salvar", description: err.message, variant: "destructive" });
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div className="max-w-2xl space-y-4">
+      <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+          <User className="h-3.5 w-3.5" /> Informações do perfil
+        </p>
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Nome completo</Label>
+          <Input
+            value={fullName}
+            onChange={e => setFullName(e.target.value)}
+            placeholder="Seu nome"
+            className="text-sm"
+          />
+        </div>
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground capitalize">
+            Cargo: {role === "owner" ? "Proprietário" : "Funcionário"}
+          </p>
+        </div>
+        <Button
+          onClick={handleSaveName}
+          disabled={saving}
+          className="h-10 w-full gap-2 bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 rounded-xl"
+        >
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {saving ? "Salvando..." : "Salvar nome"}
+        </Button>
+      </div>
+
+      <motion.div whileTap={{ scale: 0.97 }}>
+        <Button
+          variant="destructive"
+          onClick={onLogout}
+          className="h-12 w-full font-bold uppercase tracking-wider rounded-xl"
+        >
+          <LogOut className="mr-2 h-5 w-5" /> Sair da conta
+        </Button>
+      </motion.div>
+
+      <div className="pb-8" />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // ROOT: Settings page
 // ═══════════════════════════════════════════════════════════════════════════
 const TABS = [
