@@ -696,49 +696,71 @@ export default function Index() {
               {/* Resumo de vendas — por método de pagamento */}
               <C className="flex flex-col">
                 <CH left="Resumo de vendas" right={<span className="font-light text-foreground">{mask("R$ 2.320,00")}</span>} />
-                {/* Bar chart by payment method */}
-                <div className="flex-1 flex items-end gap-1.5 h-[120px]">
-                  {(() => {
-                    const bars = [
-                      { label: "Crédito", value: 800, color: "#a78bfa" },
-                      { label: "Débito", value: 420, color: "#60a5fa" },
-                      { label: "Pix", value: 450, color: "#2dd4bf" },
-                      { label: "Dinheiro", value: 650, color: "#34d399" },
-                      { label: "Boleto", value: 0, color: "#fb923c" },
-                      { label: "Transf.", value: 0, color: "#f472b6" },
-                    ];
-                    const maxVal = Math.max(...bars.map(b => b.value), 1);
-                    return bars.map((b) => {
-                      const hPct = (b.value / maxVal) * 100;
-                      return (
-                        <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
-                          <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
-                            {b.value > 0 ? `R$ ${b.value.toLocaleString("pt-BR")}` : "—"}
-                          </div>
-                          <div
-                            className="w-full rounded-t-sm transition-all hover:opacity-80 cursor-default"
-                            style={{ height: `${Math.max(hPct, 3)}%`, backgroundColor: b.color, minHeight: 4, opacity: b.value === 0 ? 0.15 : 1 }}
-                          />
-                          <span className="text-[7px] text-muted-foreground text-center leading-tight">{b.label}</span>
-                        </div>
-                      );
-                    });
-                  })()}
-                </div>
-                {/* Breakdown */}
-                <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
+                {/* Legend */}
+                <div className="flex flex-wrap gap-x-3 gap-y-1 mb-3">
                   {[
-                    { label: "Crédito", value: "R$ 800,00", color: "#a78bfa" },
-                    { label: "Dinheiro", value: "R$ 650,00", color: "#34d399" },
+                    { label: "Crédito", color: "#34d399" },
+                    { label: "Débito", color: "#b8a038" },
+                    { label: "Pix", color: "#2dd4bf" },
+                    { label: "Dinheiro", color: "#5b8fa8" },
+                    { label: "Boleto", color: "#6366f1" },
+                    { label: "Transferência", color: "#f472b6" },
+                  ].map((l) => (
+                    <span key={l.label} className="flex items-center gap-1 text-[9px] text-muted-foreground">
+                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
+                      {l.label}
+                    </span>
+                  ))}
+                </div>
+                {/* Bar chart */}
+                {(() => {
+                  const bars = [
+                    { label: "Boleto", value: 0, color: "#6366f1" },
+                    { label: "Crédito", value: 800, color: "#34d399" },
+                    { label: "Débito", value: 420, color: "#b8a038" },
+                    { label: "Pix", value: 450, color: "#2dd4bf" },
+                    { label: "Dinheiro", value: 650, color: "#5b8fa8" },
+                    { label: "Transf.", value: 0, color: "#f472b6" },
+                  ];
+                  const maxVal = Math.max(...bars.map(b => b.value), 1);
+                  return (
+                    <div className="flex-1 flex items-end justify-between gap-2 h-[110px]">
+                      {bars.map((b) => {
+                        const hPct = (b.value / maxVal) * 100;
+                        return (
+                          <div key={b.label} className="flex-1 flex flex-col items-center gap-1.5 group relative h-full justify-end">
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                              {b.value > 0 ? `R$ ${b.value.toLocaleString("pt-BR")}` : "—"}
+                            </div>
+                            <div
+                              className="w-3/4 max-w-[48px] rounded-sm transition-all hover:opacity-80 cursor-default"
+                              style={{
+                                height: b.value > 0 ? `${hPct}%` : "3px",
+                                backgroundColor: b.color,
+                                opacity: b.value === 0 ? 0.25 : 1,
+                              }}
+                            />
+                            <span className="text-[8px] text-muted-foreground text-center leading-tight">{b.label}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
+                {/* Breakdown */}
+                <div className="mt-auto pt-3 border-t border-border/50 space-y-1.5">
+                  {[
+                    { label: "Crédito", value: "R$ 800,00", color: "#34d399" },
+                    { label: "Dinheiro", value: "R$ 650,00", color: "#5b8fa8" },
                     { label: "Pix", value: "R$ 450,00", color: "#2dd4bf" },
-                    { label: "Débito", value: "R$ 420,00", color: "#60a5fa" },
+                    { label: "Débito", value: "R$ 420,00", color: "#b8a038" },
                   ].map((r) => (
                     <div key={r.label} className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                      <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                         <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
                         {r.label}
                       </span>
-                      <span className="text-[10px] font-light" style={{ color: r.color }}>{mask(r.value)}</span>
+                      <span className="text-[11px] font-light" style={{ color: r.color }}>{mask(r.value)}</span>
                     </div>
                   ))}
                 </div>
