@@ -67,8 +67,8 @@ function C({ children, className, onClick }: {
 function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between mb-3">
-      <p className="text-[11px] font-normal text-muted-foreground uppercase tracking-[0.1em]">{left}</p>
-      {right && <div className="text-[11px] text-muted-foreground font-light">{right}</div>}
+      <p className="text-[11px] font-light text-muted-foreground uppercase tracking-[0.1em]">{left}</p>
+      {right && <div className="text-[11px] text-muted-foreground font-extralight">{right}</div>}
     </div>
   );
 }
@@ -199,13 +199,13 @@ export default function Index() {
       <AppLayout>
         <div className="space-y-5">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
-              {getGreeting()},{" "}
-              <span className="text-primary">{profile?.full_name?.split(" ")[0] ?? ""}!</span>
-            </h1>
-            <p className="mt-0.5 text-xs uppercase tracking-widest text-muted-foreground">
-              {format(today, "EEEE • d 'de' MMMM", { locale: ptBR })}
-            </p>
+             <h1 className="text-2xl font-light tracking-tight text-foreground">
+               {getGreeting()},{" "}
+               <span className="text-primary">{profile?.full_name?.split(" ")[0] ?? ""}!</span>
+             </h1>
+             <p className="mt-0.5 text-xs uppercase tracking-widest text-muted-foreground font-extralight">
+               {format(today, "EEEE • d 'de' MMMM", { locale: ptBR })}
+             </p>
           </div>
 
           {isLoading ? (
@@ -220,8 +220,8 @@ export default function Index() {
                       <DollarSign className="h-6 w-6 text-primary" strokeWidth={2.5} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Faturamento do mês</p>
-                      <p className="text-3xl font-extrabold tracking-tight text-foreground truncate">{formatCurrency(revenueMonth)}</p>
+                       <p className="text-[10px] font-light uppercase tracking-widest text-muted-foreground">Faturamento do mês</p>
+                       <p className="text-3xl font-extralight tracking-tight text-foreground truncate">{formatCurrency(revenueMonth)}</p>
                     </div>
                   </div>
                 </C>
@@ -238,8 +238,8 @@ export default function Index() {
                     <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", bg)}>
                       <Icon className={cn("h-3.5 w-3.5", icolor)} strokeWidth={2.5} />
                     </div>
-                    <span className="text-2xl font-extrabold text-foreground leading-none">{value}</span>
-                    <span className="text-[9px] text-muted-foreground font-medium uppercase tracking-wide">{label}</span>
+                     <span className="text-2xl font-extralight text-foreground leading-none">{value}</span>
+                     <span className="text-[9px] text-muted-foreground font-light uppercase tracking-wide">{label}</span>
                   </button>
                 ))}
               </motion.div>
@@ -255,7 +255,7 @@ export default function Index() {
                       <Icon className="h-4 w-4 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="text-xl font-extrabold text-foreground leading-none">{value}</p>
+                      <p className="text-xl font-extralight text-foreground leading-none">{value}</p>
                       <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">{label}</p>
                     </div>
                   </C>
@@ -264,8 +264,8 @@ export default function Index() {
 
               {/* Nova OS */}
               <motion.div variants={item} whileTap={{ scale: 0.97 }}>
-                <Button onClick={() => navigate("/checkin")} className="h-14 w-full rounded-xl bg-primary hover:bg-primary/90 text-black font-bold uppercase tracking-widest text-sm">
-                  <Plus className="mr-2 h-5 w-5" strokeWidth={3} /> Nova OS
+                 <Button onClick={() => navigate("/checkin")} className="h-14 w-full rounded-xl bg-primary hover:bg-primary/90 text-black font-normal uppercase tracking-widest text-sm">
+                   <Plus className="mr-2 h-5 w-5" strokeWidth={2} /> Nova OS
                 </Button>
               </motion.div>
 
@@ -273,8 +273,8 @@ export default function Index() {
               {recentActive.length > 0 && (
                 <motion.div variants={item} className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Em Andamento</h2>
-                    <button onClick={() => navigate("/jobs")} className="flex items-center gap-0.5 text-xs text-primary font-semibold">Ver todas <ChevronRight className="h-3.5 w-3.5" /></button>
+                     <h2 className="text-[10px] font-light uppercase tracking-widest text-muted-foreground">Em Andamento</h2>
+                     <button onClick={() => navigate("/jobs")} className="flex items-center gap-0.5 text-xs text-primary font-light">Ver todas <ChevronRight className="h-3.5 w-3.5" /></button>
                   </div>
                   <div className="space-y-2">
                     {recentActive.map(job => {
@@ -283,13 +283,13 @@ export default function Index() {
                       return (
                         <button key={job.id} onClick={() => navigate("/jobs")} className="w-full bg-card border border-border rounded-xl p-3 flex items-center gap-3 text-left">
                           <div className="shrink-0 bg-primary/10 border border-primary/20 rounded-lg px-2.5 py-1.5">
-                            <span className="font-mono text-[11px] font-bold text-primary tracking-widest uppercase">{v?.plate ?? "—"}</span>
+                            <span className="font-mono text-[11px] font-normal text-primary tracking-widest uppercase">{v?.plate ?? "—"}</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-foreground truncate">{v?.customers?.name ?? v?.model ?? "—"}</p>
+                            <p className="text-sm font-normal text-foreground truncate">{v?.customers?.name ?? v?.model ?? "—"}</p>
                             <p className="text-[11px] text-muted-foreground truncate">{v?.model ?? ""}</p>
                           </div>
-                          <span className={cn("shrink-0 rounded-lg border px-2.5 py-1 text-[10px] font-bold uppercase", st.bg, st.color)}>{st.label}</span>
+                          <span className={cn("shrink-0 rounded-lg border px-2.5 py-1 text-[10px] font-medium uppercase", st.bg, st.color)}>{st.label}</span>
                         </button>
                       );
                     })}
