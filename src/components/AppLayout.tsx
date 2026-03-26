@@ -8,29 +8,6 @@ import { cn } from "@/lib/utils";
 export default function AppLayout({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
 
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("sidebar-collapsed") === "true";
-  });
-
-  // Listen for collapse changes from sidebar
-  useEffect(() => {
-    const handleStorage = () => {
-      setCollapsed(localStorage.getItem("sidebar-collapsed") === "true");
-    };
-    window.addEventListener("storage", handleStorage);
-    
-    // Also poll for same-tab changes
-    const interval = setInterval(() => {
-      const val = localStorage.getItem("sidebar-collapsed") === "true";
-      setCollapsed((prev) => (prev !== val ? val : prev));
-    }, 200);
-
-    return () => {
-      window.removeEventListener("storage", handleStorage);
-      clearInterval(interval);
-    };
-  }, []);
 
   if (isMobile) {
     return (
