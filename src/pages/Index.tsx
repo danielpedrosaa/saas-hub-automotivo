@@ -99,7 +99,7 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
-    <C className="col-span-6 flex flex-col">
+    <C className="col-span-6 flex flex-col h-[420px]">
       <div className="flex items-center justify-between mb-3">
         <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
         <div className="flex items-center gap-2">
@@ -151,8 +151,8 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
       </p>
 
       {/* Area chart */}
-      <div className="flex-1 min-h-[80px] relative">
-        <svg viewBox={`0 0 ${Math.max(data.labels.length - 1, 1) * 50} 80`} className="w-full h-full" preserveAspectRatio="none">
+      <div className="flex-1 min-h-[80px] relative overflow-visible">
+        <svg viewBox={`-15 -5 ${Math.max(data.labels.length - 1, 1) * 50 + 30} 100`} className="w-full h-full" preserveAspectRatio="none" overflow="visible">
           <defs>
             <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
@@ -181,8 +181,8 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
                     <circle cx={x} cy={y} r="8" fill="transparent" />
                     <circle cx={x} cy={y} r={hoveredIdx === i ? 4.5 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
                     {hoveredIdx === i && (
-                      <foreignObject x={x - 35} y={y - 26} width="70" height="20">
-                        <div className="bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
+                      <foreignObject x={x - 35} y={y - 26} width="70" height="18">
+                        <div className="bg-popover border border-border text-[8px] text-foreground font-extralight rounded px-1 py-0.5 text-center whitespace-nowrap">
                           R$ {data.values[i].toLocaleString("pt-BR")}
                         </div>
                       </foreignObject>
@@ -194,9 +194,9 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
           })()}
         </svg>
       </div>
-      <div className="flex justify-between mt-1">
+      <div className="flex justify-between mt-1 px-0">
         {data.labels.map((d) => (
-          <span key={d} className="text-[9px] text-muted-foreground">{d}</span>
+          <span key={d} className="text-[9px] text-muted-foreground text-center" style={{ minWidth: 0 }}>{d}</span>
         ))}
       </div>
     </C>
@@ -677,7 +677,7 @@ export default function Index() {
                   ].map((q) => (
                     <div key={q.label} className="text-center">
                       <p className={cn("text-[22px] font-extralight leading-none", q.color)}>{maskNum(q.n)}</p>
-                      <p className="text-[9px] text-muted-foreground mt-1">{q.label}</p>
+                      <p className="text-[9px] text-muted-foreground mt-1 mb-3">{q.label}</p>
                     </div>
                   ))}
                 </div>
@@ -697,30 +697,33 @@ export default function Index() {
               <C className="flex flex-col">
                 <CH left="Resumo de vendas" right={<span className="font-light text-foreground">{mask("R$ 2.320,00")}</span>} />
                 {/* Bar chart by payment method */}
-                <div className="flex-1 flex items-end gap-1.5 min-h-[80px]">
-                  {[
-                    { label: "Crédito", value: 800, color: "#a78bfa" },
-                    { label: "Débito", value: 420, color: "#60a5fa" },
-                    { label: "Pix", value: 450, color: "#2dd4bf" },
-                    { label: "Dinheiro", value: 650, color: "#34d399" },
-                    { label: "Boleto", value: 0, color: "#fb923c" },
-                    { label: "Transf.", value: 0, color: "#f472b6" },
-                  ].map((b) => {
-                    const maxVal = 800;
-                    const hPct = maxVal > 0 ? (b.value / maxVal) * 100 : 0;
-                    return (
-                      <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
-                        <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
-                          {b.value > 0 ? `R$ ${b.value.toLocaleString("pt-BR")}` : "—"}
+                <div className="flex-1 flex items-end gap-1.5 h-[120px]">
+                  {(() => {
+                    const bars = [
+                      { label: "Crédito", value: 800, color: "#a78bfa" },
+                      { label: "Débito", value: 420, color: "#60a5fa" },
+                      { label: "Pix", value: 450, color: "#2dd4bf" },
+                      { label: "Dinheiro", value: 650, color: "#34d399" },
+                      { label: "Boleto", value: 0, color: "#fb923c" },
+                      { label: "Transf.", value: 0, color: "#f472b6" },
+                    ];
+                    const maxVal = Math.max(...bars.map(b => b.value), 1);
+                    return bars.map((b) => {
+                      const hPct = (b.value / maxVal) * 100;
+                      return (
+                        <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
+                          <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                            {b.value > 0 ? `R$ ${b.value.toLocaleString("pt-BR")}` : "—"}
+                          </div>
+                          <div
+                            className="w-full rounded-t-sm transition-all hover:opacity-80 cursor-default"
+                            style={{ height: `${Math.max(hPct, 3)}%`, backgroundColor: b.color, minHeight: 4, opacity: b.value === 0 ? 0.15 : 1 }}
+                          />
+                          <span className="text-[7px] text-muted-foreground text-center leading-tight">{b.label}</span>
                         </div>
-                        <div
-                          className="w-full rounded-t-sm transition-all hover:opacity-80 cursor-default"
-                          style={{ height: `${Math.max(hPct, 3)}%`, backgroundColor: b.color, minHeight: 4, opacity: b.value === 0 ? 0.15 : 1 }}
-                        />
-                        <span className="text-[7px] text-muted-foreground text-center leading-tight">{b.label}</span>
-                      </div>
-                    );
-                  })}
+                      );
+                    });
+                  })()}
                 </div>
                 {/* Breakdown */}
                 <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
