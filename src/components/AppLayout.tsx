@@ -1,13 +1,10 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Sidebar from "./layout/Sidebar";
-
 import MobileBottomNav from "./layout/MobileBottomNav";
-import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
-
 
   if (isMobile) {
     return (
@@ -17,8 +14,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </div>
     );
   }
-
-  const sidebarWidth = collapsed ? 72 : 220;
 
   return (
     <div className="h-screen overflow-hidden bg-background flex font-sans">
