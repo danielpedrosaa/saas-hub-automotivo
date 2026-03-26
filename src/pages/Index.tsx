@@ -643,9 +643,8 @@ export default function Index() {
               </C>
             </motion.div>
 
-            {/* ── ROW 2.5: Financeiro + Oportunidades ─────────────────── */}
-            <FinanceiroCard mask={mask} navigate={navigate} />
-
+            <motion.div variants={item} className="grid grid-cols-12 gap-3">
+              <FinanceiroCard mask={mask} navigate={navigate} />
 
               {/* Oportunidades */}
               <C className="col-span-6 flex flex-col">
