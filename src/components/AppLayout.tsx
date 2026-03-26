@@ -47,8 +47,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     <div className="h-screen overflow-hidden bg-background flex font-sans">
       <Sidebar />
       <div
-        className="flex-1 h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300 custom-scrollbar"
-        style={{ paddingLeft: sidebarWidth }}
+        className="h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300 custom-scrollbar"
+        style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
       >
         <div className="w-full px-6 py-6 min-h-full">
           {children}
