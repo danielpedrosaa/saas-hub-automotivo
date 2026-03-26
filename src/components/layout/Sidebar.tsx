@@ -78,31 +78,55 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-all duration-300 border-r border-border",
+        "fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-all duration-300 border-r border-border relative",
         "bg-card",
         w,
       )}
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
-      {/* ── Logo + Collapse ── */}
-      <div className="flex items-center justify-between h-[52px] px-3 border-b border-border shrink-0">
-        {!collapsed && (
+      {/* ── Collapse button — right edge, vertically centered ── */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute flex items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-foreground transition-colors"
+        style={{
+          right: -12,
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: 24,
+          height: 24,
+          zIndex: 20,
+        }}
+      >
+        <ChevronLeft
+          className="transition-transform duration-200"
+          style={{
+            width: 10,
+            height: 10,
+            transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        />
+      </button>
+
+      {/* ── Logo ── */}
+      <div
+        className="flex items-center justify-center border-b border-border shrink-0"
+        style={{ padding: "20px 16px", marginBottom: 12 }}
+      >
+        {collapsed ? (
+          <img
+            src="/favicon.ico"
+            alt="NovaCar"
+            className="block mx-auto object-contain"
+            style={{ width: 36, height: 36 }}
+          />
+        ) : (
           <img
             src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
             alt="NovaCar"
-            className="h-[20px] w-auto object-contain"
+            className="block mx-auto object-contain"
+            style={{ height: 36, width: "auto", maxWidth: "80%" }}
           />
         )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
-            "text-muted-foreground hover:text-foreground hover:bg-muted",
-            collapsed && "mx-auto"
-          )}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </button>
       </div>
 
       {/* ── Nav ── */}
