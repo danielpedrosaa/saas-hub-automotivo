@@ -341,7 +341,12 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
             size="sm"
             variant="ghost"
             className="text-xs text-muted-foreground hover:text-foreground h-9 px-3 shrink-0"
-            onClick={() => selectColor("#C8FF00")}
+            onClick={() => {
+              setColorError("");
+              setPrimaryColor(null);
+              setHexInput("");
+              applyPrimary(null);
+            }}
           >
             Restaurar padrão
           </Button>
