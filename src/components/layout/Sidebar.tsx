@@ -84,39 +84,36 @@ export default function Sidebar() {
       )}
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
-      {/* ── Logo ── */}
-      <div
-        className="shrink-0 flex items-center justify-center border-b border-border"
-        style={{ padding: "5px 12px 24px", marginBottom: 16 }}
-      >
-        <img
-          src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
-          alt="NovaCar"
-          style={{ height: collapsed ? 24 : 28, width: "auto", maxWidth: "80%" }}
-          className="object-contain transition-all duration-300"
-        />
+      {/* ── Logo + Collapse ── */}
+      <div className="shrink-0" style={{ padding: collapsed ? "4px 0 28px" : "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
+        <div className="flex items-center justify-between">
+          {collapsed ? (
+            <div
+              className="mx-auto flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
+              style={{ width: 34, height: 34 }}
+            >
+              NC
+            </div>
+          ) : (
+            <img
+              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
+              alt="NovaCar"
+              style={{ height: 28, width: "auto" }}
+              className="object-contain"
+            />
+          )}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className={cn(
+              "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
+              "text-muted-foreground hover:text-foreground hover:bg-muted",
+              collapsed && "mx-auto mt-2"
+            )}
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
-
-      {/* ── Collapse toggle on sidebar edge ── */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="fixed z-50 flex items-center justify-center cursor-pointer border border-border border-l-0 bg-muted/60 hover:bg-muted transition-colors"
-        style={{
-          top: "50vh",
-          transform: "translateY(-50%)",
-          left: collapsed ? 60 : 208,
-          width: 20,
-          height: 48,
-          borderRadius: "0 6px 6px 0",
-          transition: "left 0.3s",
-        }}
-      >
-        {collapsed ? (
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        ) : (
-          <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
-        )}
-      </button>
 
       {/* ── Nav ── */}
       <nav className="flex-1 overflow-y-auto py-2 sidebar-scroll">
