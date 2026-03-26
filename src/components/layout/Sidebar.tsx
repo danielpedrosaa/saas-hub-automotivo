@@ -293,12 +293,12 @@ function NavItemRow({
               >
                 <span className="flex-1 truncate">{child.label}</span>
                 {child.badge === "novo" && (
-                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground tracking-wider">
+                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground tracking-wider">
                     novo
                   </span>
                 )}
                 {child.badge === "IA" && (
-                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-purple/15 text-purple tracking-wider">
+                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-purple/15 text-purple tracking-wider">
                     IA
                   </span>
                 )}
