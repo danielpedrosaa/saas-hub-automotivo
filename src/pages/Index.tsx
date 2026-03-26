@@ -78,8 +78,8 @@ type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
 const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
   "Diário": {
-    labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-    values: [120, 580, 430, 690, 510, 780, 340],
+    labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+    values: [580, 430, 350, 690, 780, 340, 120],
   },
   "Semanal": {
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
@@ -151,38 +151,58 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
       </p>
 
       {/* Area chart */}
-      <div className="flex-1 min-h-[80px] relative overflow-visible">
-        <svg viewBox={`-15 -5 ${Math.max(data.labels.length - 1, 1) * 50 + 30} 100`} className="w-full h-full" preserveAspectRatio="none" overflow="visible">
+      <div className="flex-1 min-h-0 relative">
+        <svg
+          viewBox="0 0 500 140"
+          className="w-full h-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
           <defs>
             <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0" />
             </linearGradient>
           </defs>
+          {/* Grid line at bottom */}
+          <line x1="30" y1="115" x2="480" y2="115" stroke="hsl(var(--border))" strokeWidth="0.5" />
           {(() => {
-            const w = Math.max(data.labels.length - 1, 1) * 50;
+            const padL = 30, padR = 20, chartW = 500 - padL - padR;
+            const padT = 15, chartH = 95;
+            const n = data.labels.length;
             const pts = data.values.map((v, i) => {
-              const x = data.labels.length === 1 ? w / 2 : (i / (data.labels.length - 1)) * w;
-              const y = 75 - (v / maxVal) * 65;
+              const x = padL + (n === 1 ? chartW / 2 : (i / (n - 1)) * chartW);
+              const y = padT + chartH - (v / maxVal) * chartH;
               return [x, y];
             });
-            const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
-            const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},80 L${pts[0][0]},80 Z`;
+
+            // Smooth curve using catmull-rom to bezier
+            const lineD = pts.reduce((acc, [x, y], i) => {
+              if (i === 0) return `M${x},${y}`;
+              const [px, py] = pts[i - 1];
+              const cpx = (px + x) / 2;
+              return acc + ` C${cpx},${py} ${cpx},${y} ${x},${y}`;
+            }, "");
+
+            const areaD = lineD + ` L${pts[pts.length - 1][0]},115 L${pts[0][0]},115 Z`;
+
             return (
               <>
-                <path d={area} fill="url(#areaGradFin)" />
-                <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d={areaD} fill="url(#areaGradFin)" />
+                <path d={lineD} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" />
                 {pts.map(([x, y], i) => (
                   <g key={i}
                     onMouseEnter={() => setHoveredIdx(i)}
                     onMouseLeave={() => setHoveredIdx(null)}
                     className="cursor-crosshair"
                   >
-                    <circle cx={x} cy={y} r="8" fill="transparent" />
-                    <circle cx={x} cy={y} r={hoveredIdx === i ? 4.5 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+                    <circle cx={x} cy={y} r="12" fill="transparent" />
+                    <circle cx={x} cy={y} r={hoveredIdx === i ? 5 : 3.5}
+                      fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5"
+                      className="transition-all"
+                    />
                     {hoveredIdx === i && (
-                      <foreignObject x={x - 35} y={y - 26} width="70" height="18">
-                        <div className="bg-popover border border-border text-[8px] text-foreground font-extralight rounded px-1 py-0.5 text-center whitespace-nowrap">
+                      <foreignObject x={x - 32} y={y - 22} width="64" height="16">
+                        <div className="bg-popover border border-border text-[9px] text-foreground font-extralight rounded px-1 py-0 text-center whitespace-nowrap leading-[16px]">
                           R$ {data.values[i].toLocaleString("pt-BR")}
                         </div>
                       </foreignObject>
@@ -192,12 +212,18 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
               </>
             );
           })()}
+          {/* X-axis labels */}
+          {data.labels.map((label, i) => {
+            const padL = 30, padR = 20, chartW = 500 - padL - padR;
+            const n = data.labels.length;
+            const x = padL + (n === 1 ? chartW / 2 : (i / (n - 1)) * chartW);
+            return (
+              <text key={label} x={x} y="132" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="10" fontWeight="300">
+                {label}
+              </text>
+            );
+          })}
         </svg>
-      </div>
-      <div className="flex justify-between mt-1 px-0">
-        {data.labels.map((d) => (
-          <span key={d} className="text-[9px] text-muted-foreground text-center" style={{ minWidth: 0 }}>{d}</span>
-        ))}
       </div>
     </C>
   );
