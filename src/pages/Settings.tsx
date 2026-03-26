@@ -226,7 +226,7 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
           street: rua || null,
           number: numero || null,
           complement: complemento || null,
-          primary_color: primaryColor,
+          primary_color: primaryColor || null,
           logo_url: logoUrl || null,
         })
         .eq("id", shopId);
