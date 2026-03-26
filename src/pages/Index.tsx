@@ -78,8 +78,8 @@ type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
 const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
   "Diário": {
-    labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-    values: [120, 580, 430, 690, 510, 780, 340],
+    labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+    values: [580, 430, 690, 510, 780, 340, 120],
   },
   "Semanal": {
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
