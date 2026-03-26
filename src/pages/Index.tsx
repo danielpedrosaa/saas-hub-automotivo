@@ -561,57 +561,68 @@ export default function Index() {
 
               {/* Resumo de vendas */}
               <C className="flex flex-col">
-                <CH left="Resumo de vendas" right={<span className="font-semibold text-foreground">{mask("R$ 2.320,00")}</span>} />
+                <CH left="Resumo de vendas" right={<span className="text-[20px] font-light text-foreground">{mask("R$ 2.320,00")}</span>} />
                 {/* Legend */}
-                <div className="flex flex-wrap gap-x-2 gap-y-0.5 mb-2">
+                <div className="flex flex-wrap gap-x-3 gap-y-0.5 mb-3">
                   {[
                     { label: "Crédito", color: "#34d399" },
-                    { label: "Débito", color: "#d4a017" },
+                    { label: "Débito", color: "#f59e0b" },
                     { label: "Pix", color: "#2dd4bf" },
                     { label: "Dinheiro", color: "#60a5fa" },
                     { label: "Boleto", color: "#a78bfa" },
-                    { label: "Transf.", color: "#f87171" },
                   ].map((l) => (
                     <span key={l.label} className="flex items-center gap-1 text-[9px] text-muted-foreground">
-                      <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
+                      <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: l.color }} />
                       {l.label}
                     </span>
                   ))}
                 </div>
-                {/* CSS bar chart */}
-                <div className="flex-1 flex items-end gap-1.5 min-h-[60px]">
-                  {[
-                    { day: "Seg", h: 45, color: "#a78bfa" },
-                    { day: "Ter", h: 70, color: "#34d399" },
-                    { day: "Qua", h: 55, color: "#d4a017" },
-                    { day: "Qui", h: 80, color: "#2dd4bf" },
-                    { day: "Sex", h: 60, color: "#60a5fa" },
-                    { day: "Sáb", h: 40, color: "#60a5fa" },
-                    { day: "Dom", h: 20, color: "#a78bfa" },
-                  ].map((b) => (
-                    <div key={b.day} className="flex-1 flex flex-col items-center gap-1">
-                      <div
-                        className="w-full rounded-t-sm transition-all"
-                        style={{ height: `${b.h}%`, backgroundColor: b.color, minHeight: 4 }}
-                      />
-                      <span className="text-[8px] text-muted-foreground">{b.day}</span>
-                    </div>
-                  ))}
-                </div>
-                {/* Breakdown */}
-                <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
-                  {[
-                    { label: "Crédito", value: "R$ 800,00", color: "#34d399" },
-                    { label: "Dinheiro", value: "R$ 650,00", color: "#60a5fa" },
-                    { label: "Pix", value: "R$ 450,00", color: "#2dd4bf" },
-                    { label: "Débito", value: "R$ 420,00", color: "#d4a017" },
-                  ].map((r) => (
-                    <div key={r.label} className="flex items-center justify-between">
-                      <span className="text-[10px] text-muted-foreground">{r.label}</span>
-                      <span className="text-[10px] font-semibold" style={{ color: r.color }}>{mask(r.value)}</span>
-                    </div>
-                  ))}
-                </div>
+                {/* Vertical bar chart */}
+                {(() => {
+                  const salesData = [
+                    { label: "Crédito", value: 900, color: "#34d399" },
+                    { label: "Débito", value: 500, color: "#f59e0b" },
+                    { label: "Pix", value: 480, color: "#2dd4bf" },
+                    { label: "Dinheiro", value: 450, color: "#60a5fa" },
+                    { label: "Boleto", value: 420, color: "#a78bfa" },
+                  ];
+                  const maxVal = Math.max(...salesData.map((d) => d.value));
+                  return (
+                    <>
+                      <div className="flex-1 flex items-end gap-1.5 min-h-[70px]">
+                        {salesData.map((b) => (
+                          <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
+                            <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-popover border border-border text-[9px] text-foreground px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                              R$ {b.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                            </div>
+                            <div
+                              className="w-full rounded-t transition-all"
+                              style={{
+                                height: `${(b.value / maxVal) * 100}%`,
+                                backgroundColor: b.color,
+                                opacity: 0.7,
+                                minHeight: 4,
+                                borderRadius: "4px 4px 0 0",
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      {/* Breakdown */}
+                      <div className="mt-auto pt-3 border-t border-border/50 space-y-1">
+                        {salesData.map((r) => (
+                          <div key={r.label} className="flex items-center justify-between">
+                            <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                              <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: r.color }} />
+                              {r.label}
+                            </span>
+                            <span className="text-[10px] font-medium text-foreground">{mask(`R$ ${r.value.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  );
+                })()}
               </C>
 
               {/* Tempo médio por serviço */}
