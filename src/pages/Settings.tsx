@@ -305,7 +305,7 @@ function MinhaEmpresaTab({ shopId }: { shopId: string }) {
         {/* Swatches grid */}
         <div className="grid grid-cols-10 gap-2">
           {PRESET_COLORS.map(({ hex, label }) => {
-            const active = primaryColor.toUpperCase() === hex.toUpperCase();
+            const active = primaryColor ? primaryColor.toUpperCase() === hex.toUpperCase() : false;
             return (
               <button
                 key={hex}
