@@ -48,9 +48,9 @@ interface MockOS {
 
 const statusCfg: Record<OSStatus, { label: string; bg: string; text: string }> = {
   waiting: { label: "Aguardando", bg: "bg-warning/15", text: "text-warning" },
-  in_progress: { label: "Em Execução", bg: "bg-info/15", text: "text-info" },
+  in_progress: { label: "Em execução", bg: "bg-primary/15", text: "text-primary" },
   done: { label: "Finalizado", bg: "bg-success/15", text: "text-success" },
-  delivered: { label: "Entregue", bg: "bg-purple/15", text: "text-purple" },
+  delivered: { label: "Entregue", bg: "bg-muted", text: "text-muted-foreground" },
   cancelled: { label: "Cancelado", bg: "bg-destructive/15", text: "text-destructive" },
 };
 

@@ -24,9 +24,9 @@ type JobStatus = Enums<"job_status">;
 
 const statusConfig: Record<JobStatus, { label: string; className: string }> = {
   waiting: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
-  in_progress: { label: "Em Execução", className: "bg-primary text-primary-foreground" },
+  in_progress: { label: "Em execução", className: "bg-primary text-primary-foreground" },
   done: { label: "Finalizado", className: "bg-success text-success-foreground" },
-  delivered: { label: "Entregue", className: "bg-[hsl(var(--delivered))] text-[hsl(var(--delivered-foreground))]" },
+  delivered: { label: "Entregue", className: "bg-muted text-muted-foreground" },
 };
 
 const nextStatus: Record<JobStatus, JobStatus | null> = {

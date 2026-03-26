@@ -34,9 +34,9 @@ type JobStatus = Enums<"job_status"> | "cancelled";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   waiting: { label: "Aguardando", className: "bg-warning text-warning-foreground" },
-  in_progress: { label: "Em Execução", className: "bg-primary text-primary-foreground" },
-  done: { label: "Concluída", className: "bg-success text-success-foreground" },
-  delivered: { label: "Entregue", className: "bg-[hsl(var(--delivered))] text-[hsl(var(--delivered-foreground))]" },
+  in_progress: { label: "Em execução", className: "bg-primary text-primary-foreground" },
+  done: { label: "Finalizado", className: "bg-success text-success-foreground" },
+  delivered: { label: "Entregue", className: "bg-muted text-muted-foreground" },
   cancelled: { label: "Cancelada", className: "bg-destructive text-destructive-foreground" },
 };
 
