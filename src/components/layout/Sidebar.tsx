@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { useShop } from "@/hooks/useShopData";
 import { NAV_STRUCTURE, type NavItem, type NavChild } from "./sidebar-nav";
 import {
   ChevronLeft, ChevronRight, ChevronDown, Sun, Moon, LogOut, Settings,
