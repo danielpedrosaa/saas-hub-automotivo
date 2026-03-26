@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useJobs, useAppointments, useTeam } from "@/hooks/useShopData";
 import { useShop } from "@/hooks/useShopData";
