@@ -21,7 +21,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <div
         className="h-screen overflow-y-auto overflow-x-hidden flex-1 min-w-0 transition-all duration-300 custom-scrollbar"
       >
-        <div className="max-w-[1200px] mx-auto w-full px-6 py-6 min-h-full">
+        <div className="mx-auto w-full px-[10px] pt-4 min-h-full">
           {children}
         </div>
       </div>
