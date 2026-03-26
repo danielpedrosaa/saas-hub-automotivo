@@ -76,7 +76,7 @@ export default function Sidebar() {
     ? profile.full_name.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase()
     : "U";
 
-  const w = collapsed ? "w-[72px]" : "w-[260px]";
+  const w = collapsed ? "w-[72px]" : "w-[220px]";
 
   return (
     <aside
@@ -285,7 +285,7 @@ function NavItemRow({
                 key={child.to}
                 to={child.to}
                 className={cn(
-                  "flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] transition-colors",
+                  "flex items-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] transition-colors whitespace-nowrap",
                   isChildActive(child)
                     ? "text-foreground font-semibold bg-muted/60"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
@@ -293,12 +293,12 @@ function NavItemRow({
               >
                 <span className="flex-1 truncate">{child.label}</span>
                 {child.badge === "novo" && (
-                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground tracking-wider">
+                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground tracking-wider">
                     novo
                   </span>
                 )}
                 {child.badge === "IA" && (
-                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-purple/15 text-purple tracking-wider">
+                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-purple/15 text-purple tracking-wider">
                     IA
                   </span>
                 )}

@@ -41,7 +41,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  const sidebarWidth = collapsed ? 72 : 260;
+  const sidebarWidth = collapsed ? 72 : 220;
 
   return (
     <div className="min-h-[100dvh] bg-background flex font-sans">
