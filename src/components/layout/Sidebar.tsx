@@ -82,7 +82,7 @@ export default function Sidebar() {
   const logoLight = shop?.logo_url || "/Logo_NovaCar.png";
   const logoDark = shop?.logo_url || "/Logo_NovaCar_White.png";
 
-  const w = collapsed ? "w-[72px]" : "w-[240px]";
+  const w = collapsed ? "w-[72px]" : "w-[220px]";
 
   return (
     <aside
