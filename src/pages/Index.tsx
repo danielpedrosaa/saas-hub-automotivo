@@ -438,14 +438,14 @@ export default function Index() {
                 const st = statusConfig[row.status];
                 return (
                   <div key={row.time} className="flex items-center gap-4 py-2.5 first:pt-0 last:pb-0">
-                    <span className="text-[13px] text-muted-foreground font-medium w-10 shrink-0">{row.time}</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-foreground truncate">{row.name}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{row.plate}</p>
-                    </div>
-                    <span className="text-[12px] text-muted-foreground hidden lg:block">{row.service}</span>
-                    <span className="text-[13px] font-medium text-foreground w-16 text-right shrink-0">{mask(row.price)}</span>
-                    <span className={cn("shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold", st.bg, st.color)}>
+                     <span className="text-[13px] text-muted-foreground font-light w-10 shrink-0">{row.time}</span>
+                     <div className="flex-1 min-w-0">
+                       <p className="text-[13px] font-normal text-foreground truncate">{row.name}</p>
+                       <p className="text-[10px] text-muted-foreground font-extralight uppercase tracking-wide">{row.plate}</p>
+                     </div>
+                     <span className="text-[12px] text-muted-foreground font-extralight hidden lg:block">{row.service}</span>
+                     <span className="text-[13px] font-light text-foreground w-16 text-right shrink-0">{mask(row.price)}</span>
+                     <span className={cn("shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-medium", st.bg, st.color)}>
                       {st.label}
                     </span>
                   </div>
@@ -472,12 +472,12 @@ export default function Index() {
                 { hour: "17", min: "45", name: "Pedro Almeida", detail: "Lavagem simples · GY8-8M90" },
               ].map((a) => (
                 <div key={a.hour + a.min} className="flex items-center gap-3">
-                  <div className="flex h-[38px] w-[38px] shrink-0 flex-col items-center justify-center rounded-lg bg-secondary text-foreground">
-                    <span className="text-[14px] font-semibold leading-none">{a.hour}</span>
-                    <span className="text-[9px] text-muted-foreground leading-none">{a.min}</span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-foreground truncate">{a.name}</p>
+                   <div className="flex h-[38px] w-[38px] shrink-0 flex-col items-center justify-center rounded-lg bg-secondary text-foreground">
+                     <span className="text-[14px] font-light leading-none">{a.hour}</span>
+                     <span className="text-[9px] text-muted-foreground font-extralight leading-none">{a.min}</span>
+                   </div>
+                   <div className="min-w-0">
+                     <p className="text-[13px] font-normal text-foreground truncate">{a.name}</p>
                     <p className="text-[10px] text-muted-foreground truncate">{a.detail}</p>
                   </div>
                 </div>
@@ -550,18 +550,18 @@ export default function Index() {
                 <div className="mt-auto pt-3 border-t border-border/50 flex items-center justify-between">
                   <div>
                     <p className="text-[10px] text-muted-foreground">Valor total</p>
-                    <p className="text-[13px] font-semibold text-foreground">{mask("R$ 4.280")}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] text-muted-foreground">Taxa de conversão</p>
-                    <p className="text-[13px] font-semibold text-success">62%</p>
+                     <p className="text-[13px] font-light text-foreground">{mask("R$ 4.280")}</p>
+                   </div>
+                   <div className="text-right">
+                     <p className="text-[10px] text-muted-foreground">Taxa de conversão</p>
+                     <p className="text-[13px] font-light text-success">62%</p>
                   </div>
                 </div>
               </C>
 
               {/* Resumo de vendas */}
               <C className="flex flex-col">
-                <CH left="Resumo de vendas" right={<span className="font-semibold text-foreground">{mask("R$ 2.320,00")}</span>} />
+                <CH left="Resumo de vendas" right={<span className="font-light text-foreground">{mask("R$ 2.320,00")}</span>} />
                 {/* Legend */}
                 <div className="flex flex-wrap gap-x-2 gap-y-0.5 mb-2">
                   {[
@@ -608,7 +608,7 @@ export default function Index() {
                   ].map((r) => (
                     <div key={r.label} className="flex items-center justify-between">
                       <span className="text-[10px] text-muted-foreground">{r.label}</span>
-                      <span className="text-[10px] font-semibold" style={{ color: r.color }}>{mask(r.value)}</span>
+                      <span className="text-[10px] font-light" style={{ color: r.color }}>{mask(r.value)}</span>
                     </div>
                   ))}
                 </div>
@@ -627,7 +627,7 @@ export default function Index() {
                   ].map((b) => (
                     <div key={b.label} className="flex-1 flex flex-col items-center gap-1 group relative">
                       {/* Tooltip */}
-                      <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-medium rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
+                      <div className="absolute -top-6 opacity-0 group-hover:opacity-100 transition-opacity bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 whitespace-nowrap pointer-events-none z-10">
                         {b.time}
                       </div>
                       <div
@@ -647,14 +647,14 @@ export default function Index() {
               {/* Resumo financeiro */}
               <C className="col-span-6 flex flex-col">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
+                  <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
                   <div className="flex items-center gap-2">
                     <div className="flex bg-secondary rounded-lg overflow-hidden">
                       {["Diário", "Semanal", "Mensal"].map((p) => (
                         <button
                           key={p}
                           className={cn(
-                            "px-2.5 py-1 text-[10px] font-medium transition-colors",
+                            "px-2.5 py-1 text-[10px] font-light transition-colors",
                             p === "Diário"
                               ? "bg-foreground text-background"
                               : "text-muted-foreground hover:text-foreground"
@@ -673,12 +673,12 @@ export default function Index() {
                 {/* Entradas / Saídas */}
                 <div className="grid grid-cols-2 gap-2 mb-3">
                   <div className="bg-secondary/60 rounded-lg p-3">
-                    <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Entradas hoje</p>
+                    <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
                     <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
                     <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
                   </div>
                   <div className="bg-secondary/60 rounded-lg p-3">
-                    <p className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider mb-1">Saídas hoje</p>
+                    <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
                     <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
                     <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
                   </div>
@@ -687,11 +687,11 @@ export default function Index() {
                 {/* Faturas pendentes */}
                 <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
                   <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
-                  <span className="text-[12px] font-semibold text-pink">{mask("R$ 1.220,00")}</span>
+                  <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
                 </div>
 
                 {/* Receita semanal */}
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">Receita semanal</p>
+                <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">Receita semanal</p>
                 <div className="flex-1 min-h-[80px] relative">
                   <svg viewBox="0 0 300 80" className="w-full h-full" preserveAspectRatio="none">
                     <defs>
@@ -867,7 +867,7 @@ export default function Index() {
                 <div className="grid grid-cols-2 gap-2 flex-1">
                   {/* Básico */}
                   <div className="rounded-lg border border-border/60 p-3 flex flex-col relative overflow-hidden">
-                    <div className="absolute top-2 right-[-22px] bg-success text-black text-[8px] font-semibold px-7 py-0.5 rotate-45 uppercase tracking-wider">Popular</div>
+                    <div className="absolute top-2 right-[-22px] bg-success text-black text-[8px] font-medium px-7 py-0.5 rotate-45 uppercase tracking-wider">Popular</div>
                     <p className="text-[12px] font-normal text-foreground">Plano Básico</p>
                     <p className="text-[10px] font-extralight text-muted-foreground mb-2 leading-tight">4 lavagens simples por mês</p>
                     <p className="text-lg font-extralight text-foreground">R$ 119 <span className="text-[10px] text-muted-foreground font-light">/mês</span></p>
@@ -888,9 +888,9 @@ export default function Index() {
                   </div>
                   {/* Frota */}
                   <div className="rounded-lg border border-border/60 p-3 flex flex-col">
-                    <p className="text-[11px] font-semibold text-foreground">Plano Frota</p>
-                    <p className="text-[9px] text-muted-foreground mb-2">8 lavagens simples (até 3 veículos)</p>
-                    <p className="text-lg font-light text-foreground">R$ 199 <span className="text-[9px] text-muted-foreground font-normal">/mês</span></p>
+                     <p className="text-[11px] font-normal text-foreground">Plano Frota</p>
+                     <p className="text-[9px] text-muted-foreground mb-2">8 lavagens simples (até 3 veículos)</p>
+                     <p className="text-lg font-extralight text-foreground">R$ 199 <span className="text-[9px] text-muted-foreground font-extralight">/mês</span></p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[9px] text-muted-foreground">👥 2 assinantes</span>
                       <span className="text-[9px] text-muted-foreground">🚗 Multi-veículo</span>
