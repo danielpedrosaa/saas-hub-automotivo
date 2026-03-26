@@ -1,36 +1,10 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Sidebar from "./layout/Sidebar";
-
 import MobileBottomNav from "./layout/MobileBottomNav";
-import { cn } from "@/lib/utils";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
-
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem("sidebar-collapsed") === "true";
-  });
-
-  // Listen for collapse changes from sidebar
-  useEffect(() => {
-    const handleStorage = () => {
-      setCollapsed(localStorage.getItem("sidebar-collapsed") === "true");
-    };
-    window.addEventListener("storage", handleStorage);
-    
-    // Also poll for same-tab changes
-    const interval = setInterval(() => {
-      const val = localStorage.getItem("sidebar-collapsed") === "true";
-      setCollapsed((prev) => (prev !== val ? val : prev));
-    }, 200);
-
-    return () => {
-      window.removeEventListener("storage", handleStorage);
-      clearInterval(interval);
-    };
-  }, []);
 
   if (isMobile) {
     return (
@@ -41,14 +15,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     );
   }
 
-  const sidebarWidth = collapsed ? 72 : 220;
-
   return (
     <div className="h-screen overflow-hidden bg-background flex font-sans">
       <Sidebar />
       <div
-        className="h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300 custom-scrollbar"
-        style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
+        className="h-screen overflow-y-auto overflow-x-hidden flex-1 min-w-0 transition-all duration-300 custom-scrollbar"
       >
         <div className="max-w-[1200px] mx-auto w-full px-6 py-6 min-h-full">
           {children}
