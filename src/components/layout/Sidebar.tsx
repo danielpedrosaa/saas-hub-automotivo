@@ -87,41 +87,51 @@ export default function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-all duration-300 border-r border-border",
+        "fixed top-0 left-0 bottom-0 flex flex-col z-40 transition-all duration-300 border-r border-border relative",
         "bg-card",
         w,
       )}
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
-      {/* ── Logo + Collapse ── */}
-      <div className="shrink-0" style={{ padding: collapsed ? "4px 0 28px" : "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
-        <div className="flex items-center justify-between">
-          {collapsed ? (
-            <div
-              className="mx-auto flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
-              style={{ width: 34, height: 34 }}
-            >
-              NC
-            </div>
-          ) : (
-            <img
-              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
-              alt="NovaCar"
-              style={{ height: 28, width: "auto" }}
-              className="object-contain"
-            />
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={cn(
-              "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
-              "text-muted-foreground hover:text-foreground hover:bg-muted",
-              collapsed && "mx-auto mt-2"
-            )}
+      {/* ── Collapse button on edge ── */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute z-50 flex items-center justify-center rounded-full border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+        style={{
+          width: 24,
+          height: 24,
+          right: -12,
+          top: "50%",
+          transform: "translateY(-50%)",
+        }}
+      >
+        {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
+      </button>
+
+      {/* ── Logo ── */}
+      <div
+        className="shrink-0 flex items-center border-b border-border"
+        style={{
+          padding: collapsed ? "5px 0 24px" : "5px 12px 24px",
+          marginBottom: 16,
+          justifyContent: collapsed ? "center" : "flex-start",
+        }}
+      >
+        {collapsed ? (
+          <div
+            className="flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
+            style={{ width: 34, height: 34 }}
           >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
-        </div>
+            {shopInitials}
+          </div>
+        ) : (
+          <img
+            src={isDark ? logoDark : logoLight}
+            alt={shop?.name || "Logo"}
+            style={{ height: 28, width: "auto", transition: "opacity 80ms ease" }}
+            className="object-contain"
+          />
+        )}
       </div>
 
       {/* ── Nav ── */}
