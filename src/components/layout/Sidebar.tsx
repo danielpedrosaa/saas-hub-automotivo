@@ -84,35 +84,34 @@ export default function Sidebar() {
       )}
       style={{ padding: collapsed ? "28px 8px" : "28px 18px" }}
     >
-      {/* ── Logo + Collapse ── */}
-      <div className="shrink-0" style={{ padding: collapsed ? "4px 0 28px" : "4px 0 28px", borderBottom: "1px solid hsl(var(--border))", marginBottom: 20 }}>
-        <div className="flex items-center justify-between">
-          {collapsed ? (
-            <div
-              className="mx-auto flex items-center justify-center rounded-[9px] bg-muted text-[13px] font-medium text-foreground"
-              style={{ width: 34, height: 34 }}
-            >
-              NC
-            </div>
-          ) : (
-            <img
-              src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
-              alt="NovaCar"
-              style={{ height: 28, width: "auto" }}
-              className="object-contain"
-            />
-          )}
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={cn(
-              "flex h-7 w-7 items-center justify-center rounded-md transition-colors",
-              "text-muted-foreground hover:text-foreground hover:bg-muted",
-              collapsed && "mx-auto mt-2"
-            )}
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </button>
-        </div>
+      {/* ── Collapse button on right edge ── */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="fixed z-50 flex items-center justify-center transition-all duration-300 bg-muted border border-border border-l-0 rounded-r-[6px] text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer"
+        style={{
+          top: "50vh",
+          transform: "translateY(-50%)",
+          left: collapsed ? 72 - 1 : 220 - 1,
+          width: 20,
+          height: 48,
+          borderTopLeftRadius: 0,
+          borderBottomLeftRadius: 0,
+        }}
+      >
+        {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronLeft className="h-3.5 w-3.5" />}
+      </button>
+
+      {/* ── Logo ── */}
+      <div
+        className="shrink-0 flex items-center justify-center border-b border-border"
+        style={{ padding: "20px 12px 24px", marginBottom: 16 }}
+      >
+        <img
+          src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
+          alt="NovaCar"
+          style={{ height: collapsed ? 24 : 28, width: "auto", maxWidth: "80%" }}
+          className="object-contain transition-all duration-300"
+        />
       </div>
 
       {/* ── Nav ── */}
