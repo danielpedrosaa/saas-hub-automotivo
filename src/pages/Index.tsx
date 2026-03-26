@@ -78,8 +78,8 @@ type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
 const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
   "Diário": {
-    labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
-    values: [120, 580, 430, 690, 510, 780, 340],
+    labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
+    values: [580, 430, 690, 510, 780, 340, 120],
   },
   "Semanal": {
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
@@ -95,8 +95,29 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
   const [period, setPeriod] = useState<FinancePeriod>("Diário");
   const data = financeData[period];
   const maxVal = Math.max(...data.values, 1);
-
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  // Chart dimensions
+  const chartW = 600;
+  const chartH = 160;
+  const padL = 10;
+  const padR = 10;
+  const padT = 15;
+  const padB = 5;
+  const plotW = chartW - padL - padR;
+  const plotH = chartH - padT - padB;
+
+  const pts = data.values.map((v, i) => {
+    const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
+    const y = padT + plotH - (v / maxVal) * plotH;
+    return [x, y] as [number, number];
+  });
+
+  const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
+  const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},${padT + plotH} L${pts[0][0]},${padT + plotH} Z`;
+
+  // Grid lines (4 horizontal)
+  const gridLines = [0.25, 0.5, 0.75, 1].map(pct => padT + plotH - pct * plotH);
 
   return (
     <C className="col-span-6 flex flex-col h-[420px]">
@@ -150,54 +171,65 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
         Receita {period === "Diário" ? "semanal" : period === "Semanal" ? "mensal" : "anual"}
       </p>
 
-      {/* Area chart */}
-      <div className="flex-1 min-h-[80px] relative overflow-visible">
-        <svg viewBox={`-15 -5 ${Math.max(data.labels.length - 1, 1) * 50 + 30} 100`} className="w-full h-full" preserveAspectRatio="none" overflow="visible">
+      {/* Area chart — proper aspect ratio */}
+      <div className="flex-1 min-h-0 relative">
+        <svg viewBox={`0 0 ${chartW} ${chartH + 20}`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+              <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0.01" />
             </linearGradient>
           </defs>
-          {(() => {
-            const w = Math.max(data.labels.length - 1, 1) * 50;
-            const pts = data.values.map((v, i) => {
-              const x = data.labels.length === 1 ? w / 2 : (i / (data.labels.length - 1)) * w;
-              const y = 75 - (v / maxVal) * 65;
-              return [x, y];
-            });
-            const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
-            const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},80 L${pts[0][0]},80 Z`;
+
+          {/* Horizontal grid lines */}
+          {gridLines.map((gy, i) => (
+            <line key={i} x1={padL} y1={gy} x2={padL + plotW} y2={gy} stroke="hsl(var(--border))" strokeWidth="0.5" />
+          ))}
+          {/* Baseline */}
+          <line x1={padL} y1={padT + plotH} x2={padL + plotW} y2={padT + plotH} stroke="hsl(var(--border))" strokeWidth="0.5" />
+
+          {/* Area fill */}
+          <path d={area} fill="url(#areaGradFin)" />
+          {/* Line */}
+          <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+
+          {/* Dots + tooltips */}
+          {pts.map(([x, y], i) => (
+            <g key={i}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              className="cursor-crosshair"
+            >
+              <circle cx={x} cy={y} r="10" fill="transparent" />
+              <circle cx={x} cy={y} r={hoveredIdx === i ? 5 : 3.5} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+              {hoveredIdx === i && (
+                <foreignObject x={x - 40} y={y - 28} width="80" height="22" overflow="visible">
+                  <div className="bg-popover border border-border text-[10px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
+                    R$ {data.values[i].toLocaleString("pt-BR")}
+                  </div>
+                </foreignObject>
+              )}
+            </g>
+          ))}
+
+          {/* X-axis labels */}
+          {data.labels.map((label, i) => {
+            const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
             return (
-              <>
-                <path d={area} fill="url(#areaGradFin)" />
-                <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
-                {pts.map(([x, y], i) => (
-                  <g key={i}
-                    onMouseEnter={() => setHoveredIdx(i)}
-                    onMouseLeave={() => setHoveredIdx(null)}
-                    className="cursor-crosshair"
-                  >
-                    <circle cx={x} cy={y} r="8" fill="transparent" />
-                    <circle cx={x} cy={y} r={hoveredIdx === i ? 4.5 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
-                    {hoveredIdx === i && (
-                      <foreignObject x={x - 35} y={y - 26} width="70" height="18">
-                        <div className="bg-popover border border-border text-[8px] text-foreground font-extralight rounded px-1 py-0.5 text-center whitespace-nowrap">
-                          R$ {data.values[i].toLocaleString("pt-BR")}
-                        </div>
-                      </foreignObject>
-                    )}
-                  </g>
-                ))}
-              </>
+              <text
+                key={label}
+                x={x}
+                y={chartH + 14}
+                textAnchor={i === 0 ? "start" : i === data.labels.length - 1 ? "end" : "middle"}
+                fill="hsl(var(--muted-foreground))"
+                fontSize="11"
+                fontWeight="300"
+              >
+                {label}
+              </text>
             );
-          })()}
+          })}
         </svg>
-      </div>
-      <div className="flex justify-between mt-1 px-0">
-        {data.labels.map((d) => (
-          <span key={d} className="text-[9px] text-muted-foreground text-center" style={{ minWidth: 0 }}>{d}</span>
-        ))}
       </div>
     </C>
   );
