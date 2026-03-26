@@ -50,7 +50,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         className="h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300 custom-scrollbar"
         style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
       >
-        <div className="w-full px-6 py-6 min-h-full">
+        <div className="max-w-[1200px] mx-auto w-full px-6 py-6 min-h-full">
           {children}
         </div>
       </div>
