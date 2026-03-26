@@ -30,12 +30,10 @@ export default function Sidebar() {
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
-  // Persist collapse
   useEffect(() => {
     localStorage.setItem("sidebar-collapsed", String(collapsed));
   }, [collapsed]);
 
-  // Theme sync
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) root.classList.add("dark");
@@ -43,7 +41,6 @@ export default function Sidebar() {
     localStorage.setItem("theme", isDark ? "dark" : "light");
   }, [isDark]);
 
-  // Auto-open group that contains current route
   useEffect(() => {
     NAV_STRUCTURE.forEach((group) => {
       group.items.forEach((item) => {
@@ -87,12 +84,12 @@ export default function Sidebar() {
       )}
     >
       {/* ── Logo + Collapse ── */}
-      <div className="flex items-center justify-between h-[60px] px-4 border-b border-border shrink-0">
+      <div className="flex items-center justify-between h-[52px] px-3 border-b border-border shrink-0">
         {!collapsed && (
           <img
             src={isDark ? "/Logo_NovaCar_White.png" : "/Logo_NovaCar.png"}
             alt="NovaCar"
-            className="h-[22px] w-auto object-contain"
+            className="h-[20px] w-auto object-contain"
           />
         )}
         <button
@@ -108,16 +105,16 @@ export default function Sidebar() {
       </div>
 
       {/* ── Nav ── */}
-      <nav className="flex-1 overflow-y-auto py-3 sidebar-scroll">
+      <nav className="flex-1 overflow-y-auto py-2 sidebar-scroll">
         {NAV_STRUCTURE.map((group) => {
           const visibleItems = group.items.filter((i) => role && i.roles.includes(role));
           if (visibleItems.length === 0) return null;
 
           return (
-            <div key={group.section} className="mb-1">
+            <div key={group.section}>
               {/* Section label */}
               {!collapsed && (
-                <p className="px-5 pt-5 pb-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground/50 select-none">
+                <p className="px-3 pt-[18px] pb-2 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground/50 select-none">
                   {group.section}
                 </p>
               )}
@@ -132,8 +129,6 @@ export default function Sidebar() {
                   isOpen={!!openGroups[item.label]}
                   onToggle={() => toggleGroup(item.label)}
                   isChildActive={isChildActive}
-                  isDark={isDark}
-                  pathname={pathname}
                 />
               ))}
             </div>
@@ -142,20 +137,18 @@ export default function Sidebar() {
       </nav>
 
       {/* ── Footer ── */}
-      <div className="border-t border-border shrink-0 p-3 space-y-2">
-        {/* Theme toggle */}
+      <div className="border-t border-border shrink-0 p-2 space-y-1">
         <SidebarButton
           collapsed={collapsed}
-          icon={isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          icon={isDark ? <Moon style={{ width: 19, height: 19 }} strokeWidth={1.5} /> : <Sun style={{ width: 19, height: 19 }} strokeWidth={1.5} />}
           label={isDark ? "Tema escuro" : "Tema claro"}
           onClick={() => setIsDark(!isDark)}
           tooltipLabel="Alternar tema"
         />
 
-        {/* Settings */}
         <SidebarButton
           collapsed={collapsed}
-          icon={<Settings className="h-4 w-4" />}
+          icon={<Settings style={{ width: 19, height: 19 }} strokeWidth={1.5} />}
           label="Configurações"
           onClick={() => navigate("/settings")}
           active={pathname === "/settings"}
@@ -164,22 +157,22 @@ export default function Sidebar() {
 
         {/* User card */}
         <div className={cn(
-          "flex items-center gap-3 rounded-lg p-2 mt-1",
+          "flex items-center gap-2.5 rounded-[11px] p-2 mt-1",
           "bg-muted/50",
           collapsed && "justify-center"
         )}>
           <div className={cn(
-            "h-8 w-8 shrink-0 flex items-center justify-center rounded-md text-[10px] font-black",
+            "h-7 w-7 shrink-0 flex items-center justify-center rounded-md text-[9px] font-normal",
             "bg-background border border-border text-muted-foreground"
           )}>
             {initials}
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-semibold truncate leading-tight text-foreground">
+              <p className="text-[11px] font-normal truncate leading-tight text-foreground">
                 {profile?.full_name ?? "Usuário"}
               </p>
-              <p className="text-[9px] font-medium uppercase tracking-wider leading-tight text-muted-foreground">
+              <p className="text-[9px] font-light uppercase tracking-wider leading-tight text-muted-foreground">
                 {role === "owner" ? "proprietário" : "funcionário"}
               </p>
             </div>
@@ -187,7 +180,7 @@ export default function Sidebar() {
           {!collapsed && (
             <button
               onClick={async () => { await signOut(); navigate("/auth"); }}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md hover:bg-muted transition-colors"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md hover:bg-muted transition-colors"
             >
               <LogOut className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
@@ -200,7 +193,7 @@ export default function Sidebar() {
 
 // ── Nav item row ───────────────────────────────────────────────────────────
 function NavItemRow({
-  item, collapsed, isActive, isOpen, onToggle, isChildActive, isDark, pathname,
+  item, collapsed, isActive, isOpen, onToggle, isChildActive,
 }: {
   item: NavItem;
   collapsed: boolean;
@@ -208,29 +201,28 @@ function NavItemRow({
   isOpen: boolean;
   onToggle: () => void;
   isChildActive: (c: NavChild) => boolean;
-  isDark: boolean;
-  pathname: string;
 }) {
   const hasChildren = !!item.children && item.children.length > 0;
   const Icon = item.icon;
 
   const content = (
     <div
+      style={{ padding: "11px 14px", minHeight: 44, gap: 12 }}
       className={cn(
-        "relative flex items-center gap-2.5 px-3 py-2 mx-2 rounded-lg text-[12px] font-medium transition-all cursor-pointer group",
+        "relative flex items-center rounded-[11px] text-[13px] transition-all cursor-pointer group",
         isActive
-          ? "bg-muted text-foreground font-semibold"
-          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-        collapsed && "justify-center px-0 mx-1"
+          ? "bg-muted text-foreground font-normal"
+          : "text-muted-foreground font-light hover:bg-muted/50 hover:text-foreground",
+        collapsed && "justify-center !px-0 mx-1"
       )}
       onClick={() => {
         if (hasChildren) onToggle();
       }}
     >
       {isActive && !collapsed && (
-        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[16px] rounded-r-sm bg-foreground" />
+        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[14px] rounded-r-sm bg-foreground" />
       )}
-      <Icon className={cn("h-[18px] w-[18px] shrink-0", isActive ? "text-foreground" : "opacity-60 group-hover:opacity-100")} />
+      <Icon style={{ width: 19, height: 19 }} strokeWidth={1.5} className={cn("shrink-0", isActive ? "text-foreground" : "opacity-60 group-hover:opacity-100")} />
       {!collapsed && (
         <>
           <span className="flex-1 truncate">{item.label}</span>
@@ -245,7 +237,6 @@ function NavItemRow({
     </div>
   );
 
-  // If no children, wrap in Link
   const row = hasChildren ? (
     <div>{content}</div>
   ) : (
@@ -279,26 +270,56 @@ function NavItemRow({
             isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
           )}
         >
-          <div className="ml-[26px] pl-3 border-l border-border/50 py-0.5 space-y-0.5">
+          <div style={{ paddingLeft: 20 }} className="py-0.5">
             {item.children!.map((child) => (
               <Link
                 key={child.to}
                 to={child.to}
+                style={{ padding: "8px 14px", minHeight: 36 }}
                 className={cn(
-                  "flex items-center gap-1.5 px-2 py-1.5 rounded-md text-[11px] transition-colors whitespace-nowrap",
+                  "flex items-center gap-2 rounded-[11px] text-[12px] font-light transition-colors whitespace-nowrap group/sub",
                   isChildActive(child)
-                    ? "text-foreground font-semibold bg-muted/60"
+                    ? "text-foreground bg-muted/60"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
                 )}
               >
+                {/* Bullet dot */}
+                <span className={cn(
+                  "w-1 h-1 rounded-full shrink-0 transition-colors",
+                  isChildActive(child)
+                    ? "bg-foreground"
+                    : "bg-muted-foreground/30 group-hover/sub:bg-muted-foreground/60"
+                )} />
                 <span className="flex-1 truncate">{child.label}</span>
                 {child.badge === "novo" && (
-                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground tracking-wider">
+                  <span
+                    className="shrink-0 uppercase"
+                    style={{
+                      fontSize: 8,
+                      fontWeight: 600,
+                      padding: "2px 6px",
+                      borderRadius: 4,
+                      letterSpacing: "0.04em",
+                      background: "hsl(142 71% 45% / 0.12)",
+                      color: "hsl(142 71% 45%)",
+                    }}
+                  >
                     novo
                   </span>
                 )}
                 {child.badge === "IA" && (
-                  <span className="shrink-0 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-purple/15 text-purple tracking-wider">
+                  <span
+                    className="shrink-0 uppercase"
+                    style={{
+                      fontSize: 8,
+                      fontWeight: 600,
+                      padding: "2px 6px",
+                      borderRadius: 4,
+                      letterSpacing: "0.04em",
+                      background: "rgba(168,85,247,0.12)",
+                      color: "#a855f7",
+                    }}
+                  >
                     IA
                   </span>
                 )}
@@ -325,12 +346,13 @@ function SidebarButton({
   const btn = (
     <button
       onClick={onClick}
+      style={{ padding: "11px 14px", minHeight: 44, gap: 12 }}
       className={cn(
-        "flex items-center gap-2.5 w-full px-3 py-2 mx-0 rounded-lg text-[12px] font-medium transition-colors",
+        "flex items-center w-full rounded-[11px] text-[13px] font-light transition-colors",
         active
-          ? "bg-muted text-foreground"
+          ? "bg-muted text-foreground font-normal"
           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground",
-        collapsed && "justify-center px-0"
+        collapsed && "justify-center !px-0"
       )}
     >
       {icon}
