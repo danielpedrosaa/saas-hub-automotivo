@@ -48,9 +48,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <Sidebar />
       <div
         className="flex-1 h-screen overflow-y-auto overflow-x-hidden min-w-0 transition-all duration-300"
-        style={{ marginLeft: sidebarWidth }}
+        style={{ paddingLeft: sidebarWidth }}
       >
-        <div className="max-w-[1400px] mx-auto px-6 py-6">
+        <div className="w-full px-6 py-6 min-h-full">
           {children}
         </div>
       </div>
