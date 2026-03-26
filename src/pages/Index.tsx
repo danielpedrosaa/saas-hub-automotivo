@@ -73,6 +73,136 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
   );
 }
 
+// ── Resumo Financeiro (interactive) ─────────────────────────────────────────
+type FinancePeriod = "Diário" | "Semanal" | "Mensal";
+
+const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
+  "Diário": {
+    labels: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+    values: [120, 580, 430, 690, 510, 780, 340],
+  },
+  "Semanal": {
+    labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
+    values: [2100, 3400, 2800, 3150],
+  },
+  "Mensal": {
+    labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+    values: [8200, 9100, 7600, 10200, 9500, 11000, 8800, 9700, 10500, 11200, 9800, 10800],
+  },
+};
+
+function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navigate: (path: string) => void }) {
+  const [period, setPeriod] = useState<FinancePeriod>("Diário");
+  const data = financeData[period];
+  const maxVal = Math.max(...data.values, 1);
+
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  return (
+    <C className="col-span-6 flex flex-col">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
+        <div className="flex items-center gap-2">
+          <div className="flex bg-secondary rounded-lg overflow-hidden">
+            {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPeriod(p)}
+                className={cn(
+                  "px-2.5 py-1 text-[10px] font-light transition-colors",
+                  p === period
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+            detalhes <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+      </div>
+
+      {/* Entradas / Saídas */}
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
+          <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
+        </div>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
+          <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
+        </div>
+      </div>
+
+      {/* Faturas pendentes */}
+      <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
+        <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
+        <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
+      </div>
+
+      {/* Area chart label */}
+      <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">
+        Receita {period === "Diário" ? "semanal" : period === "Semanal" ? "mensal" : "anual"}
+      </p>
+
+      {/* Area chart */}
+      <div className="flex-1 min-h-[80px] relative">
+        <svg viewBox={`0 0 ${Math.max(data.labels.length - 1, 1) * 50} 80`} className="w-full h-full" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
+          {(() => {
+            const w = Math.max(data.labels.length - 1, 1) * 50;
+            const pts = data.values.map((v, i) => {
+              const x = data.labels.length === 1 ? w / 2 : (i / (data.labels.length - 1)) * w;
+              const y = 75 - (v / maxVal) * 65;
+              return [x, y];
+            });
+            const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
+            const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},80 L${pts[0][0]},80 Z`;
+            return (
+              <>
+                <path d={area} fill="url(#areaGradFin)" />
+                <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" />
+                {pts.map(([x, y], i) => (
+                  <g key={i}
+                    onMouseEnter={() => setHoveredIdx(i)}
+                    onMouseLeave={() => setHoveredIdx(null)}
+                    className="cursor-crosshair"
+                  >
+                    <circle cx={x} cy={y} r="8" fill="transparent" />
+                    <circle cx={x} cy={y} r={hoveredIdx === i ? 4.5 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+                    {hoveredIdx === i && (
+                      <foreignObject x={x - 35} y={y - 26} width="70" height="20">
+                        <div className="bg-popover border border-border text-[9px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
+                          R$ {data.values[i].toLocaleString("pt-BR")}
+                        </div>
+                      </foreignObject>
+                    )}
+                  </g>
+                ))}
+              </>
+            );
+          })()}
+        </svg>
+      </div>
+      <div className="flex justify-between mt-1">
+        {data.labels.map((d) => (
+          <span key={d} className="text-[9px] text-muted-foreground">{d}</span>
+        ))}
+      </div>
+    </C>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 export default function Index() {
   const { profile, role } = useAuth();
