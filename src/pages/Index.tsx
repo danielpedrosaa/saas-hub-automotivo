@@ -76,28 +76,18 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
 // ── Resumo Financeiro (interactive) ─────────────────────────────────────────
 type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
-const financeData: Record<FinancePeriod, {
-  labels: string[]; values: number[];
-  entradas: { label: string; value: string; hint: string };
-  saidas: { label: string; value: string; hint: string };
-}> = {
+const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
   "Diário": {
     labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
     values: [580, 430, 690, 510, 780, 340, 120],
-    entradas: { label: "ENTRADAS HOJE", value: "R$ 1.730", hint: "Valor total de todas as entradas" },
-    saidas: { label: "SAÍDAS HOJE", value: "R$ 340", hint: "Produtos, comissões, despesas" },
   },
   "Semanal": {
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
     values: [2100, 3400, 2800, 3150],
-    entradas: { label: "ENTRADAS SEMANA", value: "R$ 9.840", hint: "Total dos últimos 7 dias" },
-    saidas: { label: "SAÍDAS SEMANA", value: "R$ 2.190", hint: "Produtos, comissões, despesas" },
   },
   "Mensal": {
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
     values: [8200, 9100, 7600, 10200, 9500, 11000, 8800, 9700, 10500, 11200, 9800, 10800],
-    entradas: { label: "ENTRADAS MÊS", value: "R$ 38.500", hint: "Total do mês atual" },
-    saidas: { label: "SAÍDAS MÊS", value: "R$ 8.720", hint: "Produtos, comissões, despesas" },
   },
 };
 
@@ -134,16 +124,16 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
       <div className="flex items-center justify-between mb-3">
         <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
         <div className="flex items-center gap-2">
-          <div className="flex gap-0.5 bg-muted/50 rounded-lg p-0.5">
+          <div className="flex bg-secondary rounded-lg overflow-hidden">
             {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
-                  "text-[10px] font-normal px-3 py-[5px] rounded-md transition-all cursor-pointer",
+                  "px-2.5 py-1 text-[10px] font-light transition-colors",
                   p === period
-                    ? "bg-card border border-border text-foreground shadow-sm"
-                    : "border border-transparent text-muted-foreground hover:text-foreground/70"
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {p}
@@ -158,15 +148,15 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
 
       {/* Entradas / Saídas */}
       <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className="bg-secondary/60 rounded-xl p-3 border border-border hover:bg-secondary/80 transition-colors">
-          <p className="text-[9px] text-muted-foreground font-normal uppercase tracking-wider mb-1">{data.entradas.label}</p>
-          <p className="text-xl font-extralight text-success leading-none tabular-nums">{mask(data.entradas.value)}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-0.5">{data.entradas.hint}</p>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
+          <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
         </div>
-        <div className="bg-secondary/60 rounded-xl p-3 border border-border hover:bg-secondary/80 transition-colors">
-          <p className="text-[9px] text-muted-foreground font-normal uppercase tracking-wider mb-1">{data.saidas.label}</p>
-          <p className="text-xl font-extralight text-destructive leading-none tabular-nums">{mask(data.saidas.value)}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-0.5">{data.saidas.hint}</p>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
+          <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
         </div>
       </div>
 
