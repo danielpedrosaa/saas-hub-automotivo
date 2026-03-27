@@ -150,12 +150,12 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
             {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
               <button
                 key={p}
-                onClick={() => setPeriod(p)}
+                onClick={() => { setPeriod(p); setHoveredIdx(null); }}
                 className={cn(
-                  "px-3 py-[5px] text-[10px] font-normal rounded-md border transition-colors",
+                  "px-3 py-[5px] text-[10px] font-normal rounded-[6px] transition-all duration-200 cursor-pointer",
                   p === period
-                    ? "bg-card border-border text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-muted-foreground/80"
+                    ? "bg-card/80 border border-border text-foreground"
+                    : "border-none text-muted-foreground hover:text-muted-foreground/70"
                 )}
               >
                 {p}
