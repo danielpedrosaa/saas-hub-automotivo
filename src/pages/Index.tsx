@@ -171,14 +171,14 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
       {/* Entradas / Saídas */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Entradas hoje</p>
-          <p className="text-xl font-extralight text-success tabular-nums leading-none">{mask("R$ 1.730")}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Valor total de todas as entradas</p>
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">{data.entLabel}</p>
+          <p className="text-xl font-extralight text-success tabular-nums leading-none">{mask(data.entValue)}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">{data.entHint}</p>
         </div>
         <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Saídas hoje</p>
-          <p className="text-xl font-extralight text-destructive tabular-nums leading-none">{mask("R$ 340")}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Produtos, comissões, despesas</p>
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">{data.saiLabel}</p>
+          <p className="text-xl font-extralight text-destructive tabular-nums leading-none">{mask(data.saiValue)}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">{data.saiHint}</p>
         </div>
       </div>
 
