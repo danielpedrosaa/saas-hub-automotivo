@@ -76,160 +76,216 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
 // ── Resumo Financeiro (interactive) ─────────────────────────────────────────
 type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
-const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }> = {
+const financeChartData: Record<FinancePeriod, { values: number[]; labels: string[]; chartLabel: string }> = {
   "Diário": {
+    values: [980, 1420, 1100, 1650, 1870, 890, 510],
     labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
-    values: [580, 430, 690, 510, 780, 340, 120],
+    chartLabel: "RECEITA SEMANAL",
   },
   "Semanal": {
+    values: [8200, 9100, 7800, 9840],
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
-    values: [2100, 3400, 2800, 3150],
+    chartLabel: "RECEITA MENSAL",
   },
   "Mensal": {
+    values: [32000, 35000, 29000, 37000, 41000, 44000, 38000, 40000, 43000, 46000, 39000, 38500],
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-    values: [8200, 9100, 7600, 10200, 9500, 11000, 8800, 9700, 10500, 11200, 9800, 10800],
+    chartLabel: "RECEITA ANUAL",
   },
 };
 
+function buildBezierPath(pts: [number, number][]) {
+  if (pts.length < 2) return "";
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [px, py] = pts[i - 1];
+    const [cx, cy] = pts[i];
+    const cp1x = px + (cx - px) * 0.4;
+    const cp1y = py;
+    const cp2x = cx - (cx - px) * 0.4;
+    const cp2y = cy;
+    d += ` C${cp1x},${cp1y} ${cp2x},${cp2y} ${cx},${cy}`;
+  }
+  return d;
+}
+
 function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navigate: (path: string) => void }) {
   const [period, setPeriod] = useState<FinancePeriod>("Diário");
-  const data = financeData[period];
-  const maxVal = Math.max(...data.values, 1);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const data = financeChartData[period];
 
-  // Chart dimensions
-  const chartW = 600;
-  const chartH = 160;
-  const padL = 10;
-  const padR = 10;
-  const padT = 15;
-  const padB = 5;
-  const plotW = chartW - padL - padR;
-  const plotH = chartH - padT - padB;
+  const W = 600;
+  const H = 140;
+  const px = 12;
+  const py = 16;
+  const N = data.values.length;
+  const minVal = Math.min(...data.values);
+  const maxVal = Math.max(...data.values);
+  const range = maxVal - minVal || 1;
 
-  const pts = data.values.map((v, i) => {
-    const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
-    const y = padT + plotH - (v / maxVal) * plotH;
-    return [x, y] as [number, number];
+  const pts: [number, number][] = data.values.map((v, i) => {
+    const x = px + (i / (N - 1)) * (W - px * 2);
+    const y = py + (1 - (v - minVal) / range) * (H - py * 2);
+    return [x, y];
   });
 
-  const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
-  const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},${padT + plotH} L${pts[0][0]},${padT + plotH} Z`;
+  const linePath = buildBezierPath(pts);
+  const areaPath = linePath + ` L${pts[N - 1][0]},${H} L${pts[0][0]},${H} Z`;
 
-  // Grid lines (4 horizontal)
-  const gridLines = [0.25, 0.5, 0.75, 1].map(pct => padT + plotH - pct * plotH);
+  const gridLines = [0, 1, 2, 3].map(i => py + (i / 3) * (H - py * 2));
 
   return (
     <C className="col-span-6 flex flex-col h-[420px]">
+      {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
-        <div className="flex items-center gap-2">
-          <div className="flex bg-secondary rounded-lg overflow-hidden">
+        <p className="text-[12px] font-normal text-muted-foreground uppercase tracking-[0.08em]">Resumo financeiro</p>
+        <div className="flex items-center gap-[10px]">
+          <div className="flex gap-[2px] bg-accent/30 rounded-lg p-[2px]">
             {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
-                  "px-2.5 py-1 text-[10px] font-light transition-colors",
+                  "px-3 py-[5px] text-[10px] font-normal rounded-md border transition-colors",
                   p === period
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-card border-border text-foreground"
+                    : "border-transparent text-muted-foreground hover:text-muted-foreground/80"
                 )}
               >
                 {p}
               </button>
             ))}
           </div>
-          <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
-            detalhes <ChevronRight className="h-3 w-3" />
+          <button onClick={() => navigate("/financial")} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+            detalhes →
           </button>
         </div>
       </div>
 
       {/* Entradas / Saídas */}
       <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className="bg-secondary/60 rounded-lg p-3">
-          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
-          <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
-          <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
+        <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Entradas hoje</p>
+          <p className="text-xl font-extralight text-success tabular-nums leading-none">{mask("R$ 1.730")}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Valor total de todas as entradas</p>
         </div>
-        <div className="bg-secondary/60 rounded-lg p-3">
-          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
-          <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
-          <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
+        <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Saídas hoje</p>
+          <p className="text-xl font-extralight text-destructive tabular-nums leading-none">{mask("R$ 340")}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Produtos, comissões, despesas</p>
         </div>
       </div>
 
       {/* Faturas pendentes */}
-      <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
-        <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
-        <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
+      <div className="flex items-center justify-between bg-secondary/40 border border-border rounded-[10px] px-[14px] py-[10px] mb-4">
+        <span className="text-[10px] font-light text-muted-foreground">Faturas de cartões pendentes</span>
+        <span className="text-[13px] font-light tabular-nums" style={{ color: "#ff6b9d" }}>{mask("R$ 1.220,00")}</span>
       </div>
 
-      {/* Area chart label */}
-      <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">
-        Receita {period === "Diário" ? "semanal" : period === "Semanal" ? "mensal" : "anual"}
+      {/* Chart label */}
+      <p className="text-[11px] font-normal text-muted-foreground uppercase tracking-[0.1em] mb-[10px]">
+        {data.chartLabel}
       </p>
 
-      {/* Area chart — proper aspect ratio */}
-      <div className="flex-1 min-h-0 relative">
-        <svg viewBox={`0 0 ${chartW} ${chartH + 20}`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
+      {/* SVG Chart */}
+      <div className="relative w-full" style={{ height: 100, marginTop: 8 }}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${W} ${H}`}
+          preserveAspectRatio="none"
+          className="overflow-visible"
+        >
           <defs>
-            <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.15" />
-              <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0.01" />
+            <linearGradient id="finLineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="white" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
             </linearGradient>
           </defs>
 
-          {/* Horizontal grid lines */}
+          {/* Grid lines */}
           {gridLines.map((gy, i) => (
-            <line key={i} x1={padL} y1={gy} x2={padL + plotW} y2={gy} stroke="hsl(var(--border))" strokeWidth="0.5" />
+            <line key={i} x1={px} y1={gy} x2={W - px} y2={gy} stroke="hsl(var(--border))" strokeWidth="1" opacity="0.3" />
           ))}
-          {/* Baseline */}
-          <line x1={padL} y1={padT + plotH} x2={padL + plotW} y2={padT + plotH} stroke="hsl(var(--border))" strokeWidth="0.5" />
 
           {/* Area fill */}
-          <path d={area} fill="url(#areaGradFin)" />
-          {/* Line */}
-          <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+          <path d={areaPath} fill="url(#finLineGrad)" />
 
-          {/* Dots + tooltips */}
+          {/* Bezier line */}
+          <path
+            d={linePath}
+            fill="none"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            style={{
+              strokeDasharray: 1200,
+              strokeDashoffset: 1200,
+              animation: "finDrawLine 1.5s ease-out forwards 0.3s",
+            }}
+          />
+
+          {/* Dots + hover areas */}
           {pts.map(([x, y], i) => (
-            <g key={i}
+            <g
+              key={i}
               onMouseEnter={() => setHoveredIdx(i)}
               onMouseLeave={() => setHoveredIdx(null)}
               className="cursor-crosshair"
             >
-              <circle cx={x} cy={y} r="10" fill="transparent" />
-              <circle cx={x} cy={y} r={hoveredIdx === i ? 5 : 3.5} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+              {/* Hit area */}
+              <circle cx={x} cy={y} r="16" fill="transparent" />
+              {/* Visible dot */}
+              <circle
+                cx={x}
+                cy={y}
+                r={hoveredIdx === i ? 5 : 3.5}
+                fill="hsl(var(--card))"
+                stroke="white"
+                strokeWidth="1.8"
+                className="transition-all"
+                style={{
+                  opacity: 0,
+                  animation: `finDotIn 0.3s ease-out forwards ${0.4 + i * 0.08}s`,
+                }}
+              />
+              {/* Tooltip */}
               {hoveredIdx === i && (
-                <foreignObject x={x - 40} y={y - 28} width="80" height="22" overflow="visible">
-                  <div className="bg-popover border border-border text-[10px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
-                    R$ {data.values[i].toLocaleString("pt-BR")}
-                  </div>
-                </foreignObject>
+                <g>
+                  <rect
+                    x={x - 36}
+                    y={y - 38}
+                    width="72"
+                    height="28"
+                    rx="6"
+                    fill="hsl(var(--popover))"
+                  />
+                  <polygon
+                    points={`${x - 5},${y - 10} ${x + 5},${y - 10} ${x},${y - 5}`}
+                    fill="hsl(var(--popover))"
+                  />
+                  <text
+                    x={x}
+                    y={y - 20}
+                    textAnchor="middle"
+                    fill="hsl(var(--foreground))"
+                    fontSize="11"
+                    fontWeight="300"
+                  >
+                    {data.labels[i]}: R$ {data.values[i].toLocaleString("pt-BR")}
+                  </text>
+                </g>
               )}
             </g>
           ))}
-
-          {/* X-axis labels */}
-          {data.labels.map((label, i) => {
-            const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
-            return (
-              <text
-                key={label}
-                x={x}
-                y={chartH + 14}
-                textAnchor={i === 0 ? "start" : i === data.labels.length - 1 ? "end" : "middle"}
-                fill="hsl(var(--muted-foreground))"
-                fontSize="11"
-                fontWeight="300"
-              >
-                {label}
-              </text>
-            );
-          })}
         </svg>
+      </div>
+
+      {/* X labels */}
+      <div className="flex justify-between mt-[6px]">
+        {data.labels.map((label) => (
+          <span key={label} className="text-[9px] font-light text-muted-foreground">{label}</span>
+        ))}
       </div>
     </C>
   );

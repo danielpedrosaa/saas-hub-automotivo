@@ -134,3 +134,10 @@
 .custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.3);
 }
+
+@keyframes finDrawLine {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes finDotIn {
+  to { opacity: 1; }
+}
