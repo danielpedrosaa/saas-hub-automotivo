@@ -93,155 +93,143 @@ const financeData: Record<FinancePeriod, { labels: string[]; values: number[] }>
 
 function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navigate: (path: string) => void }) {
   const [period, setPeriod] = useState<FinancePeriod>("Diário");
+  const data = financeData[period];
+  const maxVal = Math.max(...data.values, 1);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
-  // Weekly chart data
-  const weekLabels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-  const weekValues = [580, 430, 690, 510, 780, 340, 120];
-  const maxVal = Math.max(...weekValues, 1);
-
-  // SVG chart dimensions
+  // Chart dimensions
   const chartW = 600;
-  const chartH = 100;
-  const padL = 6;
-  const padR = 6;
-  const padT = 10;
-  const padB = 4;
+  const chartH = 160;
+  const padL = 10;
+  const padR = 10;
+  const padT = 15;
+  const padB = 5;
   const plotW = chartW - padL - padR;
   const plotH = chartH - padT - padB;
 
-  const pts = weekValues.map((v, i) => {
-    const x = padL + (i / (weekLabels.length - 1)) * plotW;
+  const pts = data.values.map((v, i) => {
+    const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
     const y = padT + plotH - (v / maxVal) * plotH;
     return [x, y] as [number, number];
   });
 
   const line = pts.map(([x, y]) => `${x},${y}`).join(" ");
   const area = `M${pts[0][0]},${pts[0][1]} L${line} L${pts[pts.length - 1][0]},${padT + plotH} L${pts[0][0]},${padT + plotH} Z`;
+
+  // Grid lines (4 horizontal)
   const gridLines = [0.25, 0.5, 0.75, 1].map(pct => padT + plotH - pct * plotH);
 
   return (
-    <C className="col-span-6">
-      {/* 1. HEADER */}
+    <C className="col-span-6 flex flex-col h-[420px]">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[12px] font-normal text-muted-foreground uppercase" style={{ letterSpacing: "0.08em" }}>
-          Resumo financeiro
-        </p>
-        <div className="flex items-center gap-[10px]">
-          {/* Period toggle pill */}
-          <div className="flex gap-[2px] bg-accent/30 rounded-[8px] p-[2px]">
+        <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide">Resumo financeiro</p>
+        <div className="flex items-center gap-2">
+          <div className="flex bg-secondary rounded-lg overflow-hidden">
             {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
                 className={cn(
-                  "text-[10px] font-normal px-3 py-[5px] rounded-[6px] border-none transition-colors",
+                  "px-2.5 py-1 text-[10px] font-light transition-colors",
                   p === period
-                    ? "bg-card border border-border text-foreground"
-                    : "bg-transparent text-muted-foreground hover:text-foreground/70"
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
-                style={p === period ? { border: "1px solid hsl(var(--border))" } : {}}
               >
                 {p}
               </button>
             ))}
           </div>
-          {/* Link detalhes */}
-          <button
-            onClick={() => navigate("/financial")}
-            className="text-[11px] text-muted-foreground bg-transparent border-none cursor-pointer hover:text-foreground/70 transition-colors"
-          >
-            detalhes →
+          <button onClick={() => navigate("/financial")} className="text-[10px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-0.5">
+            detalhes <ChevronRight className="h-3 w-3" />
           </button>
         </div>
       </div>
 
-      {/* 2. GRID ENTRADAS / SAÍDAS */}
+      {/* Entradas / Saídas */}
       <div className="grid grid-cols-2 gap-2 mb-3">
-        <div className="p-3 rounded-[10px] border border-border bg-secondary/40 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase mb-1" style={{ letterSpacing: "0.08em" }}>
-            Entradas hoje
-          </p>
-          <p className="text-[20px] font-extralight text-success leading-none" style={{ fontVariantNumeric: "tabular-nums" }}>
-            {mask("R$ 1.730")}
-          </p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">
-            Valor total de todas as entradas
-          </p>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Entradas hoje</p>
+          <p className="text-xl font-extralight text-success leading-none">{mask("R$ 1.730")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Valor total de todas as entradas</p>
         </div>
-        <div className="p-3 rounded-[10px] border border-border bg-secondary/40 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase mb-1" style={{ letterSpacing: "0.08em" }}>
-            Saídas hoje
-          </p>
-          <p className="text-[20px] font-extralight text-destructive leading-none" style={{ fontVariantNumeric: "tabular-nums" }}>
-            {mask("R$ 340")}
-          </p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">
-            Produtos, comissões, despesas
-          </p>
+        <div className="bg-secondary/60 rounded-lg p-3">
+          <p className="text-[9px] text-muted-foreground font-light uppercase tracking-wider mb-1">Saídas hoje</p>
+          <p className="text-xl font-extralight text-destructive leading-none">{mask("R$ 340")}</p>
+          <p className="text-[9px] text-muted-foreground mt-1">Produtos, comissões, despesas</p>
         </div>
       </div>
 
-      {/* 3. FATURAS DE CARTÕES PENDENTES */}
-      <div className="flex items-center justify-between px-[14px] py-[10px] rounded-[10px] border border-border bg-secondary/40">
-        <span className="text-[10px] font-light text-muted-foreground">
-          Faturas de cartões pendentes
-        </span>
-        <span className="text-[13px] font-light" style={{ color: "#ff6b9d", fontVariantNumeric: "tabular-nums" }}>
-          {mask("R$ 1.220,00")}
-        </span>
+      {/* Faturas pendentes */}
+      <div className="flex items-center justify-between bg-secondary/40 rounded-lg px-3 py-2 mb-4">
+        <span className="text-[11px] text-muted-foreground">Faturas de cartões pendentes</span>
+        <span className="text-[12px] font-light text-pink">{mask("R$ 1.220,00")}</span>
       </div>
 
-      {/* 4. GRÁFICO DE LINHA — RECEITA SEMANAL */}
-      <div className="mt-[18px]">
-        <p className="text-[11px] font-normal text-muted-foreground uppercase mb-[10px]" style={{ letterSpacing: "0.1em" }}>
-          Receita semanal
-        </p>
+      {/* Area chart label */}
+      <p className="text-[10px] font-light text-muted-foreground uppercase tracking-wide mb-2">
+        Receita {period === "Diário" ? "semanal" : period === "Semanal" ? "mensal" : "anual"}
+      </p>
 
-        <svg viewBox={`0 0 ${chartW} ${chartH}`} className="w-full" style={{ height: 100 }} preserveAspectRatio="none">
+      {/* Area chart — proper aspect ratio */}
+      <div className="flex-1 min-h-0 relative">
+        <svg viewBox={`0 0 ${chartW} ${chartH + 20}`} className="w-full h-full" preserveAspectRatio="xMidYMid meet">
           <defs>
-            <linearGradient id="finAreaGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.10" />
-              <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0" />
+            <linearGradient id="areaGradFin" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="hsl(var(--foreground))" stopOpacity="0.15" />
+              <stop offset="100%" stopColor="hsl(var(--foreground))" stopOpacity="0.01" />
             </linearGradient>
           </defs>
 
-          {/* Grid lines */}
+          {/* Horizontal grid lines */}
           {gridLines.map((gy, i) => (
             <line key={i} x1={padL} y1={gy} x2={padL + plotW} y2={gy} stroke="hsl(var(--border))" strokeWidth="0.5" />
           ))}
+          {/* Baseline */}
           <line x1={padL} y1={padT + plotH} x2={padL + plotW} y2={padT + plotH} stroke="hsl(var(--border))" strokeWidth="0.5" />
 
           {/* Area fill */}
-          <path d={area} fill="url(#finAreaGrad)" />
-
+          <path d={area} fill="url(#areaGradFin)" />
           {/* Line */}
-          <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" />
+          <polyline points={line} fill="none" stroke="hsl(var(--foreground))" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
 
-          {/* Dots */}
+          {/* Dots + tooltips */}
           {pts.map(([x, y], i) => (
-            <g key={i} onMouseEnter={() => setHoveredIdx(i)} onMouseLeave={() => setHoveredIdx(null)} className="cursor-crosshair">
-              <circle cx={x} cy={y} r="8" fill="transparent" />
-              <circle cx={x} cy={y} r={hoveredIdx === i ? 4 : 3} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
+            <g key={i}
+              onMouseEnter={() => setHoveredIdx(i)}
+              onMouseLeave={() => setHoveredIdx(null)}
+              className="cursor-crosshair"
+            >
+              <circle cx={x} cy={y} r="10" fill="transparent" />
+              <circle cx={x} cy={y} r={hoveredIdx === i ? 5 : 3.5} fill="hsl(var(--background))" stroke="hsl(var(--foreground))" strokeWidth="1.5" className="transition-all" />
               {hoveredIdx === i && (
-                <foreignObject x={x - 36} y={y - 26} width="72" height="20" overflow="visible">
+                <foreignObject x={x - 40} y={y - 28} width="80" height="22" overflow="visible">
                   <div className="bg-popover border border-border text-[10px] text-foreground font-light rounded px-1.5 py-0.5 text-center whitespace-nowrap">
-                    R$ {weekValues[i].toLocaleString("pt-BR")}
+                    R$ {data.values[i].toLocaleString("pt-BR")}
                   </div>
                 </foreignObject>
               )}
             </g>
           ))}
-        </svg>
 
-        {/* X-axis labels */}
-        <div className="flex justify-between mt-[6px]">
-          {weekLabels.map((label) => (
-            <span key={label} className="text-[9px] font-light text-muted-foreground">
-              {label}
-            </span>
-          ))}
-        </div>
+          {/* X-axis labels */}
+          {data.labels.map((label, i) => {
+            const x = padL + (data.labels.length === 1 ? plotW / 2 : (i / (data.labels.length - 1)) * plotW);
+            return (
+              <text
+                key={label}
+                x={x}
+                y={chartH + 14}
+                textAnchor={i === 0 ? "start" : i === data.labels.length - 1 ? "end" : "middle"}
+                fill="hsl(var(--muted-foreground))"
+                fontSize="11"
+                fontWeight="300"
+              >
+                {label}
+              </text>
+            );
+          })}
+        </svg>
       </div>
     </C>
   );
