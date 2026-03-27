@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useRef, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useJobs, useAppointments, useTeam } from "@/hooks/useShopData";
 import { useShop } from "@/hooks/useShopData";
@@ -118,9 +118,22 @@ function buildBezierPath(pts: [number, number][]) {
 function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navigate: (path: string) => void }) {
   const [period, setPeriod] = useState<FinancePeriod>("Diário");
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const [chartW, setChartW] = useState(400);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const data = financeChartData[period];
 
-  const W = 600;
+  useEffect(() => {
+    const measure = () => {
+      if (wrapRef.current) setChartW(wrapRef.current.getBoundingClientRect().width);
+    };
+    measure();
+    let timer: ReturnType<typeof setTimeout>;
+    const onResize = () => { clearTimeout(timer); timer = setTimeout(measure, 200); };
+    window.addEventListener("resize", onResize);
+    return () => { window.removeEventListener("resize", onResize); clearTimeout(timer); };
+  }, []);
+
+  const W = chartW;
   const H = 140;
   const px = 12;
   const py = 16;
@@ -137,8 +150,25 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
 
   const linePath = buildBezierPath(pts);
   const areaPath = linePath + ` L${pts[N - 1][0]},${H} L${pts[0][0]},${H} Z`;
-
   const gridLines = [0, 1, 2, 3].map(i => py + (i / 3) * (H - py * 2));
+
+  // Tooltip positioning
+  const tipW = 82;
+  const getTipX = (x: number) => {
+    if (x < 80) return x;
+    if (x > W - 80) return x - tipW;
+    return x - tipW / 2;
+  };
+  const getTipAnchor = (x: number) => {
+    if (x < 80) return "start" as const;
+    if (x > W - 80) return "end" as const;
+    return "middle" as const;
+  };
+  const getTipTextX = (x: number) => {
+    if (x < 80) return x + 6;
+    if (x > W - 80) return x - 6;
+    return x;
+  };
 
   return (
     <C className="col-span-6 flex flex-col h-[420px]">
@@ -193,13 +223,12 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
         {data.chartLabel}
       </p>
 
-      {/* SVG Chart */}
-      <div className="relative w-full" style={{ height: 100, marginTop: 8 }}>
+      {/* SVG Chart — measured width, no preserveAspectRatio="none" */}
+      <div ref={wrapRef} className="relative w-full" style={{ height: H, marginTop: 8 }}>
         <svg
           width="100%"
-          height="100%"
+          height={H}
           viewBox={`0 0 ${W} ${H}`}
-          preserveAspectRatio="none"
           className="overflow-visible"
         >
           <defs>
@@ -239,9 +268,7 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
               onMouseLeave={() => setHoveredIdx(null)}
               className="cursor-crosshair"
             >
-              {/* Hit area */}
               <circle cx={x} cy={y} r="16" fill="transparent" />
-              {/* Visible dot */}
               <circle
                 cx={x}
                 cy={y}
@@ -255,25 +282,24 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
                   animation: `finDotIn 0.3s ease-out forwards ${0.4 + i * 0.08}s`,
                 }}
               />
-              {/* Tooltip */}
               {hoveredIdx === i && (
                 <g>
                   <rect
-                    x={x - 36}
+                    x={getTipX(x)}
                     y={y - 38}
-                    width="72"
-                    height="28"
+                    width={tipW}
+                    height="26"
                     rx="6"
                     fill="hsl(var(--popover))"
                   />
                   <polygon
-                    points={`${x - 5},${y - 10} ${x + 5},${y - 10} ${x},${y - 5}`}
+                    points={`${x - 4},${y - 12} ${x + 4},${y - 12} ${x},${y - 7}`}
                     fill="hsl(var(--popover))"
                   />
                   <text
-                    x={x}
-                    y={y - 20}
-                    textAnchor="middle"
+                    x={getTipTextX(x)}
+                    y={y - 21}
+                    textAnchor={getTipAnchor(x)}
                     fill="hsl(var(--foreground))"
                     fontSize="11"
                     fontWeight="300"
