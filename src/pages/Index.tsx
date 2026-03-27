@@ -76,21 +76,27 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
 // ── Resumo Financeiro (interactive) ─────────────────────────────────────────
 type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
-const financeChartData: Record<FinancePeriod, { values: number[]; labels: string[]; chartLabel: string }> = {
+const financeChartData: Record<FinancePeriod, { values: number[]; labels: string[]; chartLabel: string; entLabel: string; entValue: string; entHint: string; saiLabel: string; saiValue: string; saiHint: string }> = {
   "Diário": {
     values: [980, 1420, 1100, 1650, 1870, 890, 510],
     labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
     chartLabel: "RECEITA SEMANAL",
+    entLabel: "ENTRADAS HOJE", entValue: "R$ 1.730", entHint: "Valor total de todas as entradas",
+    saiLabel: "SAÍDAS HOJE", saiValue: "R$ 340", saiHint: "Produtos, comissões, despesas",
   },
   "Semanal": {
     values: [8200, 9100, 7800, 9840],
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
     chartLabel: "RECEITA MENSAL",
+    entLabel: "ENTRADAS SEMANA", entValue: "R$ 9.840", entHint: "Total dos últimos 7 dias",
+    saiLabel: "SAÍDAS SEMANA", saiValue: "R$ 2.190", saiHint: "Produtos, comissões, despesas",
   },
   "Mensal": {
     values: [32000, 35000, 29000, 37000, 41000, 44000, 38000, 40000, 43000, 46000, 39000, 38500],
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
     chartLabel: "RECEITA ANUAL",
+    entLabel: "ENTRADAS MÊS", entValue: "R$ 38.500", entHint: "Total do mês atual",
+    saiLabel: "SAÍDAS MÊS", saiValue: "R$ 8.720", saiHint: "Produtos, comissões, despesas",
   },
 };
 
