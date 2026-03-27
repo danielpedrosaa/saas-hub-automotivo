@@ -76,21 +76,27 @@ function CH({ left, right }: { left: React.ReactNode; right?: React.ReactNode })
 // ── Resumo Financeiro (interactive) ─────────────────────────────────────────
 type FinancePeriod = "Diário" | "Semanal" | "Mensal";
 
-const financeChartData: Record<FinancePeriod, { values: number[]; labels: string[]; chartLabel: string }> = {
+const financeChartData: Record<FinancePeriod, { values: number[]; labels: string[]; chartLabel: string; entLabel: string; entValue: string; entHint: string; saiLabel: string; saiValue: string; saiHint: string }> = {
   "Diário": {
     values: [980, 1420, 1100, 1650, 1870, 890, 510],
     labels: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
     chartLabel: "RECEITA SEMANAL",
+    entLabel: "ENTRADAS HOJE", entValue: "R$ 1.730", entHint: "Valor total de todas as entradas",
+    saiLabel: "SAÍDAS HOJE", saiValue: "R$ 340", saiHint: "Produtos, comissões, despesas",
   },
   "Semanal": {
     values: [8200, 9100, 7800, 9840],
     labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4"],
     chartLabel: "RECEITA MENSAL",
+    entLabel: "ENTRADAS SEMANA", entValue: "R$ 9.840", entHint: "Total dos últimos 7 dias",
+    saiLabel: "SAÍDAS SEMANA", saiValue: "R$ 2.190", saiHint: "Produtos, comissões, despesas",
   },
   "Mensal": {
     values: [32000, 35000, 29000, 37000, 41000, 44000, 38000, 40000, 43000, 46000, 39000, 38500],
     labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
     chartLabel: "RECEITA ANUAL",
+    entLabel: "ENTRADAS MÊS", entValue: "R$ 38.500", entHint: "Total do mês atual",
+    saiLabel: "SAÍDAS MÊS", saiValue: "R$ 8.720", saiHint: "Produtos, comissões, despesas",
   },
 };
 
@@ -144,12 +150,12 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
             {(["Diário", "Semanal", "Mensal"] as FinancePeriod[]).map((p) => (
               <button
                 key={p}
-                onClick={() => setPeriod(p)}
+                onClick={() => { setPeriod(p); setHoveredIdx(null); }}
                 className={cn(
-                  "px-3 py-[5px] text-[10px] font-normal rounded-md border transition-colors",
+                  "px-3 py-[5px] text-[10px] font-normal rounded-[6px] transition-all duration-200 cursor-pointer",
                   p === period
-                    ? "bg-card border-border text-foreground"
-                    : "border-transparent text-muted-foreground hover:text-muted-foreground/80"
+                    ? "bg-card/80 border border-border text-foreground"
+                    : "border-none text-muted-foreground hover:text-muted-foreground/70"
                 )}
               >
                 {p}
@@ -165,14 +171,14 @@ function FinanceiroCard({ mask, navigate }: { mask: (v: string) => string; navig
       {/* Entradas / Saídas */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Entradas hoje</p>
-          <p className="text-xl font-extralight text-success tabular-nums leading-none">{mask("R$ 1.730")}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Valor total de todas as entradas</p>
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">{data.entLabel}</p>
+          <p className="text-xl font-extralight text-success tabular-nums leading-none">{mask(data.entValue)}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">{data.entHint}</p>
         </div>
         <div className="bg-secondary/40 border border-border rounded-[10px] p-3 hover:bg-secondary/60 transition-colors">
-          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">Saídas hoje</p>
-          <p className="text-xl font-extralight text-destructive tabular-nums leading-none">{mask("R$ 340")}</p>
-          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">Produtos, comissões, despesas</p>
+          <p className="text-[9px] font-normal text-muted-foreground uppercase tracking-[0.08em] mb-1">{data.saiLabel}</p>
+          <p className="text-xl font-extralight text-destructive tabular-nums leading-none">{mask(data.saiValue)}</p>
+          <p className="text-[9px] font-extralight text-muted-foreground mt-[2px]">{data.saiHint}</p>
         </div>
       </div>
 
